@@ -10,6 +10,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
     [Header("DisconnectPanel")]
     public InputField NickNameInput;
+    public GameObject DisconnectPanel;
 
     [Header("LobbyPanel")]
     public GameObject LobbyPanel;
@@ -34,7 +35,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
 
+    public GameObject startGameButton;  // 게임 시작 버튼을 Unity 에디터에서 연결할 GameObject
 
+    public void StartGame()
+    {
+        Spawn();  // 모든 플레이어가 게임을 시작할 때 Spawn() 메서드를 호출하도록 변경
+        DisconnectPanel.SetActive(false);
+        RoomPanel.SetActive(false);
+        LobbyPanel.SetActive(false);
+    }
+
+
+    [PunRPC]
+    void StartGameRPC()
+    {
+        PhotonNetwork.LoadLevel("InGame");  // 방장이 호출하면 ingame 씬으로 이동
+    }
+
+    public void Spawn()
+    {
+        PhotonNetwork.Instantiate("Player",Vector3.zero,Quaternion.identity);
+    }
     #region 방리스트 갱신
     // ◀버튼 -2 , ▶버튼 -1 , 셀 숫자
     public void MyListClick(int num)
@@ -120,13 +141,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void LeaveRoom() => PhotonNetwork.LeaveRoom();
 
-    public override void OnJoinedRoom()
-    {
-        RoomPanel.SetActive(true);
-        RoomRenewal();
-        ChatInput.text = "";
-        for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
-    }
+  public override void OnJoinedRoom()
+{
+    RoomPanel.SetActive(true);
+    RoomRenewal();
+
+    //if (PhotonNetwork.IsMasterClient)
+    //{
+    //    startGameButton.SetActive(true);  // 방장이면 게임 시작 버튼 활성화
+    //}
+    //else
+    //{
+    //    startGameButton.SetActive(false);  // 방장이 아니면 게임 시작 버튼 비활성화
+    //}
+
+    ChatInput.text = "";
+    for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
+}
+
 
     public override void OnCreateRoomFailed(short returnCode, string message) { RoomInput.text = ""; CreateRoom(); } 
 

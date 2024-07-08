@@ -34,5 +34,6 @@ MonoBehaviour:
   - RespawnSpaceship
   - ChatRPC
   - LoadInGameScene
+  - StartGameRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
