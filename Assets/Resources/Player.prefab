@@ -459,6 +459,7 @@ MonoBehaviour:
   speed: 10
   rotationSpeed: 10
   jumpPower: 10
+  PV: {fileID: 7980191996575902271}
 --- !u!114 &7980191996575902271
 MonoBehaviour:
   m_ObjectHideFlags: 0

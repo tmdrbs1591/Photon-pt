@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine.UI;
+
 
 public class PlayerCtrl : MonoBehaviour
 {
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
+
+    public PhotonView PV;
 
     float hAxis; // 수평 입력 값
     float vAxis; // 수직 입력 값
@@ -29,6 +34,7 @@ public class PlayerCtrl : MonoBehaviour
     void Update()
     {
         GetInput();
+        if (PV.IsMine)
         Move(); // 이동 함수 호출
         Jump();
     }
@@ -44,6 +50,7 @@ public class PlayerCtrl : MonoBehaviour
 
         moveVec = new Vector3(hAxis, 0, vAxis).normalized; // 입력 벡터를 정규화하여 이동 방향 벡터 설정
 
+        
         transform.position += moveVec * speed * Time.deltaTime; // 이동 속도와 시간 간격을 곱하여 위치 업데이트
 
         anim.SetBool("isWalk", moveVec != Vector3.zero); // 이동 벡터의 크기에 따라 걷는 애니메이션 상태 설정
