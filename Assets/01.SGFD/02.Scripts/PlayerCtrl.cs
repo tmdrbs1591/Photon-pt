@@ -1,13 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Cinemachine;
-using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
 
-public class PlayerCtrl : MonoBehaviour
+public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
@@ -17,11 +15,14 @@ public class PlayerCtrl : MonoBehaviour
 
     [SerializeField] TMP_Text nickNameText;
 
+    [SerializeField] private GameObject AttackPtc1;
+    [SerializeField] private GameObject AttackPtc2;
+    [SerializeField] private GameObject AttackPtc3;
+
     public PhotonView PV;
 
     float hAxis; // 수평 입력 값
     float vAxis; // 수직 입력 값
-
     bool jumpDown;
 
     Vector3 moveVec; // 이동 방향 벡터
@@ -35,9 +36,12 @@ public class PlayerCtrl : MonoBehaviour
     private int curAttackCount = 0;
     private Coroutine attackCoroutine;
 
+    [Header("쿨타임")]
+    [SerializeField] private float attackCoolTime = 0.5f;
+    private float attacklCurTime;
+
     private void Awake()
     {
-
         nickNameText.text = PV.IsMine ? PhotonNetwork.NickName : PV.Owner.NickName;
         nickNameText.color = PV.IsMine ? Color.green : Color.red;
         if (PV.IsMine)
@@ -64,13 +68,12 @@ public class PlayerCtrl : MonoBehaviour
 
     void Update()
     {
+        if (!PV.IsMine) return;
+
         GetInput();
-        if (PV.IsMine)
-        {
-            Move(); // 이동 함수 호출
-            Jump();
-            Attack();
-        }
+        Move(); // 이동 함수 호출
+        Jump();
+        Attack();
     }
 
     void GetInput()
@@ -103,52 +106,49 @@ public class PlayerCtrl : MonoBehaviour
             //rigid.AddForce(Vector3.up * jumpPower,ForceMode.Impulse);
         }
     }
+
     void Attack()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (attacklCurTime <= 0)
         {
-            if (curAttackCount < maxAttackCount)
+            if (Input.GetKeyDown(KeyCode.X))
             {
-                PlayerAttackAnim();
-                curAttackCount++;
-
-                if (attackCoroutine != null)
+                attacklCurTime = attackCoolTime;
+                if (curAttackCount < maxAttackCount)
                 {
-                    StopCoroutine(attackCoroutine);
+                    PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount); // RPC 호출로 모든 클라이언트에게 공격 애니메이션 실행을 동기화합니다.
+                    curAttackCount++;
                 }
-
-                attackCoroutine = StartCoroutine(EndAttackCount());
-                Debug.Log("현재 어택 횟수 : " + curAttackCount);
-            }
-            else if (curAttackCount >= maxAttackCount)
-            {
-                curAttackCount = 0;
-                PlayerAttackAnim();
-                curAttackCount++;
-
-                if (attackCoroutine != null)
+                else if (curAttackCount >= maxAttackCount)
                 {
-                    StopCoroutine(attackCoroutine);
+                    curAttackCount = 0;
+                    PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount); // RPC 호출로 모든 클라이언트에게 공격 애니메이션 실행을 동기화합니다.
+                    curAttackCount++;
                 }
-
-                attackCoroutine = StartCoroutine(EndAttackCount());
-                Debug.Log("현재 어택 횟수 : " + curAttackCount);
             }
+        }
+        else
+        {
+            attacklCurTime -= Time.deltaTime;
         }
     }
 
-    void PlayerAttackAnim()
+    [PunRPC]
+    public void PlayerAttackAnim(int attackIndex)
     {
-        switch (curAttackCount)
+        switch (attackIndex)
         {
             case 0:
                 anim.SetTrigger("isAttack1");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc1));
                 break;
             case 1:
                 anim.SetTrigger("isAttack2");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc2));
                 break;
             case 2:
                 anim.SetTrigger("isAttack3");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc3));
                 break;
         }
     }
@@ -158,5 +158,44 @@ public class PlayerCtrl : MonoBehaviour
         yield return new WaitForSeconds(5f);
         curAttackCount = 0;
         Debug.Log("공격 초기화");
+    }
+
+    IEnumerator EffectSetActive(float time, GameObject effectObject) // 이펙트 코루틴
+    {
+        effectObject.SetActive(true);
+        yield return new WaitForSeconds(time);
+        effectObject.SetActive(false);
+
+        // RPC 호출로 이펙트 활성화 상태를 모든 클라이언트에게 동기화합니다.
+        PV.RPC("SyncEffectState", RpcTarget.OthersBuffered, effectObject.name, false);
+    }
+
+    [PunRPC]
+    private void SyncEffectState(string effectName, bool state)
+    {
+        GameObject effectObject = null;
+
+        switch (effectName)
+        {
+            case "AttackPtc1":
+                effectObject = AttackPtc1;
+                break;
+            case "AttackPtc2":
+                effectObject = AttackPtc2;
+                break;
+            case "AttackPtc3":
+                effectObject = AttackPtc3;
+                break;
+        }
+
+        if (effectObject != null)
+        {
+            effectObject.SetActive(state);
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        // 동기화할 데이터가 있을 경우 여기에 작성합니다.
     }
 }

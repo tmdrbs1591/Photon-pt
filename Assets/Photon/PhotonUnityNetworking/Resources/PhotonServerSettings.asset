@@ -35,5 +35,7 @@ MonoBehaviour:
   - ChatRPC
   - LoadInGameScene
   - StartGameRPC
+  - PlayerAttackAnim
+  - SyncEffectState
   DisableAutoOpenWizard: 1
   ShowSettings: 1
