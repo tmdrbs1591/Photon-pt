@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Cinemachine;
 using Photon.Realtime;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class PlayerCtrl : MonoBehaviour
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
+
+    [SerializeField] Transform cameraPos;
 
     public PhotonView PV;
 
@@ -24,7 +27,15 @@ public class PlayerCtrl : MonoBehaviour
     Animator anim; // 애니메이터 컴포넌트
 
     Rigidbody rigid;
-
+    private void Awake()
+    {
+        if (PV.IsMine)
+        {
+            var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
+            CM.Follow = cameraPos.transform;
+            CM.LookAt = transform;
+        }
+    }
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
@@ -57,8 +68,8 @@ public class PlayerCtrl : MonoBehaviour
 
         if (moveVec != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
+         //   Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
+          //  transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
         }
     }
 
