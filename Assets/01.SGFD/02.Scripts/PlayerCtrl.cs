@@ -40,7 +40,7 @@ public class PlayerCtrl : MonoBehaviour
             if (transposer != null)
             {
                 transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
-                transposer.m_FollowOffset = new Vector3(0, 5, -10); // 예시: 카메라를 플레이어 뒤에 배치
+                transposer.m_FollowOffset = new Vector3(0, 5, -6); // 예시: 카메라를 플레이어 뒤에 배치
             }
         }
     }
@@ -58,6 +58,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             Move(); // 이동 함수 호출
             Jump();
+            Attack();
         }
     }
 
@@ -89,6 +90,13 @@ public class PlayerCtrl : MonoBehaviour
         {
             anim.SetTrigger("isJump");
             //rigid.AddForce(Vector3.up * jumpPower,ForceMode.Impulse);
+        }
+    }
+    void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            anim.SetTrigger("isAttack1");
         }
     }
 }
