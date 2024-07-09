@@ -34,6 +34,7 @@ public class PlayerCtrl : MonoBehaviour
             var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
             CM.Follow = cameraPos.transform;
             CM.LookAt = transform;
+
         }
     }
     void Start()
@@ -68,8 +69,8 @@ public class PlayerCtrl : MonoBehaviour
 
         if (moveVec != Vector3.zero)
         {
-         //   Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
-          //  transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
+            Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
         }
     }
 
