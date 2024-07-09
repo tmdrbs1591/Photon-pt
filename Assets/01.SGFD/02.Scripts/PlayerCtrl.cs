@@ -5,6 +5,7 @@ using Photon.Pun;
 using Cinemachine;
 using Photon.Realtime;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class PlayerCtrl : MonoBehaviour
     [SerializeField] private float jumpPower = 10f;
 
     [SerializeField] Transform cameraPos;
+
+    [SerializeField] TMP_Text nickNameText;
 
     public PhotonView PV;
 
@@ -27,8 +30,16 @@ public class PlayerCtrl : MonoBehaviour
 
     Rigidbody rigid;
 
+    [Header("Attack")]
+    private int maxAttackCount = 3;
+    private int curAttackCount = 0;
+    private Coroutine attackCoroutine;
+
     private void Awake()
     {
+
+        nickNameText.text = PV.IsMine ? PhotonNetwork.NickName : PV.Owner.NickName;
+        nickNameText.color = PV.IsMine ? Color.green : Color.red;
         if (PV.IsMine)
         {
             var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
@@ -96,7 +107,56 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            anim.SetTrigger("isAttack1");
+            if (curAttackCount < maxAttackCount)
+            {
+                PlayerAttackAnim();
+                curAttackCount++;
+
+                if (attackCoroutine != null)
+                {
+                    StopCoroutine(attackCoroutine);
+                }
+
+                attackCoroutine = StartCoroutine(EndAttackCount());
+                Debug.Log("현재 어택 횟수 : " + curAttackCount);
+            }
+            else if (curAttackCount >= maxAttackCount)
+            {
+                curAttackCount = 0;
+                PlayerAttackAnim();
+                curAttackCount++;
+
+                if (attackCoroutine != null)
+                {
+                    StopCoroutine(attackCoroutine);
+                }
+
+                attackCoroutine = StartCoroutine(EndAttackCount());
+                Debug.Log("현재 어택 횟수 : " + curAttackCount);
+            }
         }
+    }
+
+    void PlayerAttackAnim()
+    {
+        switch (curAttackCount)
+        {
+            case 0:
+                anim.SetTrigger("isAttack1");
+                break;
+            case 1:
+                anim.SetTrigger("isAttack2");
+                break;
+            case 2:
+                anim.SetTrigger("isAttack3");
+                break;
+        }
+    }
+
+    private IEnumerator EndAttackCount()
+    {
+        yield return new WaitForSeconds(5f);
+        curAttackCount = 0;
+        Debug.Log("공격 초기화");
     }
 }
