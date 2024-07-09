@@ -39,19 +39,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void StartGame()
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PV.RPC("StartGameRPC", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    void StartGameRPC()
+    {
         Spawn();  // 모든 플레이어가 게임을 시작할 때 Spawn() 메서드를 호출하도록 변경
         DisconnectPanel.SetActive(false);
         RoomPanel.SetActive(false);
         LobbyPanel.SetActive(false);
     }
-
-
-    [PunRPC]
-    void StartGameRPC()
-    {
-        PhotonNetwork.LoadLevel("InGame");  // 방장이 호출하면 ingame 씬으로 이동
-    }
-
     public void Spawn()
     {
         PhotonNetwork.Instantiate("Player",Vector3.zero,Quaternion.identity);
@@ -107,6 +108,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            Send();
+        }
         StatusText.text = PhotonNetwork.NetworkClientState.ToString();
         LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + "로비 / " + PhotonNetwork.CountOfPlayers + "접속";
     }
@@ -146,14 +152,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     RoomPanel.SetActive(true);
     RoomRenewal();
 
-    //if (PhotonNetwork.IsMasterClient)
-    //{
-    //    startGameButton.SetActive(true);  // 방장이면 게임 시작 버튼 활성화
-    //}
-    //else
-    //{
-    //    startGameButton.SetActive(false);  // 방장이 아니면 게임 시작 버튼 비활성화
-    //}
+    if (PhotonNetwork.IsMasterClient)
+    {
+        startGameButton.SetActive(true);  // 방장이면 게임 시작 버튼 활성화
+    }
+    else
+    {
+        startGameButton.SetActive(false);  // 방장이 아니면 게임 시작 버튼 비활성화
+    }
 
     ChatInput.text = "";
     for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
@@ -189,8 +195,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     #region 채팅
     public void Send()
     {
-        PV.RPC("ChatRPC", RpcTarget.All, PhotonNetwork.NickName + " : " + ChatInput.text);
-        ChatInput.text = "";
+        if (!string.IsNullOrEmpty(ChatInput.text))
+        {
+            PV.RPC("ChatRPC", RpcTarget.All, PhotonNetwork.NickName + " : " + ChatInput.text);
+            ChatInput.text = "";
+        }
+
+        // 다시 InputField를 활성화시킴
+        ChatInput.ActivateInputField();
+        ChatInput.Select();
     }
 
     [PunRPC] // RPC는 플레이어가 속해있는 방 모든 인원에게 전달한다
