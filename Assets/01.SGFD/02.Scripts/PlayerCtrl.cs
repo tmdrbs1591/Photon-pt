@@ -19,6 +19,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject AttackPtc2;
     [SerializeField] private GameObject AttackPtc3;
 
+    [SerializeField] Vector3 attackBoxSize;
+    [SerializeField] Transform attackBoxPos;
+
     public PhotonView PV;
 
     float hAxis; // 수평 입력 값
@@ -113,6 +116,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
+                if (photonView.IsMine)
+                {
+                    photonView.RPC("Damage", RpcTarget.All);
+                }
+
                 attacklCurTime = attackCoolTime;
                 if (curAttackCount < maxAttackCount)
                 {
@@ -141,6 +149,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             case 0:
                 anim.SetTrigger("isAttack1");
                 StartCoroutine(EffectSetActive(0.5f, AttackPtc1));
+
                 break;
             case 1:
                 anim.SetTrigger("isAttack2");
@@ -198,4 +207,31 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     {
         // 동기화할 데이터가 있을 경우 여기에 작성합니다.
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(attackBoxPos.position, attackBoxSize);
+    }
+
+
+    [PunRPC]
+    void Damage() // 데미지
+    {
+        Collider[] colliders = Physics.OverlapBox(attackBoxPos.position, attackBoxSize / 2f);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider != null && collider.CompareTag("Enemy"))
+            {
+                PhotonView enemyPhotonView = collider.gameObject.GetComponent<PhotonView>();
+                if (enemyPhotonView != null && enemyPhotonView.IsMine)
+                {
+                    enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, 1f);
+                }
+            }
+        }
+    }
+
+
 }

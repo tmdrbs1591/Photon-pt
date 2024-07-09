@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - CinemachineCamera
+  - Enemy
   layers:
   - Default
   - TransparentFX
