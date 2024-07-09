@@ -40,5 +40,6 @@ MonoBehaviour:
   - Damage
   - TakeDamage
   - HPbarUpdate
+  - SyncEnemyPosition
   DisableAutoOpenWizard: 1
   ShowSettings: 1
