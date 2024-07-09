@@ -6,7 +6,6 @@ using Cinemachine;
 using Photon.Realtime;
 using UnityEngine.UI;
 
-
 public class PlayerCtrl : MonoBehaviour
 {
     [SerializeField] private float speed; // 이동 속도
@@ -27,16 +26,25 @@ public class PlayerCtrl : MonoBehaviour
     Animator anim; // 애니메이터 컴포넌트
 
     Rigidbody rigid;
+
     private void Awake()
     {
         if (PV.IsMine)
         {
             var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
-            CM.Follow = cameraPos.transform;
-            CM.LookAt = transform;
+            CM.Follow = transform;
+            CM.LookAt = null;
 
+            // Cinemachine Transposer 설정
+            var transposer = CM.GetCinemachineComponent<CinemachineTransposer>();
+            if (transposer != null)
+            {
+                transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
+                transposer.m_FollowOffset = new Vector3(0, 5, -10); // 예시: 카메라를 플레이어 뒤에 배치
+            }
         }
     }
+
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
@@ -47,9 +55,12 @@ public class PlayerCtrl : MonoBehaviour
     {
         GetInput();
         if (PV.IsMine)
-        Move(); // 이동 함수 호출
-        Jump();
+        {
+            Move(); // 이동 함수 호출
+            Jump();
+        }
     }
+
     void GetInput()
     {
         hAxis = Input.GetAxisRaw("Horizontal"); // 수평 입력 감지
@@ -59,10 +70,8 @@ public class PlayerCtrl : MonoBehaviour
 
     void Move()
     {
-
         moveVec = new Vector3(hAxis, 0, vAxis).normalized; // 입력 벡터를 정규화하여 이동 방향 벡터 설정
 
-        
         transform.position += moveVec * speed * Time.deltaTime; // 이동 속도와 시간 간격을 곱하여 위치 업데이트
 
         anim.SetBool("isWalk", moveVec != Vector3.zero); // 이동 벡터의 크기에 따라 걷는 애니메이션 상태 설정
@@ -74,7 +83,6 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
-
     void Jump()
     {
         if (jumpDown)
@@ -83,6 +91,4 @@ public class PlayerCtrl : MonoBehaviour
             //rigid.AddForce(Vector3.up * jumpPower,ForceMode.Impulse);
         }
     }
-
-
 }
