@@ -9,8 +9,6 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable  // IPunObservabl
 
     [SerializeField] Slider hpBar;
 
-    public PhotonView PV;
-
     void Start()
     {
         currentHP = maxHP;
@@ -19,17 +17,13 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable  // IPunObservabl
 
     void Update()
     {
-        PV.RPC("HPbarUpdate", RpcTarget.AllBuffered);
+        hpBar.value = currentHP/maxHP;
         if (currentHP <= 0)
         {
             Destroy(gameObject);
         }
     }
-    [PunRPC]
-    public void HPbarUpdate()
-    {
-        hpBar.value = currentHP / maxHP;
-    }
+
     // Photon RPC 메서드로 변경
     [PunRPC]
     public void TakeDamage(float damage)
