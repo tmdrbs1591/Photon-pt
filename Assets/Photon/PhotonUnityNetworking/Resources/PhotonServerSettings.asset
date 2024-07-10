@@ -41,5 +41,11 @@ MonoBehaviour:
   - TakeDamage
   - HPbarUpdate
   - SyncEnemyPosition
+  - SpawnHitEffect
+  - SpawnDamageText
+  - SetAttackPower
+  - RPC_StartAudio
+  - RPC_StopAudio
+  - RPC_PlaySound
   DisableAutoOpenWizard: 1
   ShowSettings: 1

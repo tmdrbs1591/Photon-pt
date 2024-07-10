@@ -1,0 +1,240 @@
+using System.Collections;
+using UnityEngine;
+using Photon.Pun;
+using Cinemachine;
+using TMPro;
+
+public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
+{
+    [SerializeField] private float speed; // 이동 속도
+    [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
+    [SerializeField] private float jumpPower = 10f;
+    [SerializeField] private float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
+
+    [SerializeField] Transform cameraPos;
+    [SerializeField] TMP_Text nickNameText;
+
+    [SerializeField] private GameObject AttackPtc1;
+    [SerializeField] private GameObject AttackPtc2;
+    [SerializeField] private GameObject AttackPtc3;
+
+    [SerializeField] Vector3 attackBoxSize;
+    [SerializeField] Transform attackBoxPos;
+
+    public PhotonView PV;
+
+    float hAxis; // 수평 입력 값
+    float vAxis; // 수직 입력 값
+    bool jumpDown;
+
+    Animator anim; // 애니메이터 컴포넌트
+
+    [Header("Attack")]
+    private int maxAttackCount = 3;
+    private int curAttackCount = 0;
+    private Coroutine attackCoroutine;
+
+    [Header("쿨타임")]
+    [SerializeField] private float attackCoolTime = 0.5f;
+    private float attacklCurTime;
+
+    private void Awake()
+    {
+        if (PV.IsMine)
+        {
+            nickNameText.text = PhotonNetwork.NickName;
+            nickNameText.color = Color.green;
+
+            var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
+            CM.Follow = transform;
+            CM.LookAt = null;
+
+            var transposer = CM.GetCinemachineComponent<CinemachineTransposer>();
+            if (transposer != null)
+            {
+                transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
+                transposer.m_FollowOffset = new Vector3(0, 5, -6); // 카메라 위치 설정 예시
+            }
+        }
+        else
+        {
+            nickNameText.text = PV.Owner.NickName;
+            nickNameText.color = Color.red;
+        }
+    }
+
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        if (!PV.IsMine) return;
+
+        GetInput();
+        Move();
+        Jump();
+        Attack();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
+        }
+    }
+
+    void GetInput()
+    {
+        hAxis = Input.GetAxisRaw("Horizontal");
+        vAxis = Input.GetAxisRaw("Vertical");
+        jumpDown = Input.GetButtonDown("Jump");
+    }
+
+    void Move()
+    {
+        Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+        transform.position += moveVec * speed * Time.deltaTime;
+
+        anim.SetBool("isWalk", moveVec != Vector3.zero);
+
+        if (moveVec != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveVec);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    void Jump()
+    {
+        if (jumpDown)
+        {
+            anim.SetTrigger("isJump");
+        }
+    }
+
+    void Attack()
+    {
+        if (attacklCurTime <= 0)
+        {
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.0f, 1.0f), 1);
+                PV.RPC("Damage", RpcTarget.All);
+                attacklCurTime = attackCoolTime;
+                PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
+                curAttackCount = (curAttackCount + 1) % maxAttackCount;
+            }
+        }
+        else
+        {
+            attacklCurTime -= Time.deltaTime;
+        }
+    }
+
+    [PunRPC]
+    void PlayerAttackAnim(int attackIndex)
+    {
+        switch (attackIndex)
+        {
+            case 0:
+                anim.SetTrigger("isAttack1");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc1));
+                break;
+            case 1:
+                anim.SetTrigger("isAttack2");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc2));
+                break;
+            case 2:
+                anim.SetTrigger("isAttack3");
+                StartCoroutine(EffectSetActive(0.5f, AttackPtc3));
+                break;
+        }
+    }
+
+    IEnumerator EffectSetActive(float time, GameObject effectObject)
+    {
+        effectObject.SetActive(true);
+        yield return new WaitForSeconds(time);
+        effectObject.SetActive(false);
+        PV.RPC("SyncEffectState", RpcTarget.OthersBuffered, effectObject.name, false);
+    }
+
+    [PunRPC]
+    private void SyncEffectState(string effectName, bool state)
+    {
+        GameObject effectObject = null;
+        switch (effectName)
+        {
+            case "AttackPtc1":
+                effectObject = AttackPtc1;
+                break;
+            case "AttackPtc2":
+                effectObject = AttackPtc2;
+                break;
+            case "AttackPtc3":
+                effectObject = AttackPtc3;
+                break;
+        }
+        if (effectObject != null)
+        {
+            effectObject.SetActive(state);
+        }
+    }
+
+    [PunRPC]
+    void Damage()
+    {
+        Collider[] colliders = Physics.OverlapBox(attackBoxPos.position, attackBoxSize / 2f);
+        foreach (Collider collider in colliders)
+        {
+            if (collider != null && collider.CompareTag("Enemy"))
+            {
+                PhotonView enemyPhotonView = collider.gameObject.GetComponent<PhotonView>();
+                if (enemyPhotonView != null && enemyPhotonView.IsMine)
+                {
+                    enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, attackPower);
+                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position);
+                    PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+                }
+            }
+        }
+    }
+
+    // attackPower 값을 변경하고 다른 클라이언트에게 RPC를 통해 알립니다.
+    private void ChangeAttackPower(float newAttackPower)
+    {
+        PV.RPC("SetAttackPower", RpcTarget.AllBuffered, newAttackPower);
+    }
+
+    [PunRPC]
+    void SetAttackPower(float newAttackPower)
+    {
+        attackPower = newAttackPower;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        // 동기화할 데이터가 있을 경우 여기에 작성합니다.
+        if (stream.IsWriting)
+        {
+            // 데이터를 다른 클라이언트에게 보냅니다.
+            stream.SendNext(attackPower);
+        }
+        else
+        {
+            // 데이터를 다른 클라이언트로부터 수신합니다.
+            attackPower = (float)stream.ReceiveNext();
+        }
+    }
+
+    [PunRPC]
+    void SpawnDamageText(Vector3 position)
+    {
+        GameObject damageTextObj = Instantiate(Resources.Load<GameObject>("DamageText"), position + new Vector3(1, 2.5f, 0), Quaternion.identity);
+        TMP_Text damageText = damageTextObj.GetComponent<TMP_Text>();
+        if (damageText != null)
+        {
+            damageText.text = attackPower.ToString(); // 동기화된 _attackPower 값을 텍스트로 설정
+        }
+    }
+}
