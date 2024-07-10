@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public GameObject fadeImage;
+
     [Header("DisconnectPanel")]
     public InputField NickNameInput;
     public GameObject DisconnectPanel;
@@ -32,6 +34,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public Text StatusText;
     public PhotonView PV;
 
+
+    [Header("Spawn Positions")]
+    public Transform[] spawnPositions;
+
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
 
@@ -48,15 +54,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void StartGameRPC()
     {
+        StartCoroutine(StartGagmeRPCCor());
+    }
+
+
+    IEnumerator StartGagmeRPCCor()
+    {
         Spawn();  // 모든 플레이어가 게임을 시작할 때 Spawn() 메서드를 호출하도록 변경
+        fadeImage.SetActive(true);
+        yield return new WaitForSeconds(2f);
         DisconnectPanel.SetActive(false);
         RoomPanel.SetActive(false);
         LobbyPanel.SetActive(false);
+        yield return new WaitForSeconds(2f);
+        fadeImage.SetActive(false);
+
     }
     public void Spawn()
     {
-        PhotonNetwork.Instantiate("Player",Vector3.zero,Quaternion.identity);
+        int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1; // 플레이어 인덱스를 ActorNumber에서 1을 뺀 값으로 설정
+        Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position; // 순환하여 스폰 위치를 선택
+        PhotonNetwork.Instantiate("Player", spawnPosition, Quaternion.identity);
     }
+
     #region 방리스트 갱신
     // ◀버튼 -2 , ▶버튼 -1 , 셀 숫자
     public void MyListClick(int num)

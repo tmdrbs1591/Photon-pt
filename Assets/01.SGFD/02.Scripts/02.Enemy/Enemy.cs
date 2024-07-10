@@ -8,7 +8,13 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] float currentHP;
     [SerializeField] float maxHP;
+    [SerializeField] float attackRange;
+    [SerializeField] float attackDamage;
+    [SerializeField] float maxAttackSpeed;
+    [SerializeField] float curAttackSpeed;
     [SerializeField] Slider hpBar;
+
+    private float playerDistance;
 
     Animator anim;
     private GameObject playerObj;
@@ -53,6 +59,23 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             // 플레이어가 존재할 경우, 플레이어 방향으로 이동
             agent.SetDestination(playerObj.transform.position);
 
+            playerDistance = Vector3.Distance(gameObject.transform.position, playerObj.transform.position); // 플레이어와 몬스터의 거리 계산
+
+            // 공격속도 확인
+            if (curAttackSpeed < 0)
+            {
+                // 거리가 공격 사거리 안에 있는지 확인
+                if (playerDistance < attackRange)
+                {
+                    curAttackSpeed = maxAttackSpeed;
+                    Attack(); // 공격실행
+                }
+            }
+            else
+            {
+                curAttackSpeed -= Time.deltaTime;
+            }
+
             // 적의 위치를 동기화
             if (photonView.IsMine)
             {
@@ -88,6 +111,12 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+    void Attack()
+    {
+        //anim.SetTrigger("isAttack");
+        Debug.Log("플레이어를 공격함");
+    }
+
 
     [PunRPC]
     void SyncEnemyPosition(Vector3 newPosition)
@@ -99,6 +128,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void TakeDamage(float damage)
     {
+        AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 1);
         anim.SetTrigger("isDamage");
         currentHP -= damage;
     }

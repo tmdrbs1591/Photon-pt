@@ -9,7 +9,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
-    [SerializeField] private float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
+    [SerializeField] protected float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
 
     [SerializeField] Transform cameraPos;
     [SerializeField] TMP_Text nickNameText;
@@ -38,8 +38,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float attackCoolTime = 0.5f;
     private float attacklCurTime;
 
-    private void Awake()
+    protected void Awake()
     {
+        anim = GetComponent<Animator>();
+
         if (PV.IsMine)
         {
             nickNameText.text = PhotonNetwork.NickName;
@@ -59,16 +61,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             nickNameText.text = PV.Owner.NickName;
-            nickNameText.color = Color.red;
+            nickNameText.color = Color.white;
         }
     }
 
-    void Start()
-    {
-        anim = GetComponent<Animator>();
-    }
 
-    void Update()
+    protected void Update()
     {
         if (!PV.IsMine) return;
 
@@ -118,7 +116,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
-                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.0f, 1.0f), 1);
+                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 1);
                 PV.RPC("Damage", RpcTarget.All);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
@@ -194,15 +192,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, attackPower);
                     PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position);
-                    PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+                    Destroy(PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity), 2f);
                 }
             }
         }
     }
 
     // attackPower 값을 변경하고 다른 클라이언트에게 RPC를 통해 알립니다.
-    private void ChangeAttackPower(float newAttackPower)
+    public void ChangeAttackPower(float newAttackPower)
     {
+        Debug.Log("d");
         PV.RPC("SetAttackPower", RpcTarget.AllBuffered, newAttackPower);
     }
 
@@ -236,5 +235,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             damageText.text = attackPower.ToString(); // 동기화된 _attackPower 값을 텍스트로 설정
         }
+        Destroy(damageTextObj, 2f);
     }
 }
