@@ -38,6 +38,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float attackCoolTime = 0.5f;
     private float attacklCurTime;
 
+    private Vector3 networkPosition;
+    private Quaternion networkRotation;
+    private float interpolationFactor = 30f; // 보간 계수
+
     protected void Awake()
     {
         anim = GetComponent<Animator>();
@@ -79,6 +83,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
         }
+
+        if (!PV.IsMine)
+        {
+            // 다른 클라이언트에서 보간하여 위치와 회전을 조정
+            transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * interpolationFactor);
+            transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * interpolationFactor);
+        }
     }
 
     void GetInput()
@@ -116,7 +127,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
-                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 1);
+                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
@@ -218,11 +229,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             // 데이터를 다른 클라이언트에게 보냅니다.
             stream.SendNext(attackPower);
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
         }
         else
         {
             // 데이터를 다른 클라이언트로부터 수신합니다.
             attackPower = (float)stream.ReceiveNext();
+            transform.position = (Vector3)stream.ReceiveNext();
+            transform.rotation = (Quaternion)stream.ReceiveNext();
         }
     }
 

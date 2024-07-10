@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void TakeDamage(float damage)
     {
-        AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 1);
+        AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);
         anim.SetTrigger("isDamage");
         currentHP -= damage;
     }
