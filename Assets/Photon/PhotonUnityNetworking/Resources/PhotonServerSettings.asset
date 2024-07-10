@@ -47,5 +47,9 @@ MonoBehaviour:
   - RPC_StartAudio
   - RPC_StopAudio
   - RPC_PlaySound
+  - PlayerTakeDamage
+  - EnemyDamage
+  - RPC_AttackBoxActive
+  - OnTriggerEnter
   DisableAutoOpenWizard: 1
   ShowSettings: 1

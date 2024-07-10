@@ -3,6 +3,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
+using System.Collections;
 
 public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -13,6 +14,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] float maxAttackSpeed;
     [SerializeField] float curAttackSpeed;
     [SerializeField] Slider hpBar;
+    [SerializeField] GameObject attackBox;
+
 
     private float playerDistance;
 
@@ -68,7 +71,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
                 if (playerDistance < attackRange)
                 {
                     curAttackSpeed = maxAttackSpeed;
-                    Attack(); // 공격실행
+                    anim.SetTrigger("isAttack");
+                    Debug.Log("플레이어를 공격함");
                 }
             }
             else
@@ -113,8 +117,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 
     void Attack()
     {
-        anim.SetTrigger("isAttack");
-        Debug.Log("플레이어를 공격함");
+        photonView.RPC("RPC_AttackBoxActive", RpcTarget.All);
+       
     }
 
 
@@ -146,5 +150,17 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             // 데이터 수신 (원격 플레이어의 데이터를 수신)
             currentHP = (float)stream.ReceiveNext();
         }
+    }
+    [PunRPC]
+    void RPC_AttackBoxActive()
+    {
+        StartCoroutine(AttackBoxActive());
+    }
+    IEnumerator AttackBoxActive()
+    {
+        attackBox.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        attackBox.SetActive(false);
+
     }
 }

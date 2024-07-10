@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using Cinemachine;
 using TMPro;
@@ -20,6 +21,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] Vector3 attackBoxSize;
     [SerializeField] Transform attackBoxPos;
+    [SerializeField] Slider hpBar;
+
+    [SerializeField] private float maxHp;
+    [SerializeField] private float curHp;
+
 
     public PhotonView PV;
 
@@ -44,6 +50,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     protected void Awake()
     {
+        curHp = maxHp;
+
         anim = GetComponent<Animator>();
 
         if (PV.IsMine)
@@ -78,6 +86,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         Move();
         Jump();
         Attack();
+
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -231,6 +240,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(attackPower);
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
+            stream.SendNext(curHp);
+
         }
         else
         {
@@ -238,6 +249,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             attackPower = (float)stream.ReceiveNext();
             transform.position = (Vector3)stream.ReceiveNext();
             transform.rotation = (Quaternion)stream.ReceiveNext();
+            curHp = (float)stream.ReceiveNext();
         }
     }
 
@@ -251,5 +263,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             damageText.text = attackPower.ToString(); // 동기화된 _attackPower 값을 텍스트로 설정
         }
         Destroy(damageTextObj, 2f);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("AttackBox"))
+        {
+            Debug.Log("ddddddddd");
+            if (PV.IsMine)
+            PV.RPC("PlayerTakeDamage", RpcTarget.AllBuffered, 1f); // 체력 감소 RPC 호출
+        }
+    }
+
+    [PunRPC]
+    void PlayerTakeDamage(float damage)
+    {
+        curHp -= damage;
+        hpBar.value = curHp / maxHp; // HP 바 업데이트
     }
 }
