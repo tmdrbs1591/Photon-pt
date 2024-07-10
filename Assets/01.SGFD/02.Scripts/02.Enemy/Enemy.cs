@@ -113,7 +113,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 
     void Attack()
     {
-        //anim.SetTrigger("isAttack");
+        anim.SetTrigger("isAttack");
         Debug.Log("플레이어를 공격함");
     }
 
