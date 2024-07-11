@@ -341,7 +341,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-               // StartCoroutine(ObjectSetActive(SkillPanel, 2f));// 스킬 패널 활성화
+                AudioManager.instance.PlaySound(transform.position, 3, Random.Range(1f, 1f), 1f);
+
+
+                StartCoroutine(ObjectSetActive(SkillPanel, 2.2f));// 스킬 패널 활성화
                 StartCoroutine(IsStop(1.2f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
@@ -362,12 +365,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < 6; i++)
         {
             PV.RPC("Damage", RpcTarget.All, attackPower+1f);
-            AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.3f);
+            AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.2f);
             yield return new WaitForSeconds(0.1f);
             CameraShake.instance.Shake();
         }
         yield return new WaitForSeconds(0.37f);
-        AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.2f, 1.2f), 0.3f);
+        AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.2f, 1.2f), 0.2f);
         CameraShake.instance.Shake();
         PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
 
