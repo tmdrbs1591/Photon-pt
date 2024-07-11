@@ -22,7 +22,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject DashPtc;
     [SerializeField] private GameObject SkillPtc;
 
-
     [SerializeField] Vector3 attackBoxSize;
     [SerializeField] Transform attackBoxPos;
     [SerializeField] Slider hpBar;
@@ -30,6 +29,16 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float maxHp;
     [SerializeField] private float curHp;
 
+    [Header("쿨타임")]
+    [SerializeField] private float attackCoolTime = 0.5f;
+    private float attacklCurTime;
+    [SerializeField] private float skillCoolTime = 5f; // 스킬 쿨타임 설정
+    private float skilllCurTime;
+
+    [Header("UI")]
+    [SerializeField] private Image skillFilled; // 스킬 쿨타임을 표시할 이미지
+    [SerializeField] private TMP_Text skillText; // 스킬 쿨타임을 표시할 텍스트
+    [SerializeField] private GameObject playerCanvas;
 
     public PhotonView PV;
 
@@ -40,14 +49,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     Animator anim; // 애니메이터 컴포넌트
 
-    [Header("Attack")]
     private int maxAttackCount = 3;
     private int curAttackCount = 0;
     private Coroutine attackCoroutine;
-
-    [Header("쿨타임")]
-    [SerializeField] private float attackCoolTime = 0.5f;
-    private float attacklCurTime;
 
     private Vector3 networkPosition;
     private Quaternion networkRotation;
@@ -59,6 +63,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
 
+
+        if (!photonView.IsMine)
+        {
+            // 다른 플레이어의 캔버스를 비활성화
+            playerCanvas.SetActive(false);
+        }
         if (PV.IsMine)
         {
             nickNameText.text = PhotonNetwork.NickName;
@@ -82,7 +92,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-
     protected void Update()
     {
         if (!PV.IsMine) return;
@@ -93,12 +102,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         Attack();
         Dash();
         Skill();
-
+        UpdateSkillUI(); // 스킬 UI 업데이트 메서드 호출
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
         }
-
         if (!PV.IsMine)
         {
             // 다른 클라이언트에서 보간하여 위치와 회전을 조정
@@ -277,7 +286,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             Debug.Log("ddddddddd");
             if (PV.IsMine)
-            PV.RPC("PlayerTakeDamage", RpcTarget.AllBuffered, 1f); // 체력 감소 RPC 호출
+                PV.RPC("PlayerTakeDamage", RpcTarget.AllBuffered, 1f); // 체력 감소 RPC 호출
         }
     }
 
@@ -303,16 +312,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             StartCoroutine(DashOut());
         }
     }
+
     void Skill()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (skilllCurTime <= 0)
         {
-            anim.SetTrigger("isAttack2");
-
-            PV.RPC("ActivateSkillEffect", RpcTarget.All);
-            StartCoroutine(SkillCor());
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                anim.SetTrigger("isAttack2");
+                PV.RPC("ActivateSkillEffect", RpcTarget.All);
+                StartCoroutine(SkillCor());
+                skilllCurTime = skillCoolTime;
+            }
+        }
+        else
+        {
+            skilllCurTime -= Time.deltaTime;
         }
     }
+
     IEnumerator SkillCor()
     {
         yield return new WaitForSeconds(0.1f);
@@ -320,10 +338,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < 6; i++)
         {
             PV.RPC("Damage", RpcTarget.All);
-            //AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
             yield return new WaitForSeconds(0.1f);
         }
     }
+
     [PunRPC]
     void ActivateSkillEffect() // 스킬이펙트 rpc
     {
@@ -348,5 +366,21 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         isDash = false;
     }
 
+    void UpdateSkillUI()
+    {
+        // 스킬 UI 벨류 업데이트: 남은 스킬 쿨타임에 따라 UI의 fillAmount 설정
+        if (skillFilled != null)
+        {
+            skillFilled.fillAmount = Mathf.Clamp01(skilllCurTime / skillCoolTime);
+            if (skilllCurTime > 0)
+            {
+                skillText.text = skilllCurTime.ToString("F1"); // 소수점 첫째 자리까지 표시
+            }
+            else
+            {
+                skillText.text = ""; // 쿨타임이 0 이하일 때 공백 출력
+            }
+        }
+    }
 
 }
