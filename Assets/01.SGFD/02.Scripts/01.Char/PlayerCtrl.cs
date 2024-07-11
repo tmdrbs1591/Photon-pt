@@ -37,10 +37,15 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     private float attacklCurTime;
     [SerializeField] private float skillCoolTime = 5f; // 스킬 쿨타임 설정
     private float skilllCurTime;
+    [SerializeField] private float dashCoolTime = 5f; // 대수ㅣ 쿨타임 설정
+    private float dashCurTime;
 
     [Header("UI")]
     [SerializeField] private Image skillFilled; // 스킬 쿨타임을 표시할 이미지
     [SerializeField] private TMP_Text skillText; // 스킬 쿨타임을 표시할 텍스트
+    [SerializeField] private Image dashFiled; // 스킬 쿨타임을 표시할 이미지
+    [SerializeField] private TMP_Text dashText; // 스킬 쿨타임을 표시할 텍스트
+
     [SerializeField] private GameObject playerCanvas;
 
     public PhotonView PV;
@@ -107,6 +112,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         Dash();
         Skill();
         UpdateSkillUI(); // 스킬 UI 업데이트 메서드 호출
+        UpdateDashUI(); // 
         
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -306,17 +312,26 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Dash()
     {
-        // 대쉬 입력을 감지하고, 대쉬할 때의 처리를 구현합니다.
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (dashCurTime <= 0)
         {
-            // 대쉬 이펙트 활성화 RPC 호출
-            PV.RPC("ActivateDashEffect", RpcTarget.All);
+            // 대쉬 입력을 감지하고, 대쉬할 때의 처리를 구현합니다.
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                dashCurTime = dashCoolTime;
 
-            // 대쉬 속도 증가
-            speed *= 4f;
+                // 대쉬 이펙트 활성화 RPC 호출
+                PV.RPC("ActivateDashEffect", RpcTarget.All);
 
-            // 대쉬 이펙트 지속시간 후에 대쉬 속도 복구 및 상태 초기화
-            StartCoroutine(DashOut());
+                // 대쉬 속도 증가
+                speed *= 4f;
+
+                // 대쉬 이펙트 지속시간 후에 대쉬 속도 복구 및 상태 초기화
+                StartCoroutine(DashOut());
+            }
+        }
+        else
+        {
+            dashCurTime -= Time.deltaTime;
         }
     }
 
@@ -398,7 +413,22 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
-
+    void UpdateDashUI()
+    {
+        // 스킬 UI 벨류 업데이트: 남은 스킬 쿨타임에 따라 UI의 fillAmount 설정
+        if (dashFiled != null)
+        {
+            dashFiled.fillAmount = Mathf.Clamp01(dashCurTime / dashCoolTime);
+            if (dashCurTime > 0)
+            {
+                dashText.text = dashCurTime.ToString("F1"); // 소수점 첫째 자리까지 표시
+            }
+            else
+            {
+                dashText.text = ""; // 쿨타임이 0 이하일 때 공백 출력
+            }
+        }
+    }
     IEnumerator IsStop(float time)
     {
         isStop = true;
