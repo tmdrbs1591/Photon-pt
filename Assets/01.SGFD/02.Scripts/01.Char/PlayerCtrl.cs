@@ -156,7 +156,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             {
                 StartCoroutine(IsStop(0.15f));  
                 AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
-                PV.RPC("Damage", RpcTarget.All);
+                PV.RPC("Damage", RpcTarget.All,attackPower);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
                 curAttackCount = (curAttackCount + 1) % maxAttackCount;
@@ -219,7 +219,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void Damage()
+    void Damage(float damage)
     {
         Collider[] colliders = Physics.OverlapBox(attackBoxPos.position, attackBoxSize / 2f);
         foreach (Collider collider in colliders)
@@ -229,8 +229,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 PhotonView enemyPhotonView = collider.gameObject.GetComponent<PhotonView>();
                 if (enemyPhotonView != null && enemyPhotonView.IsMine)
                 {
-                    enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, attackPower);
-                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position);
+                    enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, damage);
+                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position,damage);
                     Destroy(PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity), 2f);
                 }
             }
@@ -273,13 +273,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void SpawnDamageText(Vector3 position)
+    void SpawnDamageText(Vector3 position,float damage)
     {
         GameObject damageTextObj = Instantiate(Resources.Load<GameObject>("DamageText"), position + new Vector3(1, 2.5f, 0), Quaternion.identity);
         TMP_Text damageText = damageTextObj.GetComponent<TMP_Text>();
         if (damageText != null)
         {
-            damageText.text = attackPower.ToString(); // 동기화된 _attackPower 값을 텍스트로 설정
+            damageText.text = damage.ToString(); // 동기화된 _attackPower 값을 텍스트로 설정
         }
         Destroy(damageTextObj, 2f);
     }
@@ -323,7 +323,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                StartCoroutine(IsStop(1f));
+                StartCoroutine(IsStop(1.2f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
                 StartCoroutine(SkillCor());
@@ -342,9 +342,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
         for (int i = 0; i < 6; i++)
         {
-            PV.RPC("Damage", RpcTarget.All);
+            PV.RPC("Damage", RpcTarget.All, attackPower+1f);
             yield return new WaitForSeconds(0.1f);
         }
+        yield return new WaitForSeconds(0.37f);
+        PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
+
     }
 
     [PunRPC]
