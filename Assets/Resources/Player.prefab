@@ -1562,7 +1562,6 @@ GameObject:
   - component: {fileID: 1338997557945794133}
   - component: {fileID: 1338997557940776473}
   - component: {fileID: 1338997557949481983}
-  - component: {fileID: 3253408409335797371}
   - component: {fileID: 1338997556890091666}
   - component: {fileID: 6843316703339810068}
   - component: {fileID: 8509102258741661174}
@@ -1649,41 +1648,6 @@ CapsuleCollider:
   m_Height: 1.03
   m_Direction: 1
   m_Center: {x: 0, y: 0.52, z: 0.03}
---- !u!114 &3253408409335797371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1338997557946203685}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bc60166d8ca7044a80a198da36d3efa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigid: {fileID: 0}
-  speed: 4
-  rotationSpeed: 10
-  jumpPower: 10
-  attackPower: 10
-  cameraPos: {fileID: 8343234743522720573}
-  nickNameText: {fileID: 2090270998507699554}
-  AttackPtc1: {fileID: 1691667909999779}
-  AttackPtc2: {fileID: 1691668402047517}
-  AttackPtc3: {fileID: 4645525940110861274}
-  DashPtc: {fileID: 0}
-  SkillPtc: {fileID: 0}
-  attackBoxSize: {x: 2.25, y: 1.38, z: 0.8}
-  attackBoxPos: {fileID: 3949404975765749834}
-  hpBar: {fileID: 0}
-  maxHp: 0
-  curHp: 0
-  attackCoolTime: 0.2
-  skillCoolTime: 0.5
-  skillFilled: {fileID: 0}
-  skillText: {fileID: 0}
-  playerCanvas: {fileID: 0}
-  PV: {fileID: 6843316703339810068}
 --- !u!114 &1338997556890091666
 MonoBehaviour:
   m_ObjectHideFlags: 0

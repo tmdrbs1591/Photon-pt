@@ -46,6 +46,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     float vAxis; // 수직 입력 값
     bool jumpDown;
     bool isDash;
+    bool isStop;
 
     Animator anim; // 애니메이터 컴포넌트
 
@@ -125,6 +126,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
+        if (isStop)
+            return;
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
         transform.position += moveVec * speed * Time.deltaTime;
 
@@ -151,6 +154,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
+                StartCoroutine(IsStop(0.15f));  
                 AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All);
                 attacklCurTime = attackCoolTime;
@@ -319,6 +323,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
+                StartCoroutine(IsStop(1f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
                 StartCoroutine(SkillCor());
@@ -381,6 +386,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 skillText.text = ""; // 쿨타임이 0 이하일 때 공백 출력
             }
         }
+    }
+
+    IEnumerator IsStop(float time)
+    {
+        isStop = true;
+        yield return new WaitForSeconds(time);
+        isStop = false;
+
     }
 
 }
