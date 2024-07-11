@@ -51,5 +51,8 @@ MonoBehaviour:
   - EnemyDamage
   - RPC_AttackBoxActive
   - OnTriggerEnter
+  - DashRPC
+  - ActivateDashEffect
+  - ActivateSkillEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1

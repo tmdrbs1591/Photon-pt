@@ -7,6 +7,7 @@ using TMPro;
 
 public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [SerializeField] Rigidbody rigid;
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
@@ -18,6 +19,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject AttackPtc1;
     [SerializeField] private GameObject AttackPtc2;
     [SerializeField] private GameObject AttackPtc3;
+    [SerializeField] private GameObject DashPtc;
+    [SerializeField] private GameObject SkillPtc;
+
 
     [SerializeField] Vector3 attackBoxSize;
     [SerializeField] Transform attackBoxPos;
@@ -32,6 +36,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     float hAxis; // 수평 입력 값
     float vAxis; // 수직 입력 값
     bool jumpDown;
+    bool isDash;
 
     Animator anim; // 애니메이터 컴포넌트
 
@@ -51,7 +56,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     protected void Awake()
     {
         curHp = maxHp;
-
+        rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
 
         if (PV.IsMine)
@@ -86,7 +91,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         Move();
         Jump();
         Attack();
-
+        Dash();
+        Skill();
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -281,4 +287,66 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         curHp -= damage;
         hpBar.value = curHp / maxHp; // HP 바 업데이트
     }
+
+    void Dash()
+    {
+        // 대쉬 입력을 감지하고, 대쉬할 때의 처리를 구현합니다.
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            // 대쉬 이펙트 활성화 RPC 호출
+            PV.RPC("ActivateDashEffect", RpcTarget.All);
+
+            // 대쉬 속도 증가
+            speed *= 4f;
+
+            // 대쉬 이펙트 지속시간 후에 대쉬 속도 복구 및 상태 초기화
+            StartCoroutine(DashOut());
+        }
+    }
+    void Skill()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            anim.SetTrigger("isAttack2");
+
+            PV.RPC("ActivateSkillEffect", RpcTarget.All);
+            StartCoroutine(SkillCor());
+        }
+    }
+    IEnumerator SkillCor()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        for (int i = 0; i < 6; i++)
+        {
+            PV.RPC("Damage", RpcTarget.All);
+            //AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+    [PunRPC]
+    void ActivateSkillEffect() // 스킬이펙트 rpc
+    {
+        StartCoroutine(EffectSetActive(1.5f, SkillPtc));
+    }
+
+
+    [PunRPC]
+    void ActivateDashEffect()
+    {
+        StartCoroutine(EffectSetActive(0.3f, DashPtc));
+    }
+
+    IEnumerator DashOut()
+    {
+        yield return new WaitForSeconds(0.12f);
+
+        // 대쉬 속도 복구
+        speed /= 4f;
+
+        // 대쉬 상태 초기화
+        isDash = false;
+    }
+
+
 }
