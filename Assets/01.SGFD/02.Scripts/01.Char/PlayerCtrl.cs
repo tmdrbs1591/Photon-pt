@@ -22,6 +22,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject DashPtc;
     [SerializeField] private GameObject SkillPtc;
 
+
+    [SerializeField] private GameObject SkillPanel;
+
     [SerializeField] Vector3 attackBoxSize;
     [SerializeField] Transform attackBoxPos;
     [SerializeField] Slider hpBar;
@@ -155,7 +158,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             if (Input.GetKeyDown(KeyCode.X))
             {
                 StartCoroutine(IsStop(0.15f));  
-                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1.2f, 1.2f), 0.4f);
+                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1f, 1.2f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All,attackPower);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
@@ -323,6 +326,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
+               // StartCoroutine(ObjectSetActive(SkillPanel, 2f));// 스킬 패널 활성화
                 StartCoroutine(IsStop(1.2f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
@@ -343,9 +347,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         for (int i = 0; i < 6; i++)
         {
             PV.RPC("Damage", RpcTarget.All, attackPower+1f);
+            AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.3f);
             yield return new WaitForSeconds(0.1f);
+            CameraShake.instance.Shake();
         }
         yield return new WaitForSeconds(0.37f);
+        AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.2f, 1.2f), 0.3f);
+        CameraShake.instance.Shake();
         PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
 
     }
@@ -396,6 +404,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         isStop = true;
         yield return new WaitForSeconds(time);
         isStop = false;
+
+    }
+
+    IEnumerator ObjectSetActive(GameObject go,float time)
+    {
+        go.SetActive(true);
+        yield return new WaitForSeconds(time);
+        go.SetActive(false);
 
     }
 
