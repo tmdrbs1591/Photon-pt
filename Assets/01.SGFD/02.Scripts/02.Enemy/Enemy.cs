@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] float maxAttackSpeed;
     [SerializeField] float curAttackSpeed;
     [SerializeField] Slider hpBar;
+    [SerializeField] Slider hpBar2;
     [SerializeField] GameObject attackBox;
 
 
@@ -35,6 +36,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (playerObj == null)
         {
+            
+
             // 중심 위치와 반지름을 설정하여 오버랩 서클 사용
             Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
 
@@ -108,7 +111,9 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        hpBar.value = currentHP / maxHP;
+        hpBar.value = Mathf.Lerp(hpBar.value, (float)currentHP / (float)maxHP, Time.deltaTime * 20f);
+        hpBar2.value = Mathf.Lerp(hpBar2.value, (float)currentHP / (float)maxHP, Time.deltaTime * 5f); ;
+
         if (currentHP <= 0)
         {
             Destroy(gameObject);
