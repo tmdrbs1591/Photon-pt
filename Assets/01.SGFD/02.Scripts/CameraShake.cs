@@ -5,8 +5,7 @@ public class CameraShake : MonoBehaviour
 {
     public static CameraShake instance; // 싱글톤 인스턴스
 
-    public Camera mainCamera; // 흔들릴 메인 카메라
-    private Vector3 originalCameraPos; // 카메라 초기 위치 저장 변수
+    private Camera mainCamera; // 흔들릴 메인 카메라
 
     private void Awake()
     {
@@ -21,11 +20,7 @@ public class CameraShake : MonoBehaviour
         }
 
         mainCamera = Camera.main; // "MainCamera" 태그가 붙은 카메라를 자동으로 찾음
-        if (mainCamera != null)
-        {
-            originalCameraPos = mainCamera.transform.position; // 초기 위치 저장
-        }
-        else
+        if (mainCamera == null)
         {
             Debug.LogError("Main camera not found. Please tag the main camera as 'MainCamera'.");
         }
@@ -39,11 +34,11 @@ public class CameraShake : MonoBehaviour
     [Range(0.1f, 1f)]
     private float duration = 0.1f; // 흔들림 지속 시간
 
+    // 흔들림 메서드
     public void Shake()
     {
         if (mainCamera != null)
         {
-            Debug.Log("ddsadsas");
             StopAllCoroutines(); // 다른 흔들림이 실행 중이면 멈춤
             StartCoroutine(ShakeCoroutine());
         }
@@ -56,15 +51,16 @@ public class CameraShake : MonoBehaviour
     private IEnumerator ShakeCoroutine()
     {
         float elapsed = 0.0f;
+        Vector3 originalCameraPos = mainCamera.transform.position; // 현재 카메라 위치 저장
 
         while (elapsed < duration)
         {
-            float CameraPosX = Random.value * shakeRange * 2 - shakeRange;
-            float CameraPosY = Random.value * shakeRange * 2 - shakeRange;
+            float cameraPosX = Random.value * shakeRange * 2 - shakeRange;
+            float cameraPosY = Random.value * shakeRange * 2 - shakeRange;
 
             Vector3 newCameraPos = originalCameraPos;
-            newCameraPos.x += CameraPosX;
-            newCameraPos.y += CameraPosY;
+            newCameraPos.x += cameraPosX;
+            newCameraPos.y += cameraPosY;
 
             mainCamera.transform.position = newCameraPos; // 카메라 위치 변경
 
@@ -75,4 +71,44 @@ public class CameraShake : MonoBehaviour
 
         mainCamera.transform.position = originalCameraPos; // 초기 위치로 복구
     }
+
+    // 줌 인 메서드
+    public void ZoomIn(float zoomFOV, float duration)
+    {
+        if (mainCamera != null)
+        {
+            float startFOV = mainCamera.fieldOfView;
+            float targetFOV = zoomFOV;
+            StartCoroutine(ZoomCoroutine(startFOV, targetFOV, duration));
+        }
+    }
+
+    public void ZoomOut(float defaultFOV, float duration)
+    {
+        if (mainCamera != null)
+        {
+            float startFOV = mainCamera.fieldOfView;
+            float targetFOV = defaultFOV;
+            StartCoroutine(ZoomCoroutine(startFOV, targetFOV, duration));
+        }
+    }
+
+    private IEnumerator ZoomCoroutine(float startFOV, float targetFOV, float duration)
+    {
+        float elapsed = 0.0f;
+
+        while (elapsed < duration)
+        {
+            float currentFOV = Mathf.Lerp(startFOV, targetFOV, elapsed / duration);
+            mainCamera.fieldOfView = currentFOV;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        mainCamera.fieldOfView = targetFOV; // 최종 FOV 값을 명확히 설정
+    }
+
+
+
 }

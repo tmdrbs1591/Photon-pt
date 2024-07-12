@@ -1,30 +1,33 @@
 using UnityEngine;
-using Cinemachine;
 
 public class UILookAt : MonoBehaviour
 {
-    public string cinemachineTag = "CinemachineCamera"; // Cinemachine 카메라의 태그를 지정합니다.
-    private Transform cinemachineTransform; // Cinemachine 카메라의 Transform을 저장할 변수
+    private Transform mainCameraTransform; // 메인 카메라의 Transform을 저장할 변수
 
     void Start()
     {
-        // 태그를 사용하여 Cinemachine 카메라를 찾습니다.
-        GameObject cinemachineCameraObject = GameObject.FindGameObjectWithTag(cinemachineTag);
+        // 메인 카메라를 찾습니다.
+        Camera mainCamera = Camera.main;
 
-        if (cinemachineCameraObject == null)
+        if (mainCamera == null)
         {
-            Debug.LogError("Cinemachine camera not found with tag '" + cinemachineTag + "'. Make sure it is tagged correctly.");
+            Debug.LogError("Main camera not found. Make sure it is tagged as 'MainCamera'.");
             return;
         }
 
-        // Cinemachine 카메라의 Transform을 가져옵니다.
-        cinemachineTransform = cinemachineCameraObject.transform;
+        // 메인 카메라의 Transform을 가져옵니다.
+        mainCameraTransform = mainCamera.transform;
     }
 
     void LateUpdate()
     {
-        // Cinemachine 카메라의 위치와 UI 요소의 위치 차이를 구합니다.
-        Vector3 direction = cinemachineTransform.position - transform.position;
+        if (mainCameraTransform == null)
+        {
+            return; // 메인 카메라가 설정되지 않은 경우 업데이트를 중단합니다.
+        }
+
+        // 메인 카메라의 위치와 UI 요소의 위치 차이를 구합니다.
+        Vector3 direction = mainCameraTransform.position - transform.position;
 
         // 방향 벡터를 기반으로 회전을 계산합니다.
         Quaternion lookRotation = Quaternion.LookRotation(-direction, Vector3.up);

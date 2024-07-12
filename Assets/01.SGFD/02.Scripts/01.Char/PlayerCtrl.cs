@@ -83,16 +83,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             nickNameText.text = PhotonNetwork.NickName;
             nickNameText.color = Color.green;
 
-            var CM = GameObject.Find("CMCamera").GetComponent<CinemachineVirtualCamera>();
-            CM.Follow = transform;
-            CM.LookAt = null;
+            var CM = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+            CM.target = transform;
 
-            var transposer = CM.GetCinemachineComponent<CinemachineTransposer>();
-            if (transposer != null)
-            {
-                transposer.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
-                transposer.m_FollowOffset = new Vector3(0, 5, -6); // Ä«¸Þ¶ó À§Ä¡ ¼³Á¤ ¿¹½Ã
-            }
         }
         else
         {
@@ -361,6 +354,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator SkillCor()
     {
         yield return new WaitForSeconds(0.1f);
+        CameraShake.instance.ZoomIn(10f,1f); // ÁÜ ÀÎ
 
         for (int i = 0; i < 6; i++)
         {
@@ -373,6 +367,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.2f, 1.2f), 0.2f);
         CameraShake.instance.Shake();
         PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
+
+        CameraShake.instance.ZoomOut(57.4f,0.2f); // ÁÜ ¾Æ¿ô
 
     }
 
