@@ -114,8 +114,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         if (!PV.IsMine)
         {
             // 다른 클라이언트에서 보간하여 위치와 회전을 조정
-            transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * interpolationFactor);
-            transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * interpolationFactor);
+            transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 25);
+            transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 25);
         }
     }
 
@@ -168,6 +168,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             attacklCurTime -= Time.deltaTime;
         }
+
     }
 
     [PunRPC]
