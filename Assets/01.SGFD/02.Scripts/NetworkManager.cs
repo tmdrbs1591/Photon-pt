@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AI;
+using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine.UI;
-
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -34,33 +35,35 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public Text StatusText;
     public PhotonView PV;
 
-
     [Header("Spawn Positions")]
     public Transform[] spawnPositions;
 
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
 
-    public GameObject startGameButton;  // 게임 시작 버튼을 Unity 에디터에서 연결할 GameObject
+    public GameObject startGameButton;
 
     public void StartGame()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected)
         {
             PV.RPC("StartGameRPC", RpcTarget.All);
+        }
+        else
+        {
+            Debug.LogError("Not connected to Photon master client or not in a room.");
         }
     }
 
     [PunRPC]
     void StartGameRPC()
     {
-        StartCoroutine(StartGagmeRPCCor());
+        StartCoroutine(StartGameCoroutine());
     }
 
-
-    IEnumerator StartGagmeRPCCor()
+    IEnumerator StartGameCoroutine()
     {
-        Spawn();  // 모든 플레이어가 게임을 시작할 때 Spawn() 메서드를 호출하도록 변경
+        Spawn();
         fadeImage.SetActive(true);
         yield return new WaitForSeconds(2f);
         DisconnectPanel.SetActive(false);
@@ -68,17 +71,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         LobbyPanel.SetActive(false);
         yield return new WaitForSeconds(2f);
         fadeImage.SetActive(false);
-
     }
+
     public void Spawn()
     {
-        int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1; // 플레이어 인덱스를 ActorNumber에서 1을 뺀 값으로 설정
-        Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position; // 순환하여 스폰 위치를 선택
-        PhotonNetwork.Instantiate("Player", spawnPosition, Quaternion.identity);
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+            Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position;
+            PhotonNetwork.Instantiate("Player", spawnPosition, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogError("Not connected to Photon server.");
+        }
     }
 
-    #region 방리스트 갱신
-    // ◀버튼 -2 , ▶버튼 -1 , 셀 숫자
+    #region RoomList Management
+
     public void MyListClick(int num)
     {
         if (num == -2) --currentPage;
@@ -89,18 +99,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void MyListRenewal()
     {
-        // 최대페이지
         maxPage = (myList.Count % CellBtn.Length == 0) ? myList.Count / CellBtn.Length : myList.Count / CellBtn.Length + 1;
-
-        // 이전, 다음버튼
         PreviousBtn.interactable = (currentPage <= 1) ? false : true;
         NextBtn.interactable = (currentPage >= maxPage) ? false : true;
 
-        // 페이지에 맞는 리스트 대입
         multiple = (currentPage - 1) * CellBtn.Length;
         for (int i = 0; i < CellBtn.Length; i++)
         {
-            CellBtn[i].interactable = (multiple + i < myList.Count) ? true : false;
+            CellBtn[i].interactable = (multiple + i < myList.Count);
             CellBtn[i].transform.GetChild(0).GetComponent<Text>().text = (multiple + i < myList.Count) ? myList[multiple + i].Name : "";
             CellBtn[i].transform.GetChild(1).GetComponent<Text>().text = (multiple + i < myList.Count) ? myList[multiple + i].PlayerCount + "/" + myList[multiple + i].MaxPlayers : "";
         }
@@ -120,15 +126,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
         MyListRenewal();
     }
+
     #endregion
 
+    #region Photon Callbacks
 
-    #region 서버연결
     void Awake() => Screen.SetResolution(960, 540, false);
 
     void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.Return))
         {
             Send();
@@ -157,38 +163,42 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         LobbyPanel.SetActive(false);
         RoomPanel.SetActive(false);
     }
-    #endregion
 
-
-    #region 방
     public void CreateRoom() => PhotonNetwork.CreateRoom(RoomInput.text == "" ? "Room" + Random.Range(0, 100) : RoomInput.text, new RoomOptions { MaxPlayers = 4 });
 
     public void JoinRandomRoom() => PhotonNetwork.JoinRandomRoom();
 
     public void LeaveRoom() => PhotonNetwork.LeaveRoom();
 
-  public override void OnJoinedRoom()
-{
-    RoomPanel.SetActive(true);
-    RoomRenewal();
-
-    if (PhotonNetwork.IsMasterClient)
+    public override void OnJoinedRoom()
     {
-        startGameButton.SetActive(true);  // 방장이면 게임 시작 버튼 활성화
+        RoomPanel.SetActive(true);
+        RoomRenewal();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            startGameButton.SetActive(true);
+        }
+        else
+        {
+            startGameButton.SetActive(false);
+        }
+
+        ChatInput.text = "";
+        for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
     }
-    else
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        startGameButton.SetActive(false);  // 방장이 아니면 게임 시작 버튼 비활성화
+        RoomInput.text = "";
+        CreateRoom();
     }
 
-    ChatInput.text = "";
-    for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
-}
-
-
-    public override void OnCreateRoomFailed(short returnCode, string message) { RoomInput.text = ""; CreateRoom(); } 
-
-    public override void OnJoinRandomFailed(short returnCode, string message) { RoomInput.text = ""; CreateRoom(); }
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        RoomInput.text = "";
+        CreateRoom();
+    }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -209,10 +219,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             ListText.text += PhotonNetwork.PlayerList[i].NickName + ((i + 1 == PhotonNetwork.PlayerList.Length) ? "" : ", ");
         RoomInfoText.text = PhotonNetwork.CurrentRoom.Name + " / " + PhotonNetwork.CurrentRoom.PlayerCount + "명 / " + PhotonNetwork.CurrentRoom.MaxPlayers + "최대";
     }
+
     #endregion
 
+    #region Chat
 
-    #region 채팅
     public void Send()
     {
         if (!string.IsNullOrEmpty(ChatInput.text))
@@ -221,21 +232,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             ChatInput.text = "";
         }
 
-        // 다시 InputField를 활성화시킴
         ChatInput.ActivateInputField();
         ChatInput.Select();
     }
 
-    [PunRPC] // RPC는 플레이어가 속해있는 방 모든 인원에게 전달한다
+    [PunRPC]
     void ChatRPC(string msg)
     {
-        // 채팅 텍스트들을 위로 밀기
         for (int i = 0; i < ChatText.Length - 1; i++)
         {
             ChatText[i].text = ChatText[i + 1].text;
         }
 
-        // 가장 아래의 텍스트에 새로운 메시지 추가
         ChatText[ChatText.Length - 1].text = msg;
     }
 

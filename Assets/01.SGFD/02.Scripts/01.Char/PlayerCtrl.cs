@@ -229,10 +229,12 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (collider != null && collider.CompareTag("Enemy"))
             {
+                var enemyScript = collider.gameObject.GetComponent<Enemy>();
                 PhotonView enemyPhotonView = collider.gameObject.GetComponent<PhotonView>();
                 if (enemyPhotonView != null && enemyPhotonView.IsMine)
                 {
                     enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, damage);
+                    enemyScript.playerObj = this.gameObject;
                     PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position,damage);
                     Destroy(PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity), 2f);
                 }

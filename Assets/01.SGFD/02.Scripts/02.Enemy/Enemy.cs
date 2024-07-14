@@ -17,16 +17,20 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Slider hpBar2;
     [SerializeField] GameObject attackBox;
 
+    [SerializeField] GameObject gold; // Á×¾úÀ»‹š »ý¼ºÇÒ °ñµå
+
 
     private float playerDistance;
 
     Animator anim;
-    private GameObject playerObj;
+    public GameObject playerObj;
     private PhotonView PV;
     NavMeshAgent agent;
 
     void Start()
     {
+        hpBar.gameObject.SetActive(false);
+        hpBar2.gameObject.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         currentHP = maxHP;
@@ -114,10 +118,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         hpBar.value = Mathf.Lerp(hpBar.value, (float)currentHP / (float)maxHP, Time.deltaTime * 20f);
         hpBar2.value = Mathf.Lerp(hpBar2.value, (float)currentHP / (float)maxHP, Time.deltaTime * 5f); ;
 
-        if (currentHP <= 0)
-        {
-            Destroy(gameObject);
-        }
+        Die();
     }
 
     void Attack()
@@ -126,6 +127,19 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
        
     }
 
+    void Die()
+    {
+        if (currentHP <= 0)
+        {
+            GameObject enemygold = Instantiate(gold, transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+            Gold goldComponent = enemygold.GetComponent<Gold>();
+
+            goldComponent.isget = false;
+            Destroy(gameObject);
+
+        }
+       
+    }
 
     [PunRPC]
     void SyncEnemyPosition(Vector3 newPosition)
@@ -137,6 +151,9 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     public void TakeDamage(float damage)
     {
+        hpBar.gameObject.SetActive(true);
+        hpBar2.gameObject.SetActive(true);
+
         AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);
         anim.SetTrigger("isDamage");
         currentHP -= damage;

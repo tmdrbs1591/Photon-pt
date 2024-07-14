@@ -54,5 +54,11 @@ MonoBehaviour:
   - DashRPC
   - ActivateDashEffect
   - ActivateSkillEffect
+  - SetTarget
+  - DestroyGold
+  - CoinDestroy
+  - GoldDestroy
+  - JumpWithRandomDirection
+  - SetIsGet
   DisableAutoOpenWizard: 1
   ShowSettings: 1

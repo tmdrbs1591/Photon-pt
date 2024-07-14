@@ -7,6 +7,8 @@ TagManager:
   - CinemachineCamera
   - Enemy
   - AttackBox
+  - Coin
+  - Gold
   layers:
   - Default
   - TransparentFX
