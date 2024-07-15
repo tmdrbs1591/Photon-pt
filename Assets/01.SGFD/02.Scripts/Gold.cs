@@ -25,8 +25,8 @@ public class Gold : MonoBehaviour
     }
     void Jump()
     {
-        float randomJumpForce = Random.Range(4f, 4f);
-        Vector2 jumpVelocity = new Vector3(Random.Range(1f, 1f), randomJumpForce);
-        rb.AddForce(jumpVelocity, ForceMode.Impulse);
+       // float randomJumpForce = Random.Range(4f, 4f);
+       // Vector2 jumpVelocity = new Vector3(Random.Range(1f, 1f), randomJumpForce);
+        rb.AddForce(new Vector3(0,4,0), ForceMode.Impulse);
     }
 }
