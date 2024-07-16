@@ -12,7 +12,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject fadeImage;
 
     [Header("DisconnectPanel")]
-    public InputField NickNameInput;
+    public TMP_InputField NickNameInput;
     public GameObject DisconnectPanel;
 
     [Header("LobbyPanel")]
@@ -28,11 +28,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject RoomPanel;
     public Text ListText;
     public Text RoomInfoText;
-    public Text[] ChatText;
+    public TMP_Text[] ChatText;
     public InputField ChatInput;
 
     [Header("ETC")]
-    public Text StatusText;
+    public TMP_Text StatusText;
     public PhotonView PV;
 
     [Header("Spawn Positions")]
@@ -218,6 +218,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
             ListText.text += PhotonNetwork.PlayerList[i].NickName + ((i + 1 == PhotonNetwork.PlayerList.Length) ? "" : ", ");
         RoomInfoText.text = PhotonNetwork.CurrentRoom.Name + " / " + PhotonNetwork.CurrentRoom.PlayerCount + "명 / " + PhotonNetwork.CurrentRoom.MaxPlayers + "최대";
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            startGameButton.SetActive(true);
+        }
+        else
+        {
+            startGameButton.SetActive(false);
+        }
     }
 
     #endregion

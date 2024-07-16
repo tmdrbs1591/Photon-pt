@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  speed: 70
+  speed: 100
   isget: 0
 --- !u!114 &-553711089334157798
 MonoBehaviour:

@@ -349,7 +349,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 AudioManager.instance.PlaySound(transform.position, 3, Random.Range(1f, 1f), 1f);
 
 
-                StartCoroutine(ObjectSetActive(SkillPanel, 2.2f));// 스킬 패널 활성화
+                StartCoroutine(ObjectSetActive(SkillPanel, 1.8f));// 스킬 패널 활성화
                 StartCoroutine(IsStop(1.2f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
