@@ -242,6 +242,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                     enemyScript.playerObj = this.gameObject;
                     PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collider.transform.position,damage);
                     PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+                    if(enemyScript.currentHP - damage <= 0)
+                    {
+                        Debug.Log(PhotonNetwork.NickName);
+                    }
                 }
             }
         }

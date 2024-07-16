@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,22 +12,36 @@ public class Gold : MonoBehaviour
 
     void Start()
     {
+       // Debug.Log(PhotonNetwork.NickName);
         rb = GetComponent<Rigidbody>();
         Jump();
     }
 
     void Update()
     {
-        Invoke("Get", 0.9f);
+        if (isget && target != null)
+        {
+            FollowTarget();
+        }
+        else
+        {
+            Invoke("Get", 0.9f);
+        }
     }
+
     void Get()
     {
         isget = true;
     }
+
     void Jump()
     {
-       // float randomJumpForce = Random.Range(4f, 4f);
-       // Vector2 jumpVelocity = new Vector3(Random.Range(1f, 1f), randomJumpForce);
-        rb.AddForce(new Vector3(0,4,0), ForceMode.Impulse);
+        rb.AddForce(new Vector3(0, 4, 0), ForceMode.Impulse);
+    }
+
+    void FollowTarget()
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
     }
 }

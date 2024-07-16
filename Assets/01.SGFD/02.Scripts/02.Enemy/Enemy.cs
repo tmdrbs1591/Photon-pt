@@ -7,7 +7,7 @@ using System.Collections;
 
 public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 {
-    [SerializeField] float currentHP;
+    [SerializeField] public float currentHP;
     [SerializeField] float maxHP;
     [SerializeField] float attackRange;
     [SerializeField] float attackDamage;
@@ -111,9 +111,14 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             GameObject enemygold = Instantiate(gold, transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
             Gold goldComponent = enemygold.GetComponent<Gold>();
             goldComponent.isget = false;
+
+            // 현재 플레이어 오브젝트를 타겟으로 설정
+            goldComponent.target = playerObj.transform;
+
             Destroy(gameObject);
         }
     }
+
 
     [PunRPC]
     void SyncEnemyPosition(Vector3 newPosition)
