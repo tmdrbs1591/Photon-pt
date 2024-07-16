@@ -66,9 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-    player Name'
+  m_text: player Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c436be1a019100e42b9ed9f092438ce8, type: 2}
   m_sharedMaterial: {fileID: -6490637825650692061, guid: c436be1a019100e42b9ed9f092438ce8,

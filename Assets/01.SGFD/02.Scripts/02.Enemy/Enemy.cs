@@ -16,11 +16,11 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Slider hpBar;
     [SerializeField] Slider hpBar2;
     [SerializeField] GameObject attackBox;
-
-    [SerializeField] GameObject gold; // 죽었을떄 생성할 골드
-
+    [SerializeField] GameObject gold; // 죽었을때 생성할 골드
 
     private float playerDistance;
+    private float syncInterval = 0.1f; // 동기화 간격 (초)
+    private float lastSyncTime;
 
     Animator anim;
     public GameObject playerObj;
@@ -40,20 +40,15 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (playerObj == null)
         {
-            
-
             // 중심 위치와 반지름을 설정하여 오버랩 서클 사용
             Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
-
             // 오버랩 서클에서 플레이어 태그를 가진 오브젝트를 찾기
             foreach (Collider collider in colliders)
             {
                 if (collider.CompareTag("Player"))
                 {
                     playerObj = collider.gameObject;
-
-                    // 플레이어를 찾았으므로 중지
-                    break;
+                    break; // 플레이어를 찾았으므로 중지
                 }
             }
         }
@@ -66,57 +61,40 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 3 * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
 
-            // 플레이어가 존재할 경우, 플레이어 방향으로 이동
-            agent.SetDestination(playerObj.transform.position);
+            agent.SetDestination(playerObj.transform.position); // 플레이어 방향으로 이동
+            playerDistance = Vector3.Distance(transform.position, playerObj.transform.position); // 거리 계산
 
-            playerDistance = Vector3.Distance(gameObject.transform.position, playerObj.transform.position); // 플레이어와 몬스터의 거리 계산
-
-            // 공격속도 확인
-            if (curAttackSpeed < 0)
+            if (curAttackSpeed < 0 && playerDistance < attackRange)
             {
-                // 거리가 공격 사거리 안에 있는지 확인
-                if (playerDistance < attackRange)
-                {
-                    curAttackSpeed = maxAttackSpeed;
-                    anim.SetTrigger("isAttack");
-                    Debug.Log("플레이어를 공격함");
-                }
+                curAttackSpeed = maxAttackSpeed;
+                anim.SetTrigger("isAttack");
+                Debug.Log("플레이어를 공격함");
             }
             else
             {
                 curAttackSpeed -= Time.deltaTime;
             }
 
-            // 적의 위치를 동기화
-            if (photonView.IsMine)
+            // 동기화 간격에 따른 위치 동기화
+            if (photonView.IsMine && Time.time - lastSyncTime > syncInterval)
             {
                 photonView.RPC("SyncEnemyPosition", RpcTarget.Others, transform.position);
+                lastSyncTime = Time.time;
             }
         }
 
         // NavMeshAgent가 목적지에 도달했는지 확인
-        if (!agent.pathPending)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            if (agent.remainingDistance <= agent.stoppingDistance)
-            {
-                // 목적지에 도달했을 때
-                anim.SetBool("isWalk", false);
-
-                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                {
-                    // 추가적인 조건을 충족할 때 (정지 상태)
-                    anim.SetBool("isWalk", false);
-                }
-            }
-            else
-            {
-                // 이동 중일 때
-                anim.SetBool("isWalk", true);
-            }
+            anim.SetBool("isWalk", false);
+        }
+        else
+        {
+            anim.SetBool("isWalk", true);
         }
 
-        hpBar.value = Mathf.Lerp(hpBar.value, (float)currentHP / (float)maxHP, Time.deltaTime * 20f);
-        hpBar2.value = Mathf.Lerp(hpBar2.value, (float)currentHP / (float)maxHP, Time.deltaTime * 5f); ;
+        hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 20f);
+        hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
 
         Die();
     }
@@ -124,7 +102,6 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     void Attack()
     {
         photonView.RPC("RPC_AttackBoxActive", RpcTarget.All);
-       
     }
 
     void Die()
@@ -133,12 +110,9 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         {
             GameObject enemygold = Instantiate(gold, transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
             Gold goldComponent = enemygold.GetComponent<Gold>();
-
             goldComponent.isget = false;
             Destroy(gameObject);
-
         }
-       
     }
 
     [PunRPC]
@@ -147,42 +121,41 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         transform.position = newPosition;
     }
 
-    // Photon RPC 메서드로 변경
     [PunRPC]
     public void TakeDamage(float damage)
     {
-        hpBar.gameObject.SetActive(true);
-        hpBar2.gameObject.SetActive(true);
-
-        AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);
-        anim.SetTrigger("isDamage");
-        currentHP -= damage;
+        if (damage > 0)
+        {
+            hpBar.gameObject.SetActive(true);
+            hpBar2.gameObject.SetActive(true);
+            AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);
+            anim.SetTrigger("isDamage");
+            currentHP -= damage;
+        }
     }
 
-    // IPunObservable 인터페이스 구현
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            // 데이터 전송 (로컬 플레이어의 데이터를 전송)
             stream.SendNext(currentHP);
         }
         else
         {
-            // 데이터 수신 (원격 플레이어의 데이터를 수신)
             currentHP = (float)stream.ReceiveNext();
         }
     }
+
     [PunRPC]
     void RPC_AttackBoxActive()
     {
         StartCoroutine(AttackBoxActive());
     }
+
     IEnumerator AttackBoxActive()
     {
         attackBox.SetActive(true);
         yield return new WaitForSeconds(0.2f);
         attackBox.SetActive(false);
-
     }
 }
