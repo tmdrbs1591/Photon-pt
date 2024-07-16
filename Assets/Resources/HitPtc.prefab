@@ -4838,6 +4838,7 @@ GameObject:
   - component: {fileID: 7899634727836767729}
   - component: {fileID: 9042345529203381946}
   - component: {fileID: 2587743767329993487}
+  - component: {fileID: -1180585631737642563}
   m_Layer: 0
   m_Name: HitPtc
   m_TagString: Untagged
@@ -9696,6 +9697,18 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-1180585631737642563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4269314156131941200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 791d00484b18cef43ac6012a161da508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5287272744448141401
 GameObject:
   m_ObjectHideFlags: 0
