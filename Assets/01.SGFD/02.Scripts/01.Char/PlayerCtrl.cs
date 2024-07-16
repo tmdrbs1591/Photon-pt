@@ -11,7 +11,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
-    [SerializeField] protected float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
+    [SerializeField] public float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
 
     [SerializeField] Transform cameraPos;
     [SerializeField] TMP_Text nickNameText;
@@ -65,6 +65,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 networkPosition;
     private Quaternion networkRotation;
     private float interpolationFactor = 30f; // 보간 계수
+
+
 
     protected void Awake()
     {
