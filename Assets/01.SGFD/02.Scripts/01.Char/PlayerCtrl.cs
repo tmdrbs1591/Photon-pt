@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Cinemachine;
 using TMPro;
+using Photon.Realtime;
 
 public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -95,9 +96,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             nickNameText.color = Color.white;
         }
     }
+    public override void OnDisconnected(DisconnectCause cause) => print("¿¬°á²÷±è");
 
     protected void Update()
     {
+
         if (!PV.IsMine) return;
 
         GetInput();
