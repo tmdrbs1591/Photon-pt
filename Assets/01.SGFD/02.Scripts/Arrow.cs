@@ -26,6 +26,12 @@ public class Arrow : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
+            var enemyScript = other.gameObject.GetComponent<Enemy>();
+            enemyScript.TakeDamage(15);
+
+            PhotonNetwork.Instantiate("HitPtc", other.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity); //히트 파티클
+
+
             Debug.Log("ssssssssssssssssssss");
             Destroy(gameObject); // 충돌 후 화살을 파괴
         }
