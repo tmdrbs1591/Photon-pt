@@ -131,6 +131,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (damage > 0)
         {
+            PhotonNetwork.Instantiate("debris", transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+
             hpBar.gameObject.SetActive(true);
             hpBar2.gameObject.SetActive(true);
             AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);

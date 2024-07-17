@@ -93,7 +93,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
             Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position;
-            PhotonNetwork.Instantiate("Player", spawnPosition, Quaternion.identity);
+            PhotonNetwork.Instantiate(CharManager.instance.currentCharater.ToString(), spawnPosition, Quaternion.identity);
         }
         else
         {
