@@ -25,7 +25,7 @@ public class Gold : MonoBehaviour
         }
         else
         {
-            Invoke("Get", 0.9f);
+            Invoke("Get", 2f);
         }
     }
 

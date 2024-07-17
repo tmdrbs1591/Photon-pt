@@ -56,6 +56,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     bool jumpDown;
     bool isDash;
     bool isStop;
+    bool isSkill;
 
     Animator anim; // 애니메이터 컴포넌트
 
@@ -133,7 +134,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop)
+        if (isStop || isSkill)//공격이나 스킬중엔 못움직이게
             return;
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
         transform.position += moveVec * speed * Time.deltaTime;
@@ -161,8 +162,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
-                StartCoroutine(IsStop(0.15f));  
-                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1f, 1.2f), 0.4f);
+                StartCoroutine(IsStop(0.2f));  
+                AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1f, 0.9f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All,attackPower);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
@@ -338,6 +339,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             {
                 dashCurTime = dashCoolTime;
 
+                anim.SetTrigger("isDash");
                 // 대쉬 이펙트 활성화 RPC 호출
                 PV.RPC("ActivateDashEffect", RpcTarget.All);
 
@@ -364,7 +366,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
 
                 StartCoroutine(ObjectSetActive(SkillPanel, 1.8f));// 스킬 패널 활성화
-                StartCoroutine(IsStop(1.2f));
+                StartCoroutine(IsSkill(1.3f));
                 anim.SetTrigger("isAttack2");
                 PV.RPC("ActivateSkillEffect", RpcTarget.All);
                 StartCoroutine(SkillCor());
@@ -461,7 +463,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         isStop = false;
 
     }
+    IEnumerator IsSkill(float time)
+    {
+        isSkill = true;
+        yield return new WaitForSeconds(time);
+        isSkill = false;
 
+    }
     IEnumerator ObjectSetActive(GameObject go,float time)
     {
         go.SetActive(true);
