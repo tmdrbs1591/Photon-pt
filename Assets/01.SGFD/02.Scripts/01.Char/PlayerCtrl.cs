@@ -302,11 +302,25 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (other.gameObject.CompareTag("AttackBox"))
         {
-            Debug.Log("ddddddddd");
             if (PV.IsMine)
                 PV.RPC("PlayerTakeDamage", RpcTarget.AllBuffered, 1f); // 체력 감소 RPC 호출
         }
     }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.transform.CompareTag("Portal") && Input.GetKey(KeyCode.C))
+        {
+            Debug.Log("next room");
+            PV.RPC("MoveToNextStage", RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    void MoveToNextStage()
+    {
+        StageManager.instance.NextStage();
+    }
+
 
     [PunRPC]
     void PlayerTakeDamage(float damage)
@@ -455,5 +469,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         go.SetActive(false);
 
     }
+
 
 }

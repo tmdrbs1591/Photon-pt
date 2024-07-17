@@ -10,6 +10,7 @@ TagManager:
   - Coin
   - Gold
   - Shop
+  - Portal
   layers:
   - Default
   - TransparentFX

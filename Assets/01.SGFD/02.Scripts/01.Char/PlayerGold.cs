@@ -18,7 +18,6 @@ public class PlayerGold : MonoBehaviour
     {
         goldtext.text = gold.ToString();
     }
-
     private void OnCollisionEnter(Collision collision)
     {
         var GoldCom = collision.gameObject.GetComponent<Gold>();

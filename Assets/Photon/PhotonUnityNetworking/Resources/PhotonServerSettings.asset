@@ -60,5 +60,9 @@ MonoBehaviour:
   - GoldDestroy
   - JumpWithRandomDirection
   - SetIsGet
+  - NextStage
+  - MovePlayer
+  - MovePlayers
+  - MoveToNextStage
   DisableAutoOpenWizard: 1
   ShowSettings: 1

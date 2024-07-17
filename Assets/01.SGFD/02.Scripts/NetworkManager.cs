@@ -9,6 +9,8 @@ using Photon.Realtime;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public static NetworkManager instance;
+    
     public GameObject fadeImage;
 
     [Header("DisconnectPanel")]
@@ -64,12 +66,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     IEnumerator StartGameCoroutine()
     {
         Spawn();
-        fadeImage.SetActive(true);
+        Fade();
         yield return new WaitForSeconds(2f);
         DisconnectPanel.SetActive(false);
         RoomPanel.SetActive(false);
         LobbyPanel.SetActive(false);
         yield return new WaitForSeconds(2f);
+        fadeImage.SetActive(false);
+    }
+    public void Fade()
+    {
+        StartCoroutine(FadeCor());
+
+    }
+
+    public  IEnumerator FadeCor()
+    {
+        fadeImage.SetActive(true);
+        yield return new WaitForSeconds(4f);
         fadeImage.SetActive(false);
     }
 
@@ -131,7 +145,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #region Photon Callbacks
 
-    void Awake() => Screen.SetResolution(960, 540, false);
+    void Awake()
+    {
+        instance = this;
+        Screen.SetResolution(960, 540, false);
+    }
+
 
     void Update()
     {
