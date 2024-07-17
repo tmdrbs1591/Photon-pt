@@ -9585,7 +9585,7 @@ MonoBehaviour:
   DashPtc: {fileID: 6204978788207602599}
   SkillPtc: {fileID: 4929369180449309046}
   SkillPanel: {fileID: 9040580010554110354}
-  attackBoxSize: {x: 2.99, y: 1.38, z: 0.83}
+  attackBoxSize: {x: 2.21, y: 1.6, z: 1.78}
   attackBoxPos: {fileID: 5447472051837976506}
   hpBar: {fileID: 8220763753427379667}
   maxHp: 20

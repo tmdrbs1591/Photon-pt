@@ -477,6 +477,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         go.SetActive(false);
 
     }
-
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(attackBoxPos.position, attackBoxSize);
+    }
 
 }
