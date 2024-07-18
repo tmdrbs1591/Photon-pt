@@ -158,6 +158,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 if (arrow != null)
                 {
                     arrow.SetDirection(fireDirection); // 화살의 방향 설정
+                    arrow._damage = attackPower; // 화살의 방향 설정
                 }
                 AudioManager.instance.PlaySound(transform.position, 4, Random.Range(1f, 0.9f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All, attackPower);

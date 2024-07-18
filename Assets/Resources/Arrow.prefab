@@ -121,7 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c96e0f7865caf7949b7c80d12fb087ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 15
+  PV: {fileID: 7012086272704346925, guid: bca3bbd983591c542a47d1d0e12ec1ac, type: 3}
+  _damage: 0
 --- !u!54 &8536713484866393198
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -187,7 +189,8 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 0
   OwnershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

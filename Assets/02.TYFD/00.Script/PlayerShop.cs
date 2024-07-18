@@ -8,10 +8,12 @@ public class PlayerShop : MonoBehaviour
     private ShopUI shopUI; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public bool isShop;    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private PlayerCtrl playerCtrl;
+    private ArcherCtrl archerCtrl;
 
     private void Awake()
     {
         playerCtrl = GetComponent<PlayerCtrl>();
+        archerCtrl = GetComponent<ArcherCtrl>();
         shopUI = GetComponentInChildren<ShopUI>(true);      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
@@ -24,12 +26,32 @@ public class PlayerShop : MonoBehaviour
         }
     }
 
-    public void OnIncreaseStatButton(string statTpe, float amount) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public void OnIncreaseStatButton(string statType, float amount)
     {
-        switch (statTpe)
+        switch (statType)
         {
             case "attackPower":
-                playerCtrl.attackPower += amount;
+                if (playerCtrl != null)
+                {
+                    playerCtrl.attackPower += amount;
+                }
+                else
+                {
+                    Debug.LogWarning("playerCtrl is null.");
+                }
+
+                if (archerCtrl != null)
+                {
+                    archerCtrl.attackPower += amount;
+                }
+                else
+                {
+                    Debug.LogWarning("archerCtrl is null.");
+                }
+                break;
+
+            default:
+                Debug.LogError("Unknown stat type: " + statType);
                 break;
         }
     }
