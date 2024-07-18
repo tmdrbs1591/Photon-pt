@@ -22,7 +22,7 @@ public class Arrow : MonoBehaviourPunCallbacks
         // PhotonView 컴포넌트 할당
         PV = GetComponent<PhotonView>();
 
-       // StartCoroutine(DestroyArrowDelayed());
+        StartCoroutine(DestroyArrowDelayed());
     }
 
     // Update is called once per frame
