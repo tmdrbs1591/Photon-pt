@@ -210,6 +210,8 @@ MonoBehaviour:
   speed: 1
   PV: {fileID: 6655681305272224590}
   _damage: 15
+  archerctrl: {fileID: 2994065302886021857, guid: bca3bbd983591c542a47d1d0e12ec1ac,
+    type: 3}
 --- !u!1 &4063812737183919450
 GameObject:
   m_ObjectHideFlags: 0

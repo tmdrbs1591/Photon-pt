@@ -71,5 +71,6 @@ MonoBehaviour:
   - CharChangeKnight
   - SyncCharacter
   - ChangeCharacter
+  - DestroyArrow
   DisableAutoOpenWizard: 1
   ShowSettings: 1

@@ -1,6 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class Arrow : MonoBehaviourPunCallbacks
 {
@@ -8,6 +9,7 @@ public class Arrow : MonoBehaviourPunCallbacks
     public PhotonView PV;
     private Rigidbody rb;
     public float _damage = 15f; // 데미지 값
+    public ArcherCtrl archerctrl;
 
 
     // Start is called before the first frame update
@@ -20,6 +22,8 @@ public class Arrow : MonoBehaviourPunCallbacks
 
         // PhotonView 컴포넌트 할당
         PV = GetComponent<PhotonView>();
+
+        StartCoroutine(DestroyArrowDelayed());
     }
 
     // Update is called once per frame
@@ -33,9 +37,10 @@ public class Arrow : MonoBehaviourPunCallbacks
         if (collision.gameObject.CompareTag("Enemy"))
         {
             var enemyPhotonView = collision.gameObject.GetComponent<PhotonView>();
-
+            var enemyScript = collision.gameObject.GetComponent<Enemy>();
             if (enemyPhotonView != null && enemyPhotonView.IsMine)
             {
+                enemyScript.playerObj = archerctrl.gameObject;
                 // 데미지 동기화 RPC 호출
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);
 
@@ -78,5 +83,24 @@ public class Arrow : MonoBehaviourPunCallbacks
             damageText.text = damage.ToString();
         }
        // Destroy(damageTextObj, 2f);
+    }
+    private IEnumerator DestroyArrowDelayed()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        if (PV != null)
+        {
+            PV.RPC("DestroyArrow", RpcTarget.AllBuffered);
+        }
+        else
+        {
+            Debug.LogError("PhotonView is null on Arrow.");
+        }
+    }
+
+    [PunRPC]
+    void DestroyArrow()
+    {
+        PhotonNetwork.Destroy(gameObject);
     }
 }
