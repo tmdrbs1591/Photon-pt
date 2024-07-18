@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+[System.Serializable]
+public class StageInfo
+{
+    public Transform spawnPos;
+    public Transform[] monsterSpawnPos;
+}
+
 public class StageManager : MonoBehaviourPun
 {
     public static StageManager instance;
-    public List<Transform> StartPosition = new List<Transform>();
+    public List<StageInfo> stageInfos = new List<StageInfo>();
     public List<Transform> ShopPosition = new List<Transform>();
+    public GameObject monsterPrefab;
     public int currentStage = 0;
 
     private float stageCooldown = 2f; // 다음 스테이지로 이동할 수 있는 쿨다운 시간 (초)
@@ -34,7 +42,7 @@ public class StageManager : MonoBehaviourPun
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Transform targetPosition;
+            Transform targetPosition = null;
 
             // 스테이지 증가
             currentStage++;
@@ -46,18 +54,27 @@ public class StageManager : MonoBehaviourPun
             }
             else
             {
-                int randomIndex = Random.Range(0, StartPosition.Count);
-                targetPosition = StartPosition[randomIndex];
+                int randomIndex = Random.Range(0, stageInfos.Count);
+                targetPosition = stageInfos[randomIndex].spawnPos;
+
+                foreach (Transform t in stageInfos[randomIndex].monsterSpawnPos)
+                {
+                    PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                }
             }
 
-            lastStageChangeTime = Time.time; // 현재 시간을 마지막 변경 시간으로 설정
-
-            // 모든 클라이언트에서 RPC 호출
-            photonView.RPC("MovePlayer", RpcTarget.All, targetPosition.position, targetPosition.rotation);
+            if (targetPosition != null)
+            {
+                lastStageChangeTime = Time.time; // 현재 시간을 마지막 변경 시간으로 설정
+                // 모든 클라이언트에서 RPC 호출
+                photonView.RPC("MovePlayer", RpcTarget.All, targetPosition.position, targetPosition.rotation);
+            }
+            else
+            {
+                Debug.LogError("Target position is null.");
+            }
         }
     }
-
-
 
     [PunRPC]
     public void MovePlayer(Vector3 position, Quaternion rotation)
@@ -67,6 +84,10 @@ public class StageManager : MonoBehaviourPun
         if (player != null)
         {
             StartCoroutine(TP(player, position, rotation));
+        }
+        else
+        {
+            Debug.LogError("Player not found.");
         }
     }
 
