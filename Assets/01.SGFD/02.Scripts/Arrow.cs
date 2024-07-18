@@ -86,7 +86,7 @@ public class Arrow : MonoBehaviourPunCallbacks
     }
     private IEnumerator DestroyArrowDelayed()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
 
         if (PV != null)
         {
