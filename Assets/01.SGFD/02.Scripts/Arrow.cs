@@ -58,7 +58,8 @@ public class Arrow : MonoBehaviourPunCallbacks
                 }
 
                 Debug.Log("Hit the enemy!");
-                //  PhotonNetwork.Destroy(gameObject);
+                // 화살 파괴 RPC 호출 (1초 뒤에 파괴되도록)
+                StartCoroutine(DestroyArrowDelayed());
             }
         }
     }
@@ -93,12 +94,12 @@ public class Arrow : MonoBehaviourPunCallbacks
         if (PV != null)
         {
             // 소유자가 아니면 소유권을 가져옵니다.
-            if (!PV.IsMine)
+            if (!PV.IsMine && !PhotonNetwork.IsMasterClient)
             {
                 PV.RequestOwnership();
             }
 
-            PV.RPC("DestroyArrow", RpcTarget.AllBuffered);
+            PV.RPC("DestroyArrow", RpcTarget.MasterClient);
         }
         else
         {
@@ -109,6 +110,9 @@ public class Arrow : MonoBehaviourPunCallbacks
     [PunRPC]
     void DestroyArrow()
     {
-        PhotonNetwork.Destroy(gameObject);
+        if (PV.IsMine || PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
     }
 }
