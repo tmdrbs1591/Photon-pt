@@ -11,7 +11,6 @@ public class Arrow : MonoBehaviourPunCallbacks
     public float _damage = 15f; // 데미지 값
     public ArcherCtrl archerctrl;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +31,7 @@ public class Arrow : MonoBehaviourPunCallbacks
         // 화살이 계속 앞으로 나가도록 함
         rb.velocity = transform.forward * speed;
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -58,13 +58,14 @@ public class Arrow : MonoBehaviourPunCallbacks
                 }
 
                 Debug.Log("Hit the enemy!");
-             //  PhotonNetwork.Destroy(gameObject);
+                //  PhotonNetwork.Destroy(gameObject);
             }
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
-     
+        // 트리거 충돌 처리 (필요에 따라 구현)
     }
 
     // 화살의 방향을 플레이어의 이동 방향으로 설정하는 메서드
@@ -82,14 +83,21 @@ public class Arrow : MonoBehaviourPunCallbacks
         {
             damageText.text = damage.ToString();
         }
-       // Destroy(damageTextObj, 2f);
+        // Destroy(damageTextObj, 2f);
     }
+
     private IEnumerator DestroyArrowDelayed()
     {
         yield return new WaitForSeconds(0.4f);
 
         if (PV != null)
         {
+            // 소유자가 아니면 소유권을 가져옵니다.
+            if (!PV.IsMine)
+            {
+                PV.RequestOwnership();
+            }
+
             PV.RPC("DestroyArrow", RpcTarget.AllBuffered);
         }
         else
