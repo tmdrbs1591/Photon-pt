@@ -92,8 +92,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         {
             anim.SetBool("isWalk", true);
         }
-
-        hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 20f);
+            
+        hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 40f);
         hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
 
         Die();

@@ -20,14 +20,14 @@ public class CharManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // 씬 전환 시에도 객체를 파괴하지 않도록 설정합니다.
     }
 
-    public Character currentCharater; // 현재 선택된 캐릭터를 저장할 변수
+    public Character currentCharacter; // 현재 선택된 캐릭터를 저장할 변수
 
     public void CharChangeKnight()
     {
-        currentCharater = Character.Knight;
+        currentCharacter = Character.Knight;
     }
     public void CharChangeArcher()
     {
-        currentCharater = Character.Archer;
+        currentCharacter = Character.Archer;
     }
 }

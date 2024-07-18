@@ -3209,8 +3209,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 212.99997, y: -308.99997}
-  m_SizeDelta: {x: 660.827, y: 1004.9603}
+  m_AnchoredPosition: {x: 213, y: -283}
+  m_SizeDelta: {x: 660.827, y: 898.9274}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2991181746195968118
 CanvasRenderer:
@@ -3240,7 +3240,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fde907cc00398664baf6cfe521c6f412, type: 3}
+  m_Sprite: {fileID: -554531275, guid: 3381ba4aeb87483428fa78306d0a8fae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5178,8 +5178,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9, y: -309}
-  m_SizeDelta: {x: 660.827, y: 1004.9603}
+  m_AnchoredPosition: {x: 9, y: -244.79}
+  m_SizeDelta: {x: 660.827, y: 769}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4512489856424593058
 CanvasRenderer:
@@ -5209,7 +5209,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fde907cc00398664baf6cfe521c6f412, type: 3}
+  m_Sprite: {fileID: -554531275, guid: 3381ba4aeb87483428fa78306d0a8fae, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8413,7 +8413,7 @@ MonoBehaviour:
   speed: 5
   rotationSpeed: 10
   jumpPower: 10
-  attackPower: 15
+  attackPower: 30
   cameraPos: {fileID: 3345333031289574603}
   nickNameText: {fileID: 2072689486957352308}
   AttackPtc1: {fileID: 5490170548552052953}
@@ -8424,12 +8424,13 @@ MonoBehaviour:
   hpBar: {fileID: 4100800911095226039}
   maxHp: 20
   curHp: 20
+  attackPos: {fileID: 3749801058783333536}
   attackCoolTime: 0.45
   skillCoolTime: 3
   dashCoolTime: 1
   skillFilled: {fileID: 1608877695802022520}
   skillText: {fileID: 795175794841465421}
-  dashFilled: {fileID: 0}
+  dashFilled: {fileID: 7957778746120629054}
   dashText: {fileID: 8150483089373153974}
   playerCanvas: {fileID: 6223381617737013226}
   PV: {fileID: 7012086272704346925}
@@ -9577,7 +9578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 8a15ff43d0caff14bab26ada1141b59d, type: 2}
+  m_Material: {fileID: 2100000, guid: 3bde70f13ccc506419e67fde2a4991f7, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -10132,7 +10133,7 @@ Transform:
   m_GameObject: {fileID: 7758220658209798453}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.016541004, y: 0.79299986, z: 0.66}
+  m_LocalPosition: {x: -0.016541004, y: 0.077, z: -0.637}
   m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_ConstrainProportionsScale: 0
   m_Children: []

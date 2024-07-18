@@ -11,6 +11,7 @@ TagManager:
   - Gold
   - Shop
   - Portal
+  - 'charimage '
   layers:
   - Default
   - TransparentFX

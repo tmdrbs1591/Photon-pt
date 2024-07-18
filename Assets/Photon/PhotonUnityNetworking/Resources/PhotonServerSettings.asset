@@ -64,5 +64,12 @@ MonoBehaviour:
   - MovePlayer
   - MovePlayers
   - MoveToNextStage
+  - RPC_RotateToClosestEnemy
+  - SetArcherSprite
+  - SetKnightSprite
+  - CharChangeArcher
+  - CharChangeKnight
+  - SyncCharacter
+  - ChangeCharacter
   DisableAutoOpenWizard: 1
   ShowSettings: 1

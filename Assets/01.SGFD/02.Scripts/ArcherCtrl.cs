@@ -28,6 +28,8 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private float maxHp;
     [SerializeField] private float curHp;
 
+    [SerializeField] private Transform attackPos;
+
     [Header("쿨타임")]
     [SerializeField] private float attackCoolTime = 0.5f;
     private float attacklCurTime;
@@ -104,6 +106,18 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
         }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GameObject closestEnemy = FindClosestEnemy();
+            if (closestEnemy != null)
+            {
+                Debug.Log("가장 가까운 적: " + closestEnemy.name + " 위치: " + closestEnemy.transform.position);
+            }
+            else
+            {
+                Debug.Log("적을 찾을 수 없습니다.");
+            }
+        }
 
         if (!PV.IsMine)
         {
@@ -145,20 +159,27 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
+
     void Attack()
     {
         if (attacklCurTime <= 0)
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
+                GameObject closestEnemy = FindClosestEnemy();
+                if (closestEnemy != null)
+                {
+                    PV.RPC("RPC_RotateToClosestEnemy", RpcTarget.All, closestEnemy.transform.position);
+                }
+
                 StartCoroutine(IsStop(0.2f));
                 Vector3 fireDirection = transform.forward; // 캐릭터가 바라보는 방향
-                GameObject arrowObj = PhotonNetwork.Instantiate("Arrow", transform.position  + fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
+                GameObject arrowObj = PhotonNetwork.Instantiate("Arrow", attackPos.transform.position + new Vector3(0,0.5f,0)+ fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
                 Arrow arrow = arrowObj.GetComponent<Arrow>();
                 if (arrow != null)
                 {
                     arrow.SetDirection(fireDirection); // 화살의 방향 설정
-                    arrow._damage = attackPower; // 화살의 방향 설정
+                    arrow._damage = attackPower; // 화살의 파워 설정
                 }
                 AudioManager.instance.PlaySound(transform.position, 4, Random.Range(1f, 0.9f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All, attackPower);
@@ -357,23 +378,49 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator SkillCor()
     {
-        yield return new WaitForSeconds(0.1f);
-        CameraShake.instance.ZoomIn(10f, 1f); // 줌 인
-
-        for (int i = 0; i < 6; i++)
+        GameObject closestEnemy = FindClosestEnemy();
+        if (closestEnemy != null)
         {
-            // PV.RPC("Damage", RpcTarget.All, attackPower + 1f);
-            AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.2f);
-            yield return new WaitForSeconds(0.1f);
-            CameraShake.instance.Shake();
+            PV.RPC("RPC_RotateToClosestEnemy", RpcTarget.All, closestEnemy.transform.position);
         }
-        yield return new WaitForSeconds(0.37f);
-        AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.2f, 1.2f), 0.2f);
-        CameraShake.instance.Shake();
-        PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
 
-        CameraShake.instance.ZoomOut(57.4f, 0.2f); // 줌 아웃
+        Vector3 fireDirection = transform.forward; // 캐릭터가 바라보는 방향
+        yield return new WaitForSeconds(0.1f);
+        for (int i = 0; i < 30; i++)
+        {
+            // 랜덤한 위치 벡터 생성 (-1부터 1까지의 범위)
+            Vector3 randomOffset = new Vector3(Random.Range(-1f, 1f), 0.5f, Random.Range(-1f, 1f));
+
+            // 화살을 랜덤한 위치에 생성
+            GameObject arrowObj = PhotonNetwork.Instantiate("SkillArrow", attackPos.transform.position + randomOffset + fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
+            SkillArrow arrow = arrowObj.GetComponent<SkillArrow>();
+            if (arrow != null)
+            {
+                arrow.SetDirection(fireDirection); // 화살의 방향 설정
+                arrow._damage = attackPower; // 화살의 파워 설정
+            }
+            CameraShake.instance.Shake();
+            anim.SetTrigger("isAttack1");
+
+            // n초 뒤에 삭제하기
+            StartCoroutine(DestroyAfterDelay(arrowObj, 0.5f));
+
+            yield return new WaitForSeconds(0.04f);
+        }
     }
+
+    IEnumerator DestroyAfterDelay(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // PhotonNetwork.Destroy를 사용하여 동기화된 방식으로 삭제
+        if (obj != null && PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Destroy(obj);
+        }
+    }
+
+
 
     [PunRPC]
     void ActivateSkillEffect() // 스킬 이펙트 RPC
@@ -452,4 +499,43 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         yield return new WaitForSeconds(time);
         go.SetActive(false);
     }
+    private GameObject FindClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy"); // "Enemy" 태그가 있는 모든 적을 찾음
+        GameObject closestEnemy = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (GameObject enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position); // 플레이어와 적 사이의 거리 계산
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+
+        return closestEnemy;
+    }
+
+    // 가장 가까운 적 방향으로 즉시 회전하는 메서드
+    private void RotateToClosestEnemy(GameObject enemy)
+    {
+        if (enemy != null)
+        {
+            Vector3 directionToEnemy = (enemy.transform.position - transform.position).normalized; // 적 방향 벡터 계산
+            Quaternion targetRotation = Quaternion.LookRotation(directionToEnemy); // 적 방향으로의 회전 계산
+            transform.rotation = targetRotation; // 즉시 회전
+        }
+    }
+
+    [PunRPC]
+    private void RPC_RotateToClosestEnemy(Vector3 enemyPosition)
+    {
+        Vector3 directionToEnemy = (enemyPosition - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(directionToEnemy);
+        transform.rotation = targetRotation;
+    }
+ 
 }

@@ -6,10 +6,13 @@ using UnityEngine.AI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public static NetworkManager instance;
+
+    public CharManager charManager;
     
     public GameObject fadeImage;
 
@@ -44,6 +47,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     int currentPage = 1, maxPage, multiple;
 
     public GameObject startGameButton;
+
+    [SerializeField] Transform playerLisContent;
+    [SerializeField] GameObject playerListItemPrefab;
+    internal object playerList;
 
     public void StartGame()
     {
@@ -93,7 +100,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
             Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position;
-            PhotonNetwork.Instantiate(CharManager.instance.currentCharater.ToString(), spawnPosition, Quaternion.identity);
+            PhotonNetwork.Instantiate(CharManager.instance.currentCharacter.ToString(), spawnPosition, Quaternion.identity);
         }
         else
         {
@@ -194,6 +201,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RoomPanel.SetActive(true);
         RoomRenewal();
 
+        Player[] players = PhotonNetwork.PlayerList;
+
+        for (int i = 0; i < players.Count(); i++)
+        {
+            Instantiate(playerListItemPrefab, playerLisContent).GetComponent<PlayerListItem>().Setup(players[i]);
+        }
+
         if (PhotonNetwork.IsMasterClient)
         {
             startGameButton.SetActive(true);
@@ -223,6 +237,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         RoomRenewal();
         ChatRPC("<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
+        Instantiate(playerListItemPrefab, playerLisContent).GetComponent<PlayerListItem>().Setup(newPlayer);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
