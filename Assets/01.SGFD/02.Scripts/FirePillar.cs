@@ -87,41 +87,15 @@ public class FirePillar : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(2.5f);
 
-        if (PV != null)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                // MasterClient가 객체를 제거합니다.
-                PhotonNetwork.Destroy(gameObject);
-            }
-            else
-            {
-                // MasterClient가 아닌 클라이언트는 소유권을 요청합니다.
-                if (PV.IsMine)
-                {
-                    PV.RPC("DestroyFirePillar", RpcTarget.MasterClient);
-                }
-                else
-                {
-                    PV.RequestOwnership();
-                    yield return new WaitUntil(() => PV.IsMine || PhotonNetwork.IsMasterClient);
-                    if (PV.IsMine || PhotonNetwork.IsMasterClient)
-                    {
-                        PhotonNetwork.Destroy(gameObject);
-                    }
-                }
-            }
-        }
-        else
-        {
-            Debug.LogError("PhotonView is null on FirePillar.");
-        }
+        // 모든 클라이언트에서 FirePillar를 제거하도록 RPC 호출
+        PV.RPC("DestroyFirePillar", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
     void DestroyFirePillar()
     {
-        if (PhotonNetwork.IsMasterClient)
+        // 모든 클라이언트에서 FirePillar를 제거합니다.
+        if (PhotonNetwork.IsMasterClient || PV.IsMine)
         {
             PhotonNetwork.Destroy(gameObject);
         }
