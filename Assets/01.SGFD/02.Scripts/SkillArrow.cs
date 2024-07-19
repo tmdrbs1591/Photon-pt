@@ -37,8 +37,8 @@ public class SkillArrow : MonoBehaviourPunCallbacks
         if (other.CompareTag("Enemy"))
         {
             var enemyPhotonView = other.gameObject.GetComponent<PhotonView>();
-
-            if (enemyPhotonView != null && enemyPhotonView.IsMine)
+            //&& enemyPhotonView.IsMine
+            if (enemyPhotonView != null )
             {
                 // 데미지 동기화 RPC 호출
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);

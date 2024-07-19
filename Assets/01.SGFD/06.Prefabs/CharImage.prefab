@@ -79,7 +79,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 6428944959620501208}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -95,6 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc0f640928c6735448c667fe820efab3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PV: {fileID: 8021634052233988520}
   currentImage: {fileID: 171574928867570600}
   KnightSprite: {fileID: 21300000, guid: 37f4620802dbe8947bb3bdaef9d13ddb, type: 3}
   ArcherSprite: {fileID: 21300000, guid: 213b38674ab3c3043aaa296677ed071b, type: 3}

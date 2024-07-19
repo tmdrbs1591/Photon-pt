@@ -74,5 +74,9 @@ MonoBehaviour:
   - DestroyArrow
   - UpdateCharacterImageRPC
   - UpdateSprite
+  - ChangeCharacterImage
+  - UpdateCharacterImage
+  - ArcherImage
+  - KnightImage
   DisableAutoOpenWizard: 1
   ShowSettings: 1
