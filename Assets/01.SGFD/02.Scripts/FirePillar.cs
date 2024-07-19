@@ -23,7 +23,7 @@ public class FirePillar : MonoBehaviourPunCallbacks
             return;
         }
 
-        //StartCoroutine(DestroyFirePillarDelayed());
+        StartCoroutine(DestroyFirePillarDelayed());
     }
 
     // Update is called once per frame
@@ -41,7 +41,7 @@ public class FirePillar : MonoBehaviourPunCallbacks
     {
         if (other.CompareTag("Enemy"))
         {
-            StartCoroutine(DamageCor(other));
+           // StartCoroutine(DamageCor(other));
             // DestroyArrowDelayed() 메서드는 필요하지 않은 경우 주석 처리
         }
     }
