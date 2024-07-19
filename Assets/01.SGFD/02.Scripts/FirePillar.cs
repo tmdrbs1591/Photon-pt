@@ -23,7 +23,7 @@ public class FirePillar : MonoBehaviourPunCallbacks
             return;
         }
 
-        StartCoroutine(DestroyFirePillarDelayed());
+        //StartCoroutine(DestroyFirePillarDelayed());
     }
 
     // Update is called once per frame
