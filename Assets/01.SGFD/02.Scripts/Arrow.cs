@@ -38,7 +38,7 @@ public class Arrow : MonoBehaviourPunCallbacks
         {
             var enemyPhotonView = collision.gameObject.GetComponent<PhotonView>();
             var enemyScript = collision.gameObject.GetComponent<Enemy>();
-            if (enemyPhotonView != null)
+            if (enemyPhotonView != null && PV.IsMine)
             {
                 // 데미지 동기화 RPC 호출
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);
@@ -47,14 +47,7 @@ public class Arrow : MonoBehaviourPunCallbacks
                 PhotonNetwork.Instantiate("HitPtc", collision.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
 
                 // 데미지 텍스트 생성 RPC 호출
-                if (PV != null)
-                {
-                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collision.transform.position, _damage);
-                }
-                else
-                {
-                    Debug.LogError("PhotonView is null on Arrow.");
-                }
+                PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, collision.transform.position, _damage);
 
                 Debug.Log("Hit the enemy!");
                 // 화살 파괴 RPC 호출 (1초 뒤에 파괴되도록)

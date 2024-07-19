@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         if (playerObj == null)
         {
             // 중심 위치와 반지름을 설정하여 오버랩 서클 사용
-            Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 10f);
             // 오버랩 서클에서 플레이어 태그를 가진 오브젝트를 찾기
             foreach (Collider collider in colliders)
             {

@@ -1,6 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class SkillArrow : MonoBehaviourPunCallbacks
 {
@@ -8,7 +9,6 @@ public class SkillArrow : MonoBehaviourPunCallbacks
     public PhotonView PV;
     private Rigidbody rb;
     public float _damage = 15f; // 데미지 값
-
 
     // Start is called before the first frame update
     void Start()
@@ -28,17 +28,20 @@ public class SkillArrow : MonoBehaviourPunCallbacks
         // 화살이 계속 앞으로 나가도록 함
         rb.velocity = transform.forward * speed;
     }
+
     private void OnCollisionEnter(Collision collision)
     {
-   
+        // 충돌 처리 (현재는 비워 두었습니다)
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
             var enemyPhotonView = other.gameObject.GetComponent<PhotonView>();
-            //&& enemyPhotonView.IsMine
-            if (enemyPhotonView != null )
+
+            // 소유자만 처리하도록
+            if (PV.IsMine && enemyPhotonView != null)
             {
                 // 데미지 동기화 RPC 호출
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);
@@ -47,17 +50,12 @@ public class SkillArrow : MonoBehaviourPunCallbacks
                 PhotonNetwork.Instantiate("HitPtc", other.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
 
                 // 데미지 텍스트 생성 RPC 호출
-                if (PV != null)
-                {
-                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, other.transform.position, _damage);
-                }
-                else
-                {
-                    Debug.LogError("PhotonView is null on Arrow.");
-                }
+                PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, other.transform.position, _damage);
 
                 Debug.Log("Hit the enemy!");
-                //  PhotonNetwork.Destroy(gameObject);
+
+                // 화살 파괴 RPC 호출 (1초 뒤에 파괴되도록)
+                StartCoroutine(DestroyArrowDelayed());
             }
         }
     }
@@ -78,5 +76,19 @@ public class SkillArrow : MonoBehaviourPunCallbacks
             damageText.text = damage.ToString();
         }
         // Destroy(damageTextObj, 2f);
+    }
+
+    private IEnumerator DestroyArrowDelayed()
+    {
+        yield return new WaitForSeconds(1f); // 1초 대기 후 화살 파괴
+
+        if (PV != null && PV.IsMine)
+        {
+            PhotonNetwork.Destroy(gameObject);
+        }
+        else
+        {
+            Debug.LogError("PhotonView is null or not owned by this client.");
+        }
     }
 }
