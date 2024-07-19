@@ -3,10 +3,9 @@ guid: cfdd144ceb76ec942b649cc196c1440c
 ShaderImporter:
   externalObjects: {}
   defaultTextures:
-  - _MainTexture: {instanceID: 0}
-  - _EmissionTex: {instanceID: 0}
-  - _Dissolve: {instanceID: 0}
-  - _texcoord: {instanceID: 0}
+  - _EmissionTex: {fileID: 2800000, guid: 776495090b22ebc49af55b62923f4a68, type: 3}
+  - _MainTexture: {fileID: 2800000, guid: 4de1419ac14d16d44b9c82b76ea6d884, type: 3}
+  - _Dissolve: {fileID: 2800000, guid: 1eae6143ce30e2849b37136524e197f0, type: 3}
   nonModifiableTextures: []
   preprocessorOverride: 0
   userData: 

@@ -176,6 +176,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 Vector3 fireDirection = transform.forward; // 캐릭터가 바라보는 방향
                 GameObject arrowObj = PhotonNetwork.Instantiate("Arrow", attackPos.transform.position + new Vector3(0,0.5f,0)+ fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
                 Arrow arrow = arrowObj.GetComponent<Arrow>();
+              
                 if (arrow != null)
                 {
                     arrow.SetDirection(fireDirection); // 화살의 방향 설정
@@ -397,8 +398,8 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
             SkillArrow arrow = arrowObj.GetComponent<SkillArrow>();
             if (arrow != null)
             {
-                arrow.SetDirection(fireDirection); // 화살의 방향 설정
-                arrow._damage = attackPower; // 화살의 파워 설정
+              //  arrow.SetDirection(fireDirection); // 화살의 방향 설정
+             //   arrow._damage = attackPower; // 화살의 파워 설정
             }
             CameraShake.instance.Shake();
             anim.SetTrigger("isAttack1");

@@ -80,5 +80,7 @@ MonoBehaviour:
   - KnightImage
   - SetCharacterSpriteRPC
   - UpdateCharacterSpriteRPC
+  - SkillEffect
+  - DestroyFirePillar
   DisableAutoOpenWizard: 1
   ShowSettings: 1

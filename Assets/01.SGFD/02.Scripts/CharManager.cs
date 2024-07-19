@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum Character
 {
-    Knight, Archer
+    Knight, Archer , Dragoon
 }
 
 public class CharManager : MonoBehaviour
@@ -29,5 +29,9 @@ public class CharManager : MonoBehaviour
     public void CharChangeArcher()
     {
         currentCharacter = Character.Archer;
+    }
+    public void CharChangeDragoon()
+    {
+        currentCharacter = Character.Dragoon;
     }
 }
