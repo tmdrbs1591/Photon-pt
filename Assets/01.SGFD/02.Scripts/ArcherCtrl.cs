@@ -180,7 +180,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     arrow.SetDirection(fireDirection); // 화살의 방향 설정
                     arrow._damage = attackPower; // 화살의 파워 설정
-                    arrow.archerctrl = gameObject.GetComponent<ArcherCtrl>(); // 화살의 파워 설정
+                    arrow.archerctrl = gameObject.GetComponent<ArcherCtrl>(); 
                 }
                 AudioManager.instance.PlaySound(transform.position, 4, Random.Range(1f, 0.9f), 0.4f);
                 PV.RPC("Damage", RpcTarget.All, attackPower);

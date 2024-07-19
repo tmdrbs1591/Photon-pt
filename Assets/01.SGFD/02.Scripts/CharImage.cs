@@ -22,11 +22,11 @@ public class CharImage : MonoBehaviour
         switch (CharManager.instance.currentCharacter)
         {
             case Character.Knight:
-                currentImage.sprite = KnightSprite;
+                NetworkManager.instance.charImage.currentImage.sprite = KnightSprite;
                 break;
 
             case Character.Archer:
-                currentImage.sprite = ArcherSprite;
+                NetworkManager.instance.charImage.currentImage.sprite = ArcherSprite;
                 break;
         }
     }

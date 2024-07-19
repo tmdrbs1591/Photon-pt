@@ -72,5 +72,7 @@ MonoBehaviour:
   - SyncCharacter
   - ChangeCharacter
   - DestroyArrow
+  - UpdateCharacterImageRPC
+  - UpdateSprite
   DisableAutoOpenWizard: 1
   ShowSettings: 1

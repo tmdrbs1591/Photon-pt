@@ -38,9 +38,8 @@ public class Arrow : MonoBehaviourPunCallbacks
         {
             var enemyPhotonView = collision.gameObject.GetComponent<PhotonView>();
             var enemyScript = collision.gameObject.GetComponent<Enemy>();
-            if (enemyPhotonView != null && enemyPhotonView.IsMine)
+            if (enemyPhotonView != null)
             {
-                enemyScript.playerObj = archerctrl.gameObject;
                 // 데미지 동기화 RPC 호출
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);
 
@@ -93,13 +92,19 @@ public class Arrow : MonoBehaviourPunCallbacks
 
         if (PV != null)
         {
-            // 소유자가 아니면 소유권을 가져옵니다.
-            if (!PV.IsMine && !PhotonNetwork.IsMasterClient)
+            // 소유자가 아니면 소유권을 요청합니다.
+            if (!PV.IsMine)
             {
                 PV.RequestOwnership();
+                // 소유권 요청 후 잠시 대기
+                yield return new WaitUntil(() => PV.IsMine || PhotonNetwork.IsMasterClient);
             }
 
-            PV.RPC("DestroyArrow", RpcTarget.MasterClient);
+            // 객체를 파괴할 권한이 있는 경우에만 파괴합니다.
+            if (PV.IsMine || PhotonNetwork.IsMasterClient)
+            {
+                PV.RPC("DestroyArrow", RpcTarget.MasterClient);
+            }
         }
         else
         {

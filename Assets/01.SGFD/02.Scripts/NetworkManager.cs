@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.AI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
@@ -12,8 +11,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public static NetworkManager instance;
 
+    public CharImage charImage; // CharImage -> Image로 수정
+
     public CharManager charManager;
-    
+
     public GameObject fadeImage;
 
     [Header("DisconnectPanel")]
@@ -84,10 +85,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void Fade()
     {
         StartCoroutine(FadeCor());
-
     }
 
-    public  IEnumerator FadeCor()
+    public IEnumerator FadeCor()
     {
         fadeImage.SetActive(true);
         yield return new WaitForSeconds(4f);
@@ -158,7 +158,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Screen.SetResolution(960, 540, false);
     }
 
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -166,7 +165,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Send();
         }
         StatusText.text = PhotonNetwork.NetworkClientState.ToString();
-        LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + "로비 / " + PhotonNetwork.CountOfPlayers + "접속";
+        LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + " 로비 / " + PhotonNetwork.CountOfPlayers + " 접속";
     }
 
     public void Connect() => PhotonNetwork.ConnectUsingSettings();
@@ -205,7 +204,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < players.Count(); i++)
         {
-            Instantiate(playerListItemPrefab, playerLisContent).GetComponent<PlayerListItem>().Setup(players[i]);
+            GameObject playerItem = Instantiate(playerListItemPrefab, playerLisContent);
+            playerItem.GetComponent<PlayerListItem>().Setup(players[i]);
+            charImage = playerItem.GetComponent<CharImage>();
         }
 
         if (PhotonNetwork.IsMasterClient)
