@@ -98,7 +98,7 @@ MonoBehaviour:
   currentImage: {fileID: 171574928867570600}
   KnightSprite: {fileID: 21300000, guid: 37f4620802dbe8947bb3bdaef9d13ddb, type: 3}
   ArcherSprite: {fileID: 21300000, guid: 213b38674ab3c3043aaa296677ed071b, type: 3}
-  DragoonSprite: {fileID: 21300000, guid: d2aef1fa9c87ca242a0e40dca7091c2b, type: 3}
+  DragoonSprite: {fileID: 21300000, guid: 039bdbc7ade42fc40ab28ef3cf3ebff0, type: 3}
 --- !u!1 &5683367467488838676
 GameObject:
   m_ObjectHideFlags: 0
