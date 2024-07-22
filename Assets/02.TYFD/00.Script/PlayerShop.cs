@@ -61,6 +61,7 @@ public class PlayerShop : MonoBehaviour
         if (shopUI != null)
         {
             shopUI.ToggleShop();
+            playerCtrl.isShop = !playerCtrl.isShop;
         }
     }
 

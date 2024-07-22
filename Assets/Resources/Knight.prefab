@@ -9598,6 +9598,7 @@ MonoBehaviour:
   dashFiled: {fileID: 3974598868448045150}
   dashText: {fileID: 7095263964158161411}
   playerCanvas: {fileID: 4000396994718129809}
+  isShop: 0
   PV: {fileID: 3941120395239933755}
 --- !u!114 &3941120395239933755
 MonoBehaviour:

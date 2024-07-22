@@ -49,6 +49,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] private GameObject playerCanvas;
 
+    [Header("Shop")]
+    [SerializeField] public bool isShop;
+
     public PhotonView PV;
 
     float hAxis; // 수평 입력 값
@@ -105,7 +108,10 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         if (!PV.IsMine) return;
 
         GetInput();
-        Move();
+        if (!isShop)
+        {
+            Move();
+        }
         Jump();
         Attack();
         Dash();
