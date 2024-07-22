@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviourPun
     public List<Transform> ShopPosition = new List<Transform>();
     public GameObject monsterPrefab;
     public int currentStage = 0;
+    public int lastStage;
 
     private float stageCooldown = 2f; // 다음 스테이지로 이동할 수 있는 쿨다운 시간 (초)
     private float lastStageChangeTime = 0f; // 마지막 스테이지 변경 시간
@@ -54,13 +55,19 @@ public class StageManager : MonoBehaviourPun
             }
             else
             {
-                int randomIndex = Random.Range(0, stageInfos.Count);
-                targetPosition = stageInfos[randomIndex].spawnPos;
+                int randomIndex = Random.Range(1, stageInfos.Count);
+                while(randomIndex == lastStage)
+                {
+                    randomIndex = Random.Range(1, stageInfos.Count);
+                }
 
-                foreach (Transform t in stageInfos[randomIndex].monsterSpawnPos)
+                targetPosition = stageInfos[randomIndex - 1].spawnPos;
+
+                foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                 {
                     PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
                 }
+                lastStage = randomIndex;
             }
 
             if (targetPosition != null)
