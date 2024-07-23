@@ -52,7 +52,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         transform.position = startPos;
         yield return new WaitForSeconds(startDelay);
         // 버튼을 오른쪽으로 부드럽게 이동시키는 애니메이션
-        transform.DOMoveX(originalPosition.x, 1f).SetEase(Ease.OutSine);
+        if (Type != "CharBtn")
+        {
+            transform.DOMoveX(originalPosition.x, 1f).SetEase(Ease.OutSine);
+
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
