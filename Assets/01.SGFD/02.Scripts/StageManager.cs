@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using Photon.Pun;
 
 [System.Serializable]
@@ -15,9 +16,12 @@ public class StageManager : MonoBehaviourPun
     public static StageManager instance;
     public List<StageInfo> stageInfos = new List<StageInfo>();
     public List<Transform> ShopPosition = new List<Transform>();
+    public List<Transform> BossPosition = new List<Transform>();
     public GameObject monsterPrefab;
     public int currentStage = 0;
     public int lastStage;
+
+    [SerializeField] TMP_Text stageText;
 
     private float stageCooldown = 2f; // 다음 스테이지로 이동할 수 있는 쿨다운 시간 (초)
     private float lastStageChangeTime = 0f; // 마지막 스테이지 변경 시간
@@ -35,6 +39,10 @@ public class StageManager : MonoBehaviourPun
         }
     }
 
+    private void Update()
+    {
+        stageText.text = "STAGE " + currentStage;      
+    }
     public void NextStage()
     {
         // 쿨다운 확인
@@ -47,16 +55,24 @@ public class StageManager : MonoBehaviourPun
 
             // 스테이지 증가
             currentStage++;
-            // 현재 스테이지가 5, 10, 15, 20, 25인지 체크
-            if (currentStage > 0 && currentStage % 5 == 0) // 5, 10, 15, 20, 25 스테이지에서 ShopPosition으로 이동
+
+            // 5, 15, 25, 35 스테이지일 때는 ShopPosition으로 이동
+            if (currentStage > 0 && currentStage % 10 == 5)
             {
                 int shopIndex = Random.Range(0, ShopPosition.Count);
                 targetPosition = ShopPosition[shopIndex];
             }
+            // 10, 20, 30, 40, 50 스테이지일 때는 BossPosition으로 이동
+            else if (currentStage > 0 && currentStage % 10 == 0)
+            {
+                int bossIndex = Random.Range(0, BossPosition.Count);
+                targetPosition = BossPosition[bossIndex];
+            }
             else
             {
+                // 일반 스테이지일 때는 stageInfos에서 랜덤하게 spawnPos 선택
                 int randomIndex = Random.Range(1, stageInfos.Count);
-                while(randomIndex == lastStage)
+                while (randomIndex == lastStage)
                 {
                     randomIndex = Random.Range(1, stageInfos.Count);
                 }
@@ -73,8 +89,9 @@ public class StageManager : MonoBehaviourPun
             if (targetPosition != null)
             {
                 lastStageChangeTime = Time.time; // 현재 시간을 마지막 변경 시간으로 설정
-                // 모든 클라이언트에서 RPC 호출
-                photonView.RPC("MovePlayer", RpcTarget.All, targetPosition.position, targetPosition.rotation);
+
+                // 모든 클라이언트에서 RPC 호출하여 currentStage와 함께 MovePlayer 메서드 실행
+                photonView.RPC("MovePlayer", RpcTarget.All, currentStage, targetPosition.position, targetPosition.rotation);
             }
             else
             {
@@ -84,8 +101,11 @@ public class StageManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void MovePlayer(Vector3 position, Quaternion rotation)
+    public void MovePlayer(int stage, Vector3 position, Quaternion rotation)
     {
+        // 클라이언트에서 stage 값을 받아와서 설정
+        currentStage = stage;
+
         // 플레이어를 랜덤 위치로 이동
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -105,4 +125,5 @@ public class StageManager : MonoBehaviourPun
         player.transform.position = position;
         player.transform.rotation = rotation;
     }
+
 }
