@@ -9,11 +9,13 @@ public class PlayerShop : MonoBehaviour
     public bool isShop;    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private PlayerCtrl playerCtrl;
     private ArcherCtrl archerCtrl;
+    private DragoonCtrl dragoonCtrl;
 
     private void Awake()
     {
         playerCtrl = GetComponent<PlayerCtrl>();
         archerCtrl = GetComponent<ArcherCtrl>();
+        dragoonCtrl = GetComponent<DragoonCtrl>();
         shopUI = GetComponentInChildren<ShopUI>(true);      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
@@ -48,8 +50,17 @@ public class PlayerShop : MonoBehaviour
                 {
                     Debug.LogWarning("archerCtrl is null.");
                 }
+                if(dragoonCtrl != null)
+                {
+                    dragoonCtrl.attackPower += amount;
+                }
+                else
+                {
+                    Debug.LogWarning("dragoonCtrl is null");
+                }
                 break;
 
+                
             default:
                 Debug.LogError("Unknown stat type: " + statType);
                 break;
@@ -61,7 +72,12 @@ public class PlayerShop : MonoBehaviour
         if (shopUI != null)
         {
             shopUI.ToggleShop();
+            if(playerCtrl != null)
             playerCtrl.isShop = !playerCtrl.isShop;
+            if(archerCtrl != null)
+                archerCtrl.isShop= !archerCtrl.isShop;
+            if(dragoonCtrl != null)
+                dragoonCtrl.isShop= !dragoonCtrl.isShop;
         }
     }
 

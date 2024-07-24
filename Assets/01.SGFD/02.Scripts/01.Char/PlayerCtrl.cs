@@ -108,17 +108,14 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         if (!PV.IsMine) return;
 
         GetInput();
-        if (!isShop)
-        {
-            Move();
-        }
-        Jump();
+        Move();
         Attack();
         Dash();
         Skill();
+        Jump();
         UpdateSkillUI(); // 스킬 UI 업데이트 메서드 호출
         UpdateDashUI(); // 
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
@@ -140,7 +137,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop || isSkill)//공격이나 스킬중엔 못움직이게
+        if (isStop || isSkill || isShop)//공격이나 스킬중엔 못움직이게
             return;
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
         transform.position += moveVec * speed * Time.deltaTime;
@@ -168,9 +165,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(KeyCode.X))
             {
-                StartCoroutine(IsStop(0.2f));  
+                StartCoroutine(IsStop(0.2f));
                 AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1f, 0.9f), 0.4f);
-                PV.RPC("Damage", RpcTarget.All,attackPower);
+                PV.RPC("Damage", RpcTarget.All, attackPower);
                 attacklCurTime = attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
                 curAttackCount = (curAttackCount + 1) % maxAttackCount;
@@ -247,7 +244,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, damage);
                     enemyScript.playerObj = this.gameObject;
-                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, enemyScript.transform.position,damage);
+                    PV.RPC("SpawnDamageText", RpcTarget.AllBuffered, enemyScript.transform.position, damage);
                     PhotonNetwork.Instantiate("HitPtc", collider.transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
                     if (enemyScript.currentHP - damage <= 0)
                     {
@@ -294,7 +291,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void SpawnDamageText(Vector3 position,float damage)
+    void SpawnDamageText(Vector3 position, float damage)
     {
         GameObject damageTextObj = Instantiate(Resources.Load<GameObject>("DamageText"), position + new Vector3(1, 2.5f, 0), Quaternion.identity);
         TMP_Text damageText = damageTextObj.GetComponent<TMP_Text>();
@@ -388,11 +385,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator SkillCor()
     {
         yield return new WaitForSeconds(0.1f);
-        CameraShake.instance.ZoomIn(10f,1f); // 줌 인
+        CameraShake.instance.ZoomIn(10f, 1f); // 줌 인
 
         for (int i = 0; i < 6; i++)
         {
-            PV.RPC("Damage", RpcTarget.All, attackPower+1f);
+            PV.RPC("Damage", RpcTarget.All, attackPower + 1f);
             AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.2f);
             yield return new WaitForSeconds(0.1f);
             CameraShake.instance.Shake();
@@ -402,7 +399,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         CameraShake.instance.Shake();
         PV.RPC("Damage", RpcTarget.All, attackPower + 10f);
 
-        CameraShake.instance.ZoomOut(57.4f,0.2f); // 줌 아웃
+        CameraShake.instance.ZoomOut(57.4f, 0.2f); // 줌 아웃
 
     }
 
@@ -467,7 +464,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         isStop = true;
         yield return new WaitForSeconds(time);
         isStop = false;
-
     }
     IEnumerator IsSkill(float time)
     {
@@ -476,7 +472,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         isSkill = false;
 
     }
-    IEnumerator ObjectSetActive(GameObject go,float time)
+    IEnumerator ObjectSetActive(GameObject go, float time)
     {
         go.SetActive(true);
         yield return new WaitForSeconds(time);

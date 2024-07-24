@@ -70,7 +70,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
     private Quaternion networkRotation;
     private float interpolationFactor = 30f; // 보간 계수
 
-
+    public bool isShop = false;
 
     protected void Awake()
     {
@@ -136,7 +136,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop || isSkill)//공격이나 스킬중엔 못움직이게
+        if (isStop || isSkill || isShop)//공격이나 스킬중엔 못움직이게
             return;
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
         transform.position += moveVec * speed * Time.deltaTime;
