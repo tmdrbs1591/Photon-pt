@@ -666,6 +666,7 @@ MonoBehaviour:
   playerCanvas: {fileID: 6984652757312781605}
   skillPos: {fileID: 2283144871202238089}
   PV: {fileID: 8863778235661851455}
+  isShop: 0
 --- !u!54 &645107817462337696
 Rigidbody:
   m_ObjectHideFlags: 0
