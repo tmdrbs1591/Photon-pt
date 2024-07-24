@@ -50,7 +50,7 @@ public class PlayerShop : MonoBehaviour
                 {
                     Debug.LogWarning("archerCtrl is null.");
                 }
-                if(dragoonCtrl != null)
+                if (dragoonCtrl != null)
                 {
                     dragoonCtrl.attackPower += amount;
                 }
@@ -60,7 +60,7 @@ public class PlayerShop : MonoBehaviour
                 }
                 break;
 
-                
+
             default:
                 Debug.LogError("Unknown stat type: " + statType);
                 break;
@@ -72,12 +72,12 @@ public class PlayerShop : MonoBehaviour
         if (shopUI != null)
         {
             shopUI.ToggleShop();
-            if(playerCtrl != null)
-            playerCtrl.isShop = !playerCtrl.isShop;
-            if(archerCtrl != null)
-                archerCtrl.isShop= !archerCtrl.isShop;
-            if(dragoonCtrl != null)
-                dragoonCtrl.isShop= !dragoonCtrl.isShop;
+            if (playerCtrl != null)
+                playerCtrl.isShop = !playerCtrl.isShop;
+            if (archerCtrl != null)
+                archerCtrl.isShop = !archerCtrl.isShop;
+            if (dragoonCtrl != null)
+                dragoonCtrl.isShop = !dragoonCtrl.isShop;
         }
     }
 
@@ -95,11 +95,29 @@ public class PlayerShop : MonoBehaviour
         {
             isShop = false;
             if (playerCtrl != null)
-                playerCtrl.isShop = !playerCtrl.isShop;
+            {
+                if (playerCtrl.isShop)
+                {
+                    playerCtrl.isShop = false;
+                    ToggleShop();
+                }
+            }
             if (archerCtrl != null)
-                archerCtrl.isShop = !archerCtrl.isShop;
+            {
+                if (archerCtrl.isShop)
+                {
+                    archerCtrl.isShop = false;
+                    ToggleShop();
+                }
+            }
             if (dragoonCtrl != null)
-                dragoonCtrl.isShop = !dragoonCtrl.isShop;
+            {
+                if (dragoonCtrl.isShop)
+                {
+                    dragoonCtrl.isShop = false;
+                    ToggleShop();
+                }
+            }
         }
     }
 }
