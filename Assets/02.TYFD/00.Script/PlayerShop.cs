@@ -98,24 +98,24 @@ public class PlayerShop : MonoBehaviour
             {
                 if (playerCtrl.isShop)
                 {
-                    playerCtrl.isShop = false;
                     ToggleShop();
+                    playerCtrl.isShop = false;
                 }
             }
             if (archerCtrl != null)
             {
                 if (archerCtrl.isShop)
                 {
-                    archerCtrl.isShop = false;
                     ToggleShop();
+                    archerCtrl.isShop = false;
                 }
             }
             if (dragoonCtrl != null)
             {
                 if (dragoonCtrl.isShop)
                 {
-                    dragoonCtrl.isShop = false;
                     ToggleShop();
+                    dragoonCtrl.isShop = false;
                 }
             }
         }

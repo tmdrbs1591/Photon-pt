@@ -138,7 +138,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop || isSkill || isShop) // 공격이나 스킬 중엔 움직이지 않게 함
+        if (isStop || isSkill) // 공격이나 스킬 중엔 움직이지 않게 함
             return;
 
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
