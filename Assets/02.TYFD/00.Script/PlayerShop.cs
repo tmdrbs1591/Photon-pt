@@ -94,6 +94,12 @@ public class PlayerShop : MonoBehaviour
         if (other.gameObject.CompareTag("Shop"))
         {
             isShop = false;
+            if (playerCtrl != null)
+                playerCtrl.isShop = !playerCtrl.isShop;
+            if (archerCtrl != null)
+                archerCtrl.isShop = !archerCtrl.isShop;
+            if (dragoonCtrl != null)
+                dragoonCtrl.isShop = !dragoonCtrl.isShop;
         }
     }
 }
