@@ -1115,6 +1115,7 @@ MonoBehaviour:
   hpBar2: {fileID: 1605174581753177462}
   attackBox: {fileID: 7521221744098874728}
   gold: {fileID: 7565021520945452815, guid: a18d351db71507e4ba2502e4ec09d2df, type: 3}
+  goldCount: 3
   playerObj: {fileID: 0}
 --- !u!114 &8558904276326529148
 MonoBehaviour:

@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Slider hpBar2;
     [SerializeField] GameObject attackBox;
     [SerializeField] GameObject gold; // 죽었을때 생성할 골드
+    [SerializeField] float goldCount;//골드수
 
     private float playerDistance;
     private float syncInterval = 0.1f; // 동기화 간격 (초)
@@ -108,12 +109,15 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (currentHP <= 0)
         {
-            GameObject enemygold = Instantiate(gold, transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
-            Gold goldComponent = enemygold.GetComponent<Gold>();
-            goldComponent.isget = false;
+            for (int i = 0; i < goldCount; i++)
+            {
+                GameObject enemygold = Instantiate(gold, transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
+                Gold goldComponent = enemygold.GetComponent<Gold>();
+                goldComponent.isget = false;
 
-            // 현재 플레이어 오브젝트를 타겟으로 설정
-            goldComponent.target = playerObj.transform;
+                // 현재 플레이어 오브젝트를 타겟으로 설정
+                goldComponent.target = playerObj.transform;
+            }
 
             Destroy(gameObject);
         }

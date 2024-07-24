@@ -36,7 +36,7 @@ public class Gold : MonoBehaviour
 
     void Jump()
     {
-        rb.AddForce(new Vector3(0, 4, 0), ForceMode.Impulse);
+        rb.AddForce(new Vector3(0, 2, 0), ForceMode.Impulse);
     }
 
     void FollowTarget()
