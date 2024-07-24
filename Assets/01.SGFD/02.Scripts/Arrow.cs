@@ -81,7 +81,7 @@ public class Arrow : MonoBehaviourPunCallbacks
 
     private IEnumerator DestroyArrowDelayed()
     {
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(1f); // 예시로 1초 대기
 
         if (PV != null)
         {
@@ -96,7 +96,7 @@ public class Arrow : MonoBehaviourPunCallbacks
             // 객체를 파괴할 권한이 있는 경우에만 파괴합니다.
             if (PV.IsMine || PhotonNetwork.IsMasterClient)
             {
-                PV.RPC("DestroyArrow", RpcTarget.MasterClient);
+                PV.RPC("DestroyArrow", RpcTarget.AllBuffered);
             }
         }
         else
