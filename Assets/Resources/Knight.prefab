@@ -9535,7 +9535,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!136 &6709670841341841180
 CapsuleCollider:
@@ -9576,7 +9576,7 @@ MonoBehaviour:
   speed: 5
   rotationSpeed: 10
   jumpPower: 10
-  attackPower: 10
+  attackPower: 100
   cameraPos: {fileID: 7479147498146489405}
   nickNameText: {fileID: 644665866816690609}
   AttackPtc1: {fileID: 3253865869161627872}

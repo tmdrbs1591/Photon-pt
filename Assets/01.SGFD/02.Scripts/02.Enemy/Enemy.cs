@@ -19,6 +19,10 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject gold; // 죽었을때 생성할 골드
     [SerializeField] float goldCount;//골드수
 
+    [SerializeField] LayerMask layerMask;
+    [SerializeField] GameObject DangerMarker;
+    [SerializeField] GameObject bulletPrefab;
+
     private float playerDistance;
     private float syncInterval = 0.1f; // 동기화 간격 (초)
     private float lastSyncTime;
@@ -93,7 +97,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         {
             anim.SetBool("isWalk", true);
         }
-            
+
         hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 40f);
         hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
 
@@ -164,6 +168,52 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine(AttackBoxActive());
     }
 
+    public void DangerMarkerShoot()
+    {
+        StartCoroutine(SpellStart());
+    }
+
+    IEnumerator SpellStart()
+    {
+        if (photonView.IsMine)
+        {
+            float angleStep = 360f / 36;
+
+            for (int i = 0; i < 36; i++)
+            {
+                Quaternion rotation = Quaternion.Euler(0f, angleStep * i, 0f); // 총알의 회전 각도 계산
+
+                GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation); // 총알 생성
+                Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
+
+                // 총알의 방향과 속도 설정
+                Vector3 shootDirection = bullet.transform.forward;
+                bulletRigidbody.velocity = shootDirection * 10;
+
+                Destroy(bullet, 2f);
+                // 총알의 추가적인 설정 (예: 데미지 설정 등)
+
+                if (PhotonNetwork.IsConnected)
+                {
+                    // PUN을 사용하여 다른 플레이어에게 총알 발사 동작을 동기화합니다.
+                    photonView.RPC("SyncSpellStart", RpcTarget.Others, transform.position, rotation);
+                }
+
+                yield return new WaitForSeconds(0.2f); // 발사 간격 기다림
+            }
+        }
+    }
+    [PunRPC]
+    void SyncSpellStart(Vector3 firePosition, Quaternion fireRotation)
+    {
+        // 다른 플레이어에게서 받은 위치와 회전으로 총알 생성
+        GameObject bullet = Instantiate(bulletPrefab, firePosition, fireRotation);
+        Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
+        Vector3 shootDirection = bullet.transform.forward;
+        bulletRigidbody.velocity = shootDirection * 10;
+
+        // 추가적인 설정 (예: 데미지 설정 등)
+    }
     IEnumerator AttackBoxActive()
     {
         attackBox.SetActive(true);
