@@ -113,7 +113,7 @@ public class StageManager : MonoBehaviourPun
             }
 
             // 스테이지 아이콘 업데이트
-            StageIcon();
+            photonView.RPC("StageIcon", RpcTarget.All);
         }
     }
 
@@ -143,6 +143,7 @@ public class StageManager : MonoBehaviourPun
         player.transform.rotation = rotation;
     }
 
+    [PunRPC]
     private void StageIcon()
     {
         foreach (var icon in stageIcons)

@@ -84,5 +84,8 @@ MonoBehaviour:
   - DestroyFirePillar
   - SpellStart
   - SyncSpellStart
+  - UpdateStageIcons
+  - SyncStageIcons
+  - StageIcon
   DisableAutoOpenWizard: 1
   ShowSettings: 1
