@@ -82,5 +82,7 @@ MonoBehaviour:
   - UpdateCharacterSpriteRPC
   - SkillEffect
   - DestroyFirePillar
+  - SpellStart
+  - SyncSpellStart
   DisableAutoOpenWizard: 1
   ShowSettings: 1
