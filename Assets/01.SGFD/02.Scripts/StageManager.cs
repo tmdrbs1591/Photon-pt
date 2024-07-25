@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class StageInfo
 {
     public Transform spawnPos;
     public Transform[] monsterSpawnPos;
+}
+
+[System.Serializable]
+public class StageIcon
+{
+    public string iconName;
+    public GameObject icon;
 }
 
 public class StageManager : MonoBehaviourPun
@@ -26,6 +34,11 @@ public class StageManager : MonoBehaviourPun
     private float stageCooldown = 2f; // 다음 스테이지로 이동할 수 있는 쿨다운 시간 (초)
     private float lastStageChangeTime = 0f; // 마지막 스테이지 변경 시간
 
+    [Header("StageBar")]
+    [SerializeField] public List<StageIcon> stageIcons = new List<StageIcon>();
+    [SerializeField] public List<Transform> stagePoss = new List<Transform>();
+    [SerializeField] private Slider stageBar;
+
     private void Awake()
     {
         if (instance == null)
@@ -41,8 +54,9 @@ public class StageManager : MonoBehaviourPun
 
     private void Update()
     {
-        stageText.text = "STAGE " + currentStage;      
+        stageText.text = "STAGE " + currentStage;
     }
+
     public void NextStage()
     {
         // 쿨다운 확인
@@ -97,6 +111,9 @@ public class StageManager : MonoBehaviourPun
             {
                 Debug.LogError("Target position is null.");
             }
+
+            // 스테이지 아이콘 업데이트
+            StageIcon();
         }
     }
 
@@ -124,6 +141,102 @@ public class StageManager : MonoBehaviourPun
         yield return new WaitForSeconds(1.3f);
         player.transform.position = position;
         player.transform.rotation = rotation;
+    }
+
+    private void StageIcon()
+    {
+        foreach (var icon in stageIcons)
+        {
+            icon.icon.SetActive(false);
+        }
+
+        int defaulIconCount = 0;
+        int stagePosUpandDown = 0;
+        bool isShop = false;
+        bool isBoss = false;
+
+        for (int i = 0; i < stagePoss.Count; i++)
+        {
+            if (i == 0)
+            {
+                stagePosUpandDown = -1;
+            }
+            else if (i > 0)
+            {
+                stagePosUpandDown++;
+            }
+            Debug.Log("현재 표시할 스테이지 : " + (currentStage + stagePosUpandDown));
+
+            if ((currentStage + stagePosUpandDown) % 10 == 0 && i != 4) // 만약 10의 배수 (보스 스테이지)
+            {
+                stageIcons[5].icon.transform.position = stagePoss[i].position;
+                stageIcons[5].icon.SetActive(true);
+                isBoss = true;
+                Debug.Log("보스 스테이지 칸번호 : " + i);
+            }
+            else if ((currentStage + stagePosUpandDown) % 5 == 0 && i != 4) // 만약 5의 배수 (상점 스테이지)
+            {
+                if (!isBoss) // 이미 보스 스테이지가 설정되지 않은 경우에만 설정
+                {
+                    stageIcons[4].icon.transform.position = stagePoss[i].position;
+                    stageIcons[4].icon.SetActive(true);
+                    isShop = true;
+                    Debug.Log("상점 스테이지 칸번호 : " + i);
+                }
+            }
+            else
+            {
+                stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
+                stageIcons[defaulIconCount].icon.SetActive(true);
+                defaulIconCount++;
+            }
+
+            if (i == 4)
+            {
+                Debug.Log("현재상점 : " + isShop);
+                Debug.Log("현재보스 : " + isBoss);
+
+                if (isShop)
+                {
+                    stageIcons[5].icon.transform.position = stagePoss[i].position;
+                    stageIcons[5].icon.SetActive(true);
+                }
+                else if (isBoss)
+                {
+                    stageIcons[4].icon.transform.position = stagePoss[i].position;
+                    stageIcons[4].icon.SetActive(true);
+                }
+                else
+                {
+                    if(currentStage - 10 > 0)
+                    {
+                        if(currentStage - 10 > 5)
+                        {
+                            stageIcons[5].icon.transform.position = stagePoss[i].position;
+                            stageIcons[5].icon.SetActive(true);
+                        }
+                        else
+                        {
+                            stageIcons[4].icon.transform.position = stagePoss[i].position;
+                            stageIcons[4].icon.SetActive(true);
+                        }
+                    }
+                    else
+                    {
+                        if (currentStage > 5)
+                        {
+                            stageIcons[5].icon.transform.position = stagePoss[i].position;
+                            stageIcons[5].icon.SetActive(true);
+                        }
+                        else
+                        {
+                            stageIcons[4].icon.transform.position = stagePoss[i].position;
+                            stageIcons[4].icon.SetActive(true);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
