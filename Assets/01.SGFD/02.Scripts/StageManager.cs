@@ -185,6 +185,11 @@ public class StageManager : MonoBehaviourPun
                     Debug.Log("상점 스테이지 칸번호 : " + i);
                 }
             }
+            else if(i == 1)
+            {
+                stageIcons[6].icon.transform.position = stagePoss[i].position;
+                stageIcons[6].icon.SetActive(true);
+            }
             else
             {
                 stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
