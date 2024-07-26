@@ -11735,7 +11735,7 @@ MonoBehaviour:
   currentXp: 0
   xp: 100
   xpSlider: {fileID: 7277312030268454149}
-  level: {fileID: 3798459467928266158}
+  levelText: {fileID: 3798459467928266158}
   xpText: {fileID: 1188900844217412763}
 --- !u!1 &6753898716793463671
 GameObject:

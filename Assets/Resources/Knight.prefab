@@ -13709,7 +13709,7 @@ MonoBehaviour:
   currentXp: 0
   xp: 100
   xpSlider: {fileID: 8855570065286355864}
-  level: {fileID: 9203624979372359762}
+  levelText: {fileID: 9203624979372359762}
   xpText: {fileID: 7302902373118525746}
 --- !u!114 &3941120395239933755
 MonoBehaviour:
