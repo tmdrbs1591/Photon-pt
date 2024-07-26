@@ -13701,8 +13701,8 @@ MonoBehaviour:
   speed: 6
   attackCoolTime: 0.3
   attackPower: 10
-  maxHp: 100
-  curHp: 100
+  maxHp: 10
+  curHp: 10
   skillCoolTime: 15
   uiLevelUp: {fileID: 7018734036294821705}
   playerLevel: 1

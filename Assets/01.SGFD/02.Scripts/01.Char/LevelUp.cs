@@ -50,16 +50,24 @@ public class LevelUp : MonoBehaviour
             aug.gameObject.SetActive(false);
         }
 
-        int[] ran = new int[3];
-        while (true)
+        // 중복되지 않는 인덱스 생성
+        List<int> indices = new List<int>();
+        for (int i = 0; i < augments.Length; i++)
         {
-            ran[0] = Random.Range(0, augments.Length);
-            ran[1] = Random.Range(0, augments.Length);
-            ran[2] = Random.Range(0, augments.Length);
-
-            if (ran[0] != ran[1] && ran[1] != ran[2] && ran[0] != ran[2])
-                break;
+            indices.Add(i);
         }
+
+        // 랜덤으로 섞기
+        for (int i = 0; i < indices.Count; i++)
+        {
+            int temp = indices[i];
+            int randomIndex = Random.Range(i, indices.Count);
+            indices[i] = indices[randomIndex];
+            indices[randomIndex] = temp;
+        }
+
+        // 처음 3개의 인덱스 선택
+        int[] ran = indices.GetRange(0, 3).ToArray();
 
         for (int index = 0; index < ran.Length; index++)
         {
@@ -83,7 +91,7 @@ public class LevelUp : MonoBehaviour
 
                 // DOTween 애니메이션
                 float delay = index * 0.1f;  // ran 배열 값에 기반하여 딜레이 설정
-                // 목표 위치를 화면 아래쪽으로 조정 (예: -400)
+                // 목표 위치를 화면 아래쪽으로 조정 (예: -370)
                 float finalPositionY = -370f;
                 augRect.DOAnchorPosY(finalPositionY, 0.5f).SetDelay(delay).SetEase(Ease.OutBack);
             }

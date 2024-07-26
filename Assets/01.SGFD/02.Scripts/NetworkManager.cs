@@ -51,6 +51,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     [SerializeField] Transform playerLisContent;
     [SerializeField] GameObject playerListItemPrefab;
+
+    [SerializeField] Transform hpBarLisContent;
+    [SerializeField] GameObject hpBarListItemPrefab;
     internal object playerList;
 
     public void StartGame()
@@ -208,6 +211,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             playerItem.GetComponent<PlayerListItem>().Setup(players[i]);
             charImage = playerItem.GetComponent<CharImage>();
         }
+        for (int i = 0; i < players.Count(); i++)
+        {
+            GameObject playerhpItem = Instantiate(hpBarListItemPrefab, hpBarLisContent);
+            playerhpItem.GetComponent<HpbarListItem>().Setup(players[i]);
+        }
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -239,6 +247,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RoomRenewal();
         ChatRPC("<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
         Instantiate(playerListItemPrefab, playerLisContent).GetComponent<PlayerListItem>().Setup(newPlayer);
+        Instantiate(hpBarListItemPrefab, hpBarLisContent).GetComponent<HpbarListItem>().Setup(newPlayer);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
