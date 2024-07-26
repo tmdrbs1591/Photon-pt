@@ -40,6 +40,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private TMP_Text dashText; // 대쉬 쿨타임을 표시할 텍스트
 
     [SerializeField] private GameObject playerCanvas;
+    [SerializeField] private GameObject playerUICanvas;
 
     public PhotonView PV;
 
@@ -74,6 +75,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             // 다른 플레이어의 캔버스를 비활성화
             playerCanvas.SetActive(false);
+            playerUICanvas.SetActive(false);
         }
         if (PV.IsMine)
         {
