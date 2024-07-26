@@ -23,6 +23,7 @@ public class PlayerGold : MonoBehaviour
         var GoldCom = collision.gameObject.GetComponent<Gold>();
         if (collision.gameObject.CompareTag("Gold") && GoldCom.isget)
         {
+            AudioManager.instance.PlaySound(transform.position, 6, Random.Range(1f, 0.9f), 0.4f);
             var ps = GetComponent<PlayerStats>();
             ps.currentXp += 10;
             ps.LV_UP();

@@ -50,6 +50,7 @@ public class PlayerStats : MonoBehaviour
     {
         if (currentXp >= xp)
         {
+            AudioManager.instance.PlaySound(transform.position, 7, Random.Range(1f, 1f), 0.4f);
             currentXp -= xp;
             playerLevel++;
             uiLevelUp.Show();
