@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -12,15 +14,47 @@ public class PlayerStats : MonoBehaviour
     public float curHp;
 
     public float skillCoolTime = 5f; // 스킬 쿨타임 설정
+
+    public LevelUp uiLevelUp;
+
+
+    [Header("레벨")]
+    public int playerLevel = 1;
+    public float currentXp; // 현재 경험치
+    public float xp = 100; // 총경험치
+
+    [SerializeField] Slider xpSlider;
+    [SerializeField] TMP_Text level;
+    [SerializeField] TMP_Text xpText;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        Player_XP();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        xpSlider.value = Mathf.Lerp(xpSlider.value, currentXp / xp, Time.deltaTime * 40f);
+        level.text = "LV." + playerLevel.ToString();
+        xpText.text = currentXp + "/" + xp;
     }
+
+    public void Player_XP()
+    {
+        xp = playerLevel * 100;
+    }
+
+    public void LV_UP()
+    {
+        if (currentXp >= xp)
+        {
+            currentXp -= xp;
+            playerLevel++;
+            uiLevelUp.Show();
+            Player_XP();
+        }
+    }
+
 }

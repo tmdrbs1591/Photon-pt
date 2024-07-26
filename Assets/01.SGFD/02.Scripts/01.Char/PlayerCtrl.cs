@@ -73,7 +73,6 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     public PlayerStats playerStats;
 
-    public LevelUp uiLevelUp;
 
     protected void Awake()
     {
@@ -132,10 +131,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 25);
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            uiLevelUp.Show();
-        }
+       
     }
 
     void GetInput()

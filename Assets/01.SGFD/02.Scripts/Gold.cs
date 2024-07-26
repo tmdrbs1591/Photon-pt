@@ -39,7 +39,7 @@ public class Gold : MonoBehaviour
         Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
 
         // 랜덤한 힘의 크기 설정 (예를 들어 1에서 3 사이의 랜덤한 값)
-        float randomForceMagnitude = Random.Range(1f, 3f);
+        float randomForceMagnitude = Random.Range(3f, 6f);
 
         // 랜덤한 방향과 크기의 임펄스 힘 적용
         rb.AddForce(randomDirection * randomForceMagnitude, ForceMode.Impulse);

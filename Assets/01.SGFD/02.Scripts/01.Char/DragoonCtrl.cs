@@ -71,7 +71,6 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     public PlayerStats playerStats;
 
-    public LevelUp uiLevelUp;
 
     protected void Awake()
     {
@@ -127,10 +126,6 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
             // 다른 클라이언트에서 보간하여 위치와 회전을 조정
             transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 25);
             transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 25);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            uiLevelUp.Show();
         }
     }
 

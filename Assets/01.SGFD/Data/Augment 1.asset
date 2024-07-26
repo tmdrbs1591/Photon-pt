@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   augmentType: 3
   augmentId: 0
-  augmentName: "\uC18D\uB3C4 \uC99D\uAC00"
-  augmentDesc: "\uC18D\uB3C4\uAC00 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  augmentName: "\uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
+  augmentDesc: "\uC774\uB3D9\uC18D\uB3C4\uAC00 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   augmentIcon: {fileID: 21300000, guid: 22e0344d008baf8488b2ce72ebc41216, type: 3}
   baseDamage: 4.5
   baseCount: 0

@@ -23,6 +23,9 @@ public class PlayerGold : MonoBehaviour
         var GoldCom = collision.gameObject.GetComponent<Gold>();
         if (collision.gameObject.CompareTag("Gold") && GoldCom.isget)
         {
+            var ps = GetComponent<PlayerStats>();
+            ps.currentXp += 10;
+            ps.LV_UP();
             Destroy(collision.gameObject);
             gold++;
         }
