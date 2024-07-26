@@ -11,6 +11,7 @@ public class PlayerStats : MonoBehaviour
     public float maxHp;
     public float curHp;
 
+    public float skillCoolTime = 5f; // 스킬 쿨타임 설정
     // Start is called before the first frame update
     void Start()
     {

@@ -32,7 +32,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     [Header("쿨타임")]
     private float attacklCurTime;
-    [SerializeField] private float skillCoolTime = 5f; // 스킬 쿨타임 설정
+   
     private float skilllCurTime;
     [SerializeField] private float dashCoolTime = 5f; // 대수ㅣ 쿨타임 설정
     private float dashCurTime;
@@ -376,7 +376,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 StartCoroutine(IsSkill(1.3f));
                 anim.SetTrigger("isAttack2");
                 StartCoroutine(SkillCor());
-                skilllCurTime = skillCoolTime;
+                skilllCurTime = playerStats.skillCoolTime;
             }
         }
         else
@@ -433,7 +433,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
         // 스킬 UI 벨류 업데이트: 남은 스킬 쿨타임에 따라 UI의 fillAmount 설정
         if (skillFilled != null)
         {
-            skillFilled.fillAmount = Mathf.Clamp01(skilllCurTime / skillCoolTime);
+            skillFilled.fillAmount = Mathf.Clamp01(skilllCurTime / playerStats.skillCoolTime);
             if (skilllCurTime > 0)
             {
                 skillText.text = skilllCurTime.ToString("F1"); // 소수점 첫째 자리까지 표시

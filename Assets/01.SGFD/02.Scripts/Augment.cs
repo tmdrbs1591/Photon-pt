@@ -59,6 +59,11 @@ public class Augment : MonoBehaviour
                 break;
             case AugmentData.AugmentType.Glove:
                 break;
+            case AugmentData.AugmentType.SkillCool:
+                playerStats.skillCoolTime -= 1f;
+                break;
+
+
         }
 
         level++;

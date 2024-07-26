@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Augment", menuName = "Scriptble Object/AugmentData")]
 public class AugmentData : ScriptableObject
 {
-    public enum AugmentType { Damage,AttackSpeed,Glove,Speed,Heal}
+    public enum AugmentType { Damage,AttackSpeed,Glove,Speed,Heal,SkillCool}
 
     [Header("# Main Info")]
     public AugmentType augmentType;
