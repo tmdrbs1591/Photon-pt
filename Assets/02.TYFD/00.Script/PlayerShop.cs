@@ -35,7 +35,7 @@ public class PlayerShop : MonoBehaviour
             case "attackPower":
                 if (playerCtrl != null)
                 {
-                    playerCtrl.attackPower += amount;
+                    playerCtrl.playerStats.attackPower += amount;
                 }
                 else
                 {
@@ -44,7 +44,7 @@ public class PlayerShop : MonoBehaviour
 
                 if (archerCtrl != null)
                 {
-                    archerCtrl.attackPower += amount;
+                    archerCtrl.playerStats.attackPower += amount;
                 }
                 else
                 {
@@ -52,7 +52,7 @@ public class PlayerShop : MonoBehaviour
                 }
                 if (dragoonCtrl != null)
                 {
-                    dragoonCtrl.attackPower += amount;
+                    dragoonCtrl.playerStats.attackPower += amount;
                 }
                 else
                 {

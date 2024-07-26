@@ -10,10 +10,8 @@ using System.Net.Http.Headers;
 public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] Rigidbody rigid;
-    [SerializeField] private float speed; // 이동 속도
     [SerializeField] private float rotationSpeed = 10f; // 회전 속도를 조절하는 변수
     [SerializeField] private float jumpPower = 10f;
-    [SerializeField] public float attackPower = 1f; // 변경된 attackPower 값을 직접 사용하지 않기 위해 private 필드로 변경
 
     [SerializeField] Transform cameraPos;
     [SerializeField] TMP_Text nickNameText;
@@ -31,11 +29,8 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Transform attackBoxPos;
     [SerializeField] Slider hpBar;
 
-    [SerializeField] private float maxHp;
-    [SerializeField] private float curHp;
 
     [Header("쿨타임")]
-    [SerializeField] private float attackCoolTime = 0.5f;
     private float attacklCurTime;
     [SerializeField] private float skillCoolTime = 5f; // 스킬 쿨타임 설정
     private float skilllCurTime;
@@ -72,11 +67,16 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     public bool isShop = false;
 
+    public PlayerStats playerStats;
+
+    public LevelUp uiLevelUp;
+
     protected void Awake()
     {
-        curHp = maxHp;
+        playerStats = GetComponent<PlayerStats>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        playerStats.curHp = playerStats.maxHp;
 
 
         if (!photonView.IsMine)
@@ -117,13 +117,17 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ChangeAttackPower(attackPower + 1f); // attackPower 증가 함수 호출
+            ChangeAttackPower(playerStats.attackPower + 1f); // attackPower 증가 함수 호출
         }
         if (!PV.IsMine)
         {
             // 다른 클라이언트에서 보간하여 위치와 회전을 조정
             transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 25);
             transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 25);
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            uiLevelUp.Show();
         }
     }
 
@@ -139,7 +143,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
         if (isStop || isSkill)//공격이나 스킬중엔 못움직이게
             return;
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
-        transform.position += moveVec * speed * Time.deltaTime;
+        transform.position += moveVec * playerStats.speed * Time.deltaTime;
 
         anim.SetBool("isWalk", moveVec != Vector3.zero);
 
@@ -167,8 +171,8 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 StartCoroutine(IsStop(0.2f));
                 AudioManager.instance.PlaySound(transform.position, 0, Random.Range(1f, 0.9f), 0.1f);
                 AudioManager.instance.PlaySound(transform.position, 5, Random.Range(1f, 0.9f), 0.5f);
-                PV.RPC("Damage", RpcTarget.All, attackPower);
-                attacklCurTime = attackCoolTime;
+                PV.RPC("Damage", RpcTarget.All, playerStats.attackPower);
+                attacklCurTime = playerStats.attackCoolTime;
                 PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered, curAttackCount);
                 curAttackCount = (curAttackCount + 1) % maxAttackCount;
             }
@@ -265,7 +269,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void SetAttackPower(float newAttackPower)
     {
-        attackPower = newAttackPower;
+        playerStats.attackPower = newAttackPower;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -274,19 +278,19 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             // 데이터를 다른 클라이언트에게 보냅니다.
-            stream.SendNext(attackPower);
+            stream.SendNext(playerStats.attackPower);
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
-            stream.SendNext(curHp);
+            stream.SendNext(playerStats.curHp);
 
         }
         else
         {
             // 데이터를 다른 클라이언트로부터 수신합니다.
-            attackPower = (float)stream.ReceiveNext();
+            playerStats.attackPower = (float)stream.ReceiveNext();
             transform.position = (Vector3)stream.ReceiveNext();
             transform.rotation = (Quaternion)stream.ReceiveNext();
-            curHp = (float)stream.ReceiveNext();
+            playerStats.curHp = (float)stream.ReceiveNext();
         }
     }
 
@@ -329,8 +333,8 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void PlayerTakeDamage(float damage)
     {
-        curHp -= damage;
-        hpBar.value = curHp / maxHp; // HP 바 업데이트
+        playerStats.curHp -= damage;
+        hpBar.value = playerStats.curHp / playerStats.maxHp; // HP 바 업데이트
     }
 
     void Dash()
@@ -347,7 +351,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
                 PV.RPC("ActivateDashEffect", RpcTarget.All);
 
                 // 대쉬 속도 증가
-                speed *= 4f;
+                playerStats.speed *= 4f;
 
                 // 대쉬 이펙트 지속시간 후에 대쉬 속도 복구 및 상태 초기화
                 StartCoroutine(DashOut());
@@ -391,10 +395,10 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
         if (firePillar != null)
         {
-            firePillar._damage = attackPower; // 화살의 파워 설정
+            firePillar._damage = playerStats.attackPower; // 화살의 파워 설정
         }
         AudioManager.instance.PlaySound(transform.position, 4, Random.Range(1f, 0.9f), 0.4f);
-        attacklCurTime = attackCoolTime;
+        attacklCurTime = playerStats.attackCoolTime;
         PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered);
 
 
@@ -418,7 +422,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
         yield return new WaitForSeconds(0.12f);
 
         // 대쉬 속도 복구
-        speed /= 4f;
+        playerStats.speed /= 4f;
 
         // 대쉬 상태 초기화
         isDash = false;
