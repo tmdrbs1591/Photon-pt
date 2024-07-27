@@ -52,6 +52,11 @@ public class StageManager : MonoBehaviourPun
         }
     }
 
+    private void Start()
+    {
+        StageIcon();
+    }
+
     private void Update()
     {
         stageText.text = "STAGE " + currentStage;
