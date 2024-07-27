@@ -710,6 +710,7 @@ GameObject:
   - component: {fileID: 4451911823465354706}
   - component: {fileID: 2779010563400126591}
   - component: {fileID: -659635908510557352}
+  - component: {fileID: 5572694070025402713}
   m_Layer: 0
   m_Name: Dragoon
   m_TagString: Player
@@ -731,6 +732,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2751440857070906995}
+  - {fileID: 1781646611612674692}
   - {fileID: 2283144871202238089}
   - {fileID: 7241961758155694476}
   - {fileID: 1221829828050748754}
@@ -809,7 +811,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 305176240414438291}
   serializedVersion: 4
-  m_Mass: 15
+  m_Mass: 70
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -826,7 +828,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &1001760828176728220
 CapsuleCollider:
@@ -991,6 +993,21 @@ MonoBehaviour:
   xpSlider: {fileID: 9108874158843602170}
   levelText: {fileID: 4857120926547855920}
   xpText: {fileID: 6030347736489011761}
+--- !u!114 &5572694070025402713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305176240414438291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6b7740117e40ff4abc6b310b15569b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventBoxSize: {x: 2.83, y: 2.25, z: 1.63}
+  eventBoxPos: {fileID: 1781646611612674692}
+  isHold: 0
 --- !u!1 &316865321839707665
 GameObject:
   m_ObjectHideFlags: 0
@@ -13400,6 +13417,37 @@ Transform:
   m_Children:
   - {fileID: 683561486723884797}
   m_Father: {fileID: 7204680606947690117}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7384508169654023905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1781646611612674692}
+  m_Layer: 0
+  m_Name: EventPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1781646611612674692
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7384508169654023905}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.1, y: 0.165, z: 0.724}
+  m_LocalScale: {x: 1.0833331, y: 1.0833331, z: 1.0833331}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 303176704719517323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7390540615569816275
 GameObject:

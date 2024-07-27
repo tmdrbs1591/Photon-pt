@@ -9111,7 +9111,7 @@ RectTransform:
   - {fileID: 408540496195972063}
   - {fileID: 2176394176303975368}
   - {fileID: 7761208991014469267}
-  m_Father: {fileID: 2383517654184473939}
+  m_Father: {fileID: 7494034897337943883}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -9651,7 +9651,6 @@ Transform:
   - {fileID: 3777673208865125618}
   - {fileID: 3925087532365370354}
   - {fileID: 6470212372723459973}
-  - {fileID: 705354762472744824}
   m_Father: {fileID: 7494034897337943883}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5552017045674783082
@@ -11460,6 +11459,7 @@ GameObject:
   - component: {fileID: 1895667924663394038}
   - component: {fileID: 5695209042304438058}
   - component: {fileID: -7544906599886039066}
+  - component: {fileID: -499408117647655480}
   m_Layer: 0
   m_Name: Archer
   m_TagString: Player
@@ -11481,9 +11481,11 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3749801058783333536}
+  - {fileID: 7347363825274486474}
   - {fileID: 3345333031289574603}
   - {fileID: 8421752207726133848}
   - {fileID: 4799833880526315880}
+  - {fileID: 705354762472744824}
   - {fileID: 2383517654184473939}
   - {fileID: 1961486185398157024}
   - {fileID: 556866549846373368}
@@ -11520,7 +11522,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6741435641518022027}
   serializedVersion: 4
-  m_Mass: 15
+  m_Mass: 70
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -11537,7 +11539,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 116
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &124786501901740783
 CapsuleCollider:
@@ -11684,7 +11686,7 @@ MonoBehaviour:
   playerUICanvas: {fileID: 5154321141173643752}
   PV: {fileID: 7012086272704346925}
   isShop: 0
-  playerStats: {fileID: 0}
+  playerStats: {fileID: -7544906599886039066}
 --- !u!114 &1895667924663394038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11737,6 +11739,21 @@ MonoBehaviour:
   xpSlider: {fileID: 7277312030268454149}
   levelText: {fileID: 3798459467928266158}
   xpText: {fileID: 1188900844217412763}
+--- !u!114 &-499408117647655480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6741435641518022027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6b7740117e40ff4abc6b310b15569b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventBoxSize: {x: 1.98, y: 5.05, z: 1.74}
+  eventBoxPos: {fileID: 7347363825274486474}
+  isHold: 0
 --- !u!1 &6753898716793463671
 GameObject:
   m_ObjectHideFlags: 0
@@ -14328,8 +14345,39 @@ Transform:
   m_GameObject: {fileID: 7758220658209798453}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.016541004, y: 0.077, z: -0.637}
+  m_LocalPosition: {x: -0.016541004, y: -0.09, z: -0.478}
   m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7494034897337943883}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7795508112139123773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7347363825274486474}
+  m_Layer: 0
+  m_Name: EventPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7347363825274486474
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7795508112139123773}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.14, z: 0.88}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7494034897337943883}
