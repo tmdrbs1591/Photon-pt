@@ -172,14 +172,15 @@ public class StageManager : MonoBehaviourPun
                 stagePosUpandDown++;
             }
             Debug.Log("현재 표시할 스테이지 : " + (currentStage + stagePosUpandDown));
-            if ((currentStage + stagePosUpandDown) % 10 == 0 && i != 4 && (currentStage + stagePosUpandDown) > 0) // 만약 10의 배수 (보스 스테이지)
+
+            if ((currentStage + stagePosUpandDown) % 10 == 0 && i != 4) // 만약 10의 배수 (보스 스테이지)
             {
                 stageIcons[5].icon.transform.position = stagePoss[i].position;
                 stageIcons[5].icon.SetActive(true);
                 isBoss = true;
                 Debug.Log("보스 스테이지 칸번호 : " + i);
             }
-            else if ((currentStage + stagePosUpandDown) % 5 == 0 && i != 4 && (currentStage + stagePosUpandDown) > 0) // 만약 5의 배수 (상점 스테이지)
+            else if ((currentStage + stagePosUpandDown) % 5 == 0 && i != 4) // 만약 5의 배수 (상점 스테이지)
             {
                 if (!isBoss) // 이미 보스 스테이지가 설정되지 않은 경우에만 설정
                 {
@@ -189,17 +190,18 @@ public class StageManager : MonoBehaviourPun
                     Debug.Log("상점 스테이지 칸번호 : " + i);
                 }
             }
-            else if (i == 1)
+            else if(i == 1)
             {
                 stageIcons[6].icon.transform.position = stagePoss[i].position;
                 stageIcons[6].icon.SetActive(true);
             }
-            else if (i != 4)
+            else
             {
                 stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
                 stageIcons[defaulIconCount].icon.SetActive(true);
                 defaulIconCount++;
             }
+
             if (i == 4)
             {
                 Debug.Log("현재상점 : " + isShop);
@@ -217,9 +219,9 @@ public class StageManager : MonoBehaviourPun
                 }
                 else
                 {
-                    if (currentStage - 10 > 0)
+                    if(currentStage - 10 > 0)
                     {
-                        if (currentStage - 10 > 5)
+                        if(currentStage - 10 > 5)
                         {
                             stageIcons[5].icon.transform.position = stagePoss[i].position;
                             stageIcons[5].icon.SetActive(true);
