@@ -4240,6 +4240,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7645440122267893666}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2052024108910401200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8605249884409897303}
+  m_Layer: 0
+  m_Name: EventPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8605249884409897303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052024108910401200}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.05513668, y: 0.401, z: 0.61000013}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8133346597014770548}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2052814619263315888
 GameObject:
   m_ObjectHideFlags: 0
@@ -13545,6 +13576,7 @@ GameObject:
   - component: {fileID: 6801369397265047919}
   - component: {fileID: -6649995726869089209}
   - component: {fileID: 4871646911513883471}
+  - component: {fileID: -5128806278797436510}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Player
@@ -13572,6 +13604,7 @@ Transform:
   - {fileID: 1568076104410483786}
   - {fileID: 7479147498146489405}
   - {fileID: 5447472051837976506}
+  - {fileID: 8605249884409897303}
   - {fileID: 3488087097103745891}
   - {fileID: 1614469587351990792}
   - {fileID: 6462986332914950174}
@@ -13824,6 +13857,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isShop: 0
+--- !u!114 &-5128806278797436510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7226479372309024491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6b7740117e40ff4abc6b310b15569b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventBoxSize: {x: 1.79, y: 1.65, z: 1.44}
+  eventBoxPos: {fileID: 8605249884409897303}
+  isHold: 0
 --- !u!1 &7232548172885131704
 GameObject:
   m_ObjectHideFlags: 0

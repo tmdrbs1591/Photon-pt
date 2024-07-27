@@ -88,5 +88,18 @@ MonoBehaviour:
   - SyncStageIcons
   - StageIcon
   - UpdatePlayerStats
+  - SpawnAcornsRPC
+  - DropAcorn
+  - PickUpAcorn
+  - ReleaseAcorn
+  - SyncAcornDrop
+  - SyncAcornPickup
+  - SyncActivateNextChild
+  - SyncChildActivation
+  - SyncActivateChildObjects
+  - SyncActivateBasket
+  - SyncActivateChildObject
+  - SyncActivateChild
+  - SyncGoldTarget
   DisableAutoOpenWizard: 1
   ShowSettings: 1
