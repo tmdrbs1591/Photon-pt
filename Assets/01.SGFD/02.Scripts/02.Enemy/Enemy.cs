@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Slider hpBar2;
     [SerializeField] GameObject attackBox;
     [SerializeField] GameObject gold; // 죽었을때 생성할 골드
-    [SerializeField] float goldCount;//골드수
+    [SerializeField] float goldCount; // 골드 수
 
     [SerializeField] LayerMask layerMask;
     [SerializeField] GameObject DangerMarker;
@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         currentHP = maxHP;
-        if (hpBar != null || hpBar != null)
+        if (hpBar != null)
         {
             hpBar.gameObject.SetActive(false);
             hpBar2.gameObject.SetActive(false);
@@ -49,8 +49,12 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnDestroy()
     {
-        StageManager.instance.currentStageMonsterCount--;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("DecreaseMonsterCount", RpcTarget.All);
+        }
     }
+
     void Update()
     {
         if (playerObj == null)
@@ -79,8 +83,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 3 * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
 
                 agent.SetDestination(playerObj.transform.position); // 플레이어 방향으로 이동
-
             }
+
             playerDistance = Vector3.Distance(transform.position, playerObj.transform.position); // 거리 계산
 
             if (curAttackSpeed < 0 && playerDistance < attackRange)
@@ -120,6 +124,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 40f);
             hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
         }
+
         Die();
     }
 
@@ -145,7 +150,6 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             Destroy(gameObject);
         }
     }
-
 
     [PunRPC]
     void SyncEnemyPosition(Vector3 newPosition)
@@ -214,11 +218,9 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
                 bulletRigidbody.velocity = shootDirection * 10;
 
                 Destroy(bullet, 2f);
-                // 총알의 추가적인 설정 (예: 데미지 설정 등)
 
                 if (PhotonNetwork.IsConnected)
                 {
-                    // PUN을 사용하여 다른 플레이어에게 총알 발사 동작을 동기화합니다.
                     photonView.RPC("SyncSpellStart", RpcTarget.Others, transform.position, rotation);
                 }
 
@@ -226,21 +228,26 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
+
     [PunRPC]
     void SyncSpellStart(Vector3 firePosition, Quaternion fireRotation)
     {
-        // 다른 플레이어에게서 받은 위치와 회전으로 총알 생성
         GameObject bullet = Instantiate(bulletPrefab, firePosition, fireRotation);
         Rigidbody bulletRigidbody = bullet.GetComponent<Rigidbody>();
         Vector3 shootDirection = bullet.transform.forward;
         bulletRigidbody.velocity = shootDirection * 10;
-
-        // 추가적인 설정 (예: 데미지 설정 등)
     }
+
     IEnumerator AttackBoxActive()
     {
         attackBox.SetActive(true);
         yield return new WaitForSeconds(0.2f);
         attackBox.SetActive(false);
+    }
+
+    [PunRPC]
+    public void DecreaseMonsterCount()
+    {
+        StageManager.instance.photonView.RPC("DecreaseMonsterCount", RpcTarget.All);
     }
 }

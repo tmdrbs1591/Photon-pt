@@ -81,7 +81,7 @@ public class StageManager : MonoBehaviourPun
 
     private void Start()
     {
-        StageIcon();
+        UpdateStageIcons();
     }
 
     private void Update()
@@ -142,7 +142,7 @@ public class StageManager : MonoBehaviourPun
 
                     foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                     {
-                        currentStageMonsterCount++;
+                        photonView.RPC("IncreaseMonsterCount", RpcTarget.All);
                         PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
                     }
 
@@ -166,7 +166,7 @@ public class StageManager : MonoBehaviourPun
             }
 
             // 스테이지 아이콘 업데이트
-            photonView.RPC("StageIcon", RpcTarget.All);
+            photonView.RPC("UpdateStageIcons", RpcTarget.All);
         }
     }
 
@@ -197,7 +197,7 @@ public class StageManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void StageIcon()
+    private void UpdateStageIcons()
     {
         foreach (var icon in stageIcons)
         {
@@ -299,14 +299,31 @@ public class StageManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void SetPortalState(bool state)
+    public void IncreaseMonsterCount()
     {
-        portalObj.SetActive(state);
+        currentStageMonsterCount++;
+    }
+
+    [PunRPC]
+    public void DecreaseMonsterCount()
+    {
+        currentStageMonsterCount--;
+
+        if (currentStageMonsterCount <= 0)
+        {
+            photonView.RPC("SetPortalState", RpcTarget.All, true);
+        }
     }
 
     [PunRPC]
     private void SetPortalPosition(Vector3 position)
     {
         portalObj.transform.position = position;
+    }
+
+    [PunRPC]
+    private void SetPortalState(bool state)
+    {
+        portalObj.SetActive(state);
     }
 }
