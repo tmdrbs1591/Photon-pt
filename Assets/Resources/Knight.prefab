@@ -13761,11 +13761,12 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
+  observableSearch: 0
   ObservedComponents:
   - {fileID: 5771829728409494103}
   - {fileID: 182879749392288860}
   - {fileID: 6801369397265047919}
-  viewIdField: 0
+  sceneViewId: 0
   InstantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!114 &5771829728409494103
@@ -13799,6 +13800,7 @@ MonoBehaviour:
   m_SynchronizePosition: 0
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
+  m_UseLocal: 0
 --- !u!114 &6801369397265047919
 MonoBehaviour:
   m_ObjectHideFlags: 0

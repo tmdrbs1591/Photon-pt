@@ -1,28 +1,38 @@
 using Photon.Pun;
-using System.Collections;
+using Photon.Realtime;
 using UnityEngine;
 
-public class Flag : MonoBehaviourPun
+public class Flag : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject clearPtc;
     [SerializeField] GameObject goldPrefab;
-
-
-    [SerializeField] bool isClear = false;
     [SerializeField] TextAnim Ostrichtextanim;
+
+    private bool isClear = false;
+
+    private void Start()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("isClear"))
+            {
+                isClear = (bool)PhotonNetwork.CurrentRoom.CustomProperties["isClear"];
+            }
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && !isClear) // 누군가가 클리어한 상태가 아닐때만
+        if (other.gameObject.CompareTag("Player") && !isClear)
         {
             Ostrichtextanim.textToShow = "<shake>졌다 ㅜㅜ<shake>";
+            SetClearState(true);
             photonView.RPC("SpawnGold", RpcTarget.All);
-            isClear = true;
         }
-        if (other.gameObject.CompareTag("Ostrich") && !isClear) // 누군가가 클리어한 상태가 아닐때만
+        if (other.gameObject.CompareTag("Ostrich") && !isClear)
         {
             Ostrichtextanim.textToShow = "<wave>내가 이겼다~~!<wave>";
-            isClear = true;
+            SetClearState(true);
         }
     }
 
@@ -35,11 +45,9 @@ public class Flag : MonoBehaviourPun
             clearPtc.SetActive(false);
             clearPtc.SetActive(true);
         }
-       
 
         if (PhotonNetwork.IsMasterClient)
         {
-            // 바구니 위치에 골드 생성
             for (int i = 0; i < 20; i++)
             {
                 GameObject gold = PhotonNetwork.Instantiate(goldPrefab.name, transform.position + new Vector3(0, 3, 0), Quaternion.identity);
@@ -48,17 +56,33 @@ public class Flag : MonoBehaviourPun
                 {
                     goldComponent.isget = false;
 
-                    // 모든 "Player" 태그가 붙은 오브젝트를 찾음
                     GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
                     if (players.Length > 0)
                     {
-                        // 랜덤으로 타겟을 선택
                         GameObject randomPlayer = players[Random.Range(0, players.Length)];
                         goldComponent.target = randomPlayer.transform;
                     }
                 }
             }
+        }
+    }
+
+    void SetClearState(bool state)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ExitGames.Client.Photon.Hashtable properties = new ExitGames.Client.Photon.Hashtable();
+            properties["isClear"] = state;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+        }
+    }
+
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged.ContainsKey("isClear"))
+        {
+            isClear = (bool)propertiesThatChanged["isClear"];
         }
     }
 }
