@@ -1105,6 +1105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bda627f180d05db40a838a92ba1da72b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Enemytype: 
   currentHP: 100
   maxHP: 100
   attackRange: 2
@@ -1121,6 +1122,7 @@ MonoBehaviour:
     m_Bits: 0
   DangerMarker: {fileID: 0}
   bulletPrefab: {fileID: 0}
+  songIndex: 1
   playerObj: {fileID: 0}
 --- !u!114 &8558904276326529148
 MonoBehaviour:

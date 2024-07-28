@@ -7,6 +7,7 @@ using System.Collections;
 
 public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [SerializeField] string Enemytype;
     [SerializeField] public float currentHP;
     [SerializeField] float maxHP;
     [SerializeField] float attackRange;
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject DangerMarker;
     [SerializeField] GameObject bulletPrefab;
 
+    [SerializeField] int songIndex;
+
     private float playerDistance;
     private float syncInterval = 0.1f; // 동기화 간격 (초)
     private float lastSyncTime;
@@ -32,13 +35,20 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     private PhotonView PV;
     NavMeshAgent agent;
 
+    
+
     void Start()
     {
-        hpBar.gameObject.SetActive(false);
-        hpBar2.gameObject.SetActive(false);
+
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         currentHP = maxHP;
+        if (hpBar != null || hpBar != null)
+        {
+            hpBar.gameObject.SetActive(false);
+            hpBar2.gameObject.SetActive(false);
+        }
+
     }
 
     void Update()
@@ -46,7 +56,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         if (playerObj == null)
         {
             // 중심 위치와 반지름을 설정하여 오버랩 서클 사용
-            Collider[] colliders = Physics.OverlapSphere(transform.position, 10f);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 20f);
             // 오버랩 서클에서 플레이어 태그를 가진 오브젝트를 찾기
             foreach (Collider collider in colliders)
             {
@@ -63,10 +73,14 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             Vector3 moveVec = (playerObj.transform.position - transform.position).normalized;
             anim.SetBool("isWalk", moveVec != Vector3.zero);
 
-            Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 3 * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
+            if (Enemytype != "Box")
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(moveVec); // 목표 회전을 이동 방향 벡터로 설정
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 3 * Time.deltaTime); // 현재 회전에서 목표 회전까지 부드럽게 회전
 
-            agent.SetDestination(playerObj.transform.position); // 플레이어 방향으로 이동
+                agent.SetDestination(playerObj.transform.position); // 플레이어 방향으로 이동
+
+            }
             playerDistance = Vector3.Distance(transform.position, playerObj.transform.position); // 거리 계산
 
             if (curAttackSpeed < 0 && playerDistance < attackRange)
@@ -81,26 +95,31 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             }
 
             // 동기화 간격에 따른 위치 동기화
-            if (photonView.IsMine && Time.time - lastSyncTime > syncInterval)
+            if (photonView.IsMine && Time.time - lastSyncTime > syncInterval && Enemytype != "Box")
             {
                 photonView.RPC("SyncEnemyPosition", RpcTarget.Others, transform.position);
                 lastSyncTime = Time.time;
             }
         }
 
-        // NavMeshAgent가 목적지에 도달했는지 확인
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (Enemytype != "Box")
         {
-            anim.SetBool("isWalk", false);
-        }
-        else
-        {
-            anim.SetBool("isWalk", true);
+            // NavMeshAgent가 목적지에 도달했는지 확인
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            {
+                anim.SetBool("isWalk", false);
+            }
+            else
+            {
+                anim.SetBool("isWalk", true);
+            }
         }
 
-        hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 40f);
-        hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
-
+        if (hpBar != null || hpBar2 != null)
+        {
+            hpBar.value = Mathf.Lerp(hpBar.value, currentHP / maxHP, Time.deltaTime * 40f);
+            hpBar2.value = Mathf.Lerp(hpBar2.value, currentHP / maxHP, Time.deltaTime * 5f);
+        }
         Die();
     }
 
@@ -141,10 +160,14 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         {
             PhotonNetwork.Instantiate("debris", transform.position + new Vector3(0, 0.3f, 0), Quaternion.identity);
 
+            if (hpBar != null || hpBar2 != null)
+            {
+                hpBar.gameObject.SetActive(true);
+                hpBar2.gameObject.SetActive(true);
+            }
+
             CameraShake.instance.Shake();
-            hpBar.gameObject.SetActive(true);
-            hpBar2.gameObject.SetActive(true);
-            AudioManager.instance.PlaySound(transform.position, 1, Random.Range(1.0f, 1.3f), 0.4f);
+            AudioManager.instance.PlaySound(transform.position, songIndex, Random.Range(1.0f, 1.3f), 0.4f);
             anim.SetTrigger("isDamage");
             currentHP -= damage;
         }

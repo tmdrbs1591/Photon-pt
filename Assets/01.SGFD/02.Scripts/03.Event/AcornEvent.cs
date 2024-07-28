@@ -113,7 +113,7 @@ public class AcornEvent : MonoBehaviourPun
             {
                 GameObject gold = PhotonNetwork.Instantiate(goldPrefab.name, spawnPosition + new Vector3(0, 3, 0), Quaternion.identity);
                 Gold goldComponent = gold.GetComponent<Gold>();
-               // goldComponent.isget = false;
+                goldComponent.isget = false;
 
                 // 모든 "Player" 태그가 붙은 오브젝트를 찾음
                 GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
