@@ -13,6 +13,11 @@ public class AcornEvent : MonoBehaviourPun
 
     [SerializeField] int acornCount;
 
+    [SerializeField] GameObject eventTextPanel;
+    [SerializeField] TextAnim textanim;
+
+    [SerializeField] TextAnim Squireltextanim;
+
     private bool isCoroutineRunning = false; // Coroutine running flag
 
     private void OnEnable()
@@ -44,6 +49,10 @@ public class AcornEvent : MonoBehaviourPun
     [PunRPC]
     void DisableAllChildren()
     {
+        eventTextPanel.SetActive(false);
+        eventTextPanel.SetActive(true);
+        textanim.textToShow = "다람쥐를 도와 도토리를 바구니에 담으세요!";
+        Squireltextanim.textToShow = "<shake>내 도토리 ㅜㅜ\r\n이걸 다 언제담아ㅜㅜ<shake>";
         foreach (Transform child in basket)
         {
             child.gameObject.SetActive(false);
@@ -80,6 +89,7 @@ public class AcornEvent : MonoBehaviourPun
 
             if (AreAllChildrenActive(basket))
             {
+                Squireltextanim.textToShow = "<wave>고마워!!<wave>";
                 AudioManager.instance.PlaySound(transform.position, 8, Random.Range(1f, 1f), 1f);
                 clearPtc.SetActive(false);
                 clearPtc.SetActive(true);

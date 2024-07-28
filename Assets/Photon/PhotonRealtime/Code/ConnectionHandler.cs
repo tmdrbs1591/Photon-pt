@@ -17,6 +17,7 @@
 namespace Photon.Realtime
 {
     using System;
+    using System.Diagnostics;
     using SupportClass = ExitGames.Client.Photon.SupportClass;
 
     #if SUPPORTED_UNITY
@@ -35,11 +36,14 @@ namespace Photon.Realtime
         /// </summary>
         public LoadBalancingClient Client { get; set; }
 
-        private byte fallbackThreadId = 255;
-
-        private bool didSendAcks;
-        private int startedAckingTimestamp;
-        private int deltaSinceStartedToAck;
+        /// <summary>Option to let the fallback thread call Disconnect after the KeepAliveInBackground time. Default: false.</summary>
+        /// <remarks>
+        /// If set to true, the thread will disconnect the client regularly, should the client not call SendOutgoingCommands / Service.
+        /// This may happen due to an app being in background (and not getting a lot of CPU time) or when loading assets.
+        ///
+        /// If false, a regular timeout time will have to pass (on top) to time out the client.
+        /// </remarks>
+        public bool DisconnectAfterKeepAlive = false;
 
         /// <summary>Defines for how long the Fallback Thread should keep the connection, before it may time out as usual.</summary>
         /// <remarks>We want to the Client to keep it's connection when an app is in the background (and doesn't call Update / Service Clients should not keep their connection indefinitely in the background, so after some milliseconds, the Fallback Thread should stop keeping it up.</remarks>
@@ -48,14 +52,52 @@ namespace Photon.Realtime
         /// <summary>Counts how often the Fallback Thread called SendAcksOnly, which is purely of interest to monitor if the game logic called SendOutgoingCommands as intended.</summary>
         public int CountSendAcksOnly { get; private set; }
 
+        /// <summary>True if a fallback thread is running. Will call the client's SendAcksOnly() method to keep the connection up.</summary>
         public bool FallbackThreadRunning
         {
             get { return this.fallbackThreadId < 255; }
         }
 
+        /// <summary>Keeps the ConnectionHandler, even if a new scene gets loaded.</summary>
+        public bool ApplyDontDestroyOnLoad = true;
+
+        /// <summary>Indicates that the app is closing. Set in OnApplicationQuit().</summary>
+        [NonSerialized]
+        public static bool AppQuits;
+        [NonSerialized]
+        public static bool AppPause;
+        [NonSerialized]
+        public static bool AppPauseRecent;
+        [NonSerialized]
+        public static bool AppOutOfFocus;
+        [NonSerialized]
+        public static bool AppOutOfFocusRecent;
+
+
+        private byte fallbackThreadId = 255;
+        private bool didSendAcks;
+        private readonly Stopwatch backgroundStopwatch = new Stopwatch();
+
 
         #if SUPPORTED_UNITY
-        public bool ApplyDontDestroyOnLoad = true;
+
+        #if UNITY_2019_4_OR_NEWER
+
+        /// <summary>
+        /// Resets statics for Domain Reload
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void StaticReset()
+        {
+            AppQuits = false;
+            AppPause = false;
+            AppPauseRecent = false;
+            AppOutOfFocus = false;
+            AppOutOfFocusRecent = false;
+        }
+
+        #endif
+
 
         /// <summary></summary>
         protected virtual void Awake()
@@ -66,27 +108,87 @@ namespace Photon.Realtime
             }
         }
 
-        /// <summary>Called by Unity when the play mode ends. Used to cleanup.</summary>
-        protected virtual void OnDestroy()
+        /// <summary>Called by Unity when the application gets closed. Disconnects if OnApplicationQuit() was called before.</summary>
+        protected virtual void OnDisable()
         {
-            //Debug.Log("OnDestroy on ConnectionHandler.");
             this.StopFallbackSendAckThread();
+
+            if (AppQuits)
+            {
+                if (this.Client != null && this.Client.IsConnected)
+                {
+                    this.Client.Disconnect(DisconnectCause.ApplicationQuit);
+                    this.Client.LoadBalancingPeer.StopThread();
+                }
+
+                SupportClass.StopAllBackgroundCalls();
+            }
         }
 
-        /// <summary>Called by Unity when the application is closed. Disconnects.</summary>
-        protected virtual void OnApplicationQuit()
+
+        /// <summary>Called by Unity when the application gets closed. The UnityEngine will also call OnDisable, which disconnects.</summary>
+        public void OnApplicationQuit()
         {
-            //Debug.Log("OnApplicationQuit");
-            this.StopFallbackSendAckThread();
-            if (this.Client != null && this.Client.IsConnected)
-            {
-                this.Client.Disconnect();
-                this.Client.LoadBalancingPeer.StopThread();
-            }
-            SupportClass.StopAllBackgroundCalls();
+            AppQuits = true;
         }
+
+        /// <summary>Called by Unity when the application gets paused or resumed.</summary>
+        public void OnApplicationPause(bool pause)
+        {
+            AppPause = pause;
+
+            if (pause)
+            {
+                AppPauseRecent = true;
+                this.CancelInvoke(nameof(this.ResetAppPauseRecent));
+            }
+            else
+            {
+                Invoke(nameof(this.ResetAppPauseRecent), 5f);
+            }
+        }
+
+        private void ResetAppPauseRecent()
+        {
+            AppPauseRecent = false;
+        }
+
+        /// <summary>Called by Unity when the application changes focus.</summary>
+        public void OnApplicationFocus(bool focus)
+        {
+            AppOutOfFocus = !focus;
+            if (!focus)
+            {
+                AppOutOfFocusRecent = true;
+                this.CancelInvoke(nameof(this.ResetAppOutOfFocusRecent));
+            }
+            else
+            {
+                this.Invoke(nameof(this.ResetAppOutOfFocusRecent), 5f);
+            }
+        }
+
+        private void ResetAppOutOfFocusRecent()
+        {
+            AppOutOfFocusRecent = false;
+        }
+
+
         #endif
 
+
+        /// <summary>
+        /// When run in Unity, this returns Application.internetReachability != NetworkReachability.NotReachable.
+        /// </summary>
+        /// <returns>Application.internetReachability != NetworkReachability.NotReachable</returns>
+        public static bool IsNetworkReachableUnity()
+        {
+            #if SUPPORTED_UNITY
+            return Application.internetReachability != NetworkReachability.NotReachable;
+            #else
+            return true;
+            #endif
+        }
 
         public void StartFallbackSendAckThread()
         {
@@ -118,7 +220,7 @@ namespace Photon.Realtime
         }
 
 
-        /// <summary>A thread which runs independent from the Update() calls. Keeps connections online while loading or in background. See PhotonNetwork.BackgroundTimeout.</summary>
+        /// <summary>A thread which runs independent from the Update() calls. Keeps connections online while loading or in background. See <see cref="KeepAliveInBackground"/>.</summary>
         public bool RealtimeFallbackThread()
         {
             if (this.Client != null)
@@ -131,18 +233,20 @@ namespace Photon.Realtime
 
                 if (this.Client.LoadBalancingPeer.ConnectionTime - this.Client.LoadBalancingPeer.LastSendOutgoingTime > 100)
                 {
-                    if (this.didSendAcks)
+                    if (!this.didSendAcks)
                     {
-                        // check if the client should disconnect after some seconds in background
-                        this.deltaSinceStartedToAck = Environment.TickCount - this.startedAckingTimestamp;
-                        if (this.deltaSinceStartedToAck > this.KeepAliveInBackground)
-                        {
-                            return true;
-                        }
+                        backgroundStopwatch.Reset();
+                        backgroundStopwatch.Start();
                     }
-                    else
+
+                    // check if the client should disconnect after some seconds in background
+                    if (backgroundStopwatch.ElapsedMilliseconds > this.KeepAliveInBackground)
                     {
-                        this.startedAckingTimestamp = Environment.TickCount;
+                        if (this.DisconnectAfterKeepAlive)
+                        {
+                            this.Client.Disconnect();
+                        }
+                        return true;
                     }
 
 

@@ -14,94 +14,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AppSettings:
     AppIdRealtime: 60f81be3-6018-449a-8f01-fb771087c668
+    AppIdFusion: 
     AppIdChat: 
-    AppIdVoice: 
+    AppIdVoice: 566d08ad-2a53-4866-aec1-e9f09fee6e7b
     AppVersion: 
     UseNameServer: 1
     FixedRegion: 
     Server: 
     Port: 0
+    ProxyServer: 
     Protocol: 0
+    EnableProtocolFallback: 1
+    AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  StartInOfflineMode: 0
+  DevRegion: kr
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
+  StartInOfflineMode: 0
   RpcList:
-  - DestroySpaceship
-  - Fire
-  - RespawnSpaceship
-  - ChatRPC
-  - LoadInGameScene
-  - StartGameRPC
-  - PlayerAttackAnim
-  - SyncEffectState
-  - Damage
-  - TakeDamage
-  - HPbarUpdate
-  - SyncEnemyPosition
-  - SpawnHitEffect
-  - SpawnDamageText
-  - SetAttackPower
-  - RPC_StartAudio
-  - RPC_StopAudio
-  - RPC_PlaySound
-  - PlayerTakeDamage
-  - EnemyDamage
-  - RPC_AttackBoxActive
-  - OnTriggerEnter
-  - DashRPC
+  - CantHearYou
+  - ChangeColour
+  - ClickRpc
+  - DestroyRpc
+  - HeresWhy
   - ActivateDashEffect
   - ActivateSkillEffect
-  - SetTarget
-  - DestroyGold
-  - CoinDestroy
-  - GoldDestroy
-  - JumpWithRandomDirection
-  - SetIsGet
-  - NextStage
-  - MovePlayer
-  - MovePlayers
-  - MoveToNextStage
-  - RPC_RotateToClosestEnemy
-  - SetArcherSprite
-  - SetKnightSprite
-  - CharChangeArcher
-  - CharChangeKnight
-  - SyncCharacter
-  - ChangeCharacter
+  - ChatRPC
+  - Damage
   - DestroyArrow
-  - UpdateCharacterImageRPC
-  - UpdateSprite
-  - ChangeCharacterImage
-  - UpdateCharacterImage
-  - ArcherImage
-  - KnightImage
-  - SetCharacterSpriteRPC
-  - UpdateCharacterSpriteRPC
-  - SkillEffect
   - DestroyFirePillar
-  - SpellStart
-  - SyncSpellStart
-  - UpdateStageIcons
-  - SyncStageIcons
+  - DestroySpaceship
+  - DisableAllChildren
+  - EventStart
+  - Fire
+  - MovePlayer
+  - MoveToNextStage
+  - PlayerAttackAnim
+  - PlayerTakeDamage
+  - RespawnSpaceship
+  - RPC_AttackBoxActive
+  - RPC_PlaySound
+  - RPC_RotateToClosestEnemy
+  - SetAttackPower
+  - SpawnDamageText
+  - SpawnGold
   - StageIcon
-  - UpdatePlayerStats
-  - SpawnAcornsRPC
-  - DropAcorn
-  - PickUpAcorn
-  - ReleaseAcorn
+  - StartGameRPC
   - SyncAcornDrop
   - SyncAcornPickup
   - SyncActivateNextChild
-  - SyncChildActivation
-  - SyncActivateChildObjects
-  - SyncActivateBasket
-  - SyncActivateChildObject
-  - SyncActivateChild
-  - SyncGoldTarget
-  - DisableAllChildren
-  - SetGoldTarget
+  - SyncEffectState
+  - SyncEnemyPosition
+  - SyncSpellStart
+  - TakeDamage
+  - UpdatePlayerStats
   DisableAutoOpenWizard: 1
   ShowSettings: 1
+  DevRegionSetOnce: 1
