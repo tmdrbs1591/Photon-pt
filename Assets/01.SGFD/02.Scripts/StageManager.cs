@@ -39,7 +39,7 @@ public class StageManager : MonoBehaviourPun
 
     [Header("Boss")]
     public List<StageInfo> bossPosition = new List<StageInfo>();
-    public List<BossMonster> bossMonsters = new List<BossMonster>();    
+    public List<BossMonster> bossMonsters = new List<BossMonster>();
 
     [Header("EventStage")]
     public List<Transform> eventStage = new List<Transform>();
@@ -88,9 +88,9 @@ public class StageManager : MonoBehaviourPun
     {
         stageText.text = "STAGE " + currentStage;
 
-        if(currentStageMonsterCount == 0)
+        if (currentStageMonsterCount == 0)
         {
-            portalObj.SetActive(true);
+            photonView.RPC("SetPortalState", RpcTarget.All, true);
         }
     }
 
@@ -142,12 +142,12 @@ public class StageManager : MonoBehaviourPun
 
                     foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                     {
-                        PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
                         currentStageMonsterCount++;
+                        PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
                     }
 
-                    portalObj.transform.position = stageInfos[randomIndex - 1].portalPos.position;
-                    portalObj.SetActive(false);
+                    photonView.RPC("SetPortalPosition", RpcTarget.All, stageInfos[randomIndex - 1].portalPos.position);
+                    photonView.RPC("SetPortalState", RpcTarget.All, false);
 
                     lastStage = randomIndex;
                 }
@@ -298,4 +298,15 @@ public class StageManager : MonoBehaviourPun
         }
     }
 
+    [PunRPC]
+    private void SetPortalState(bool state)
+    {
+        portalObj.SetActive(state);
+    }
+
+    [PunRPC]
+    private void SetPortalPosition(Vector3 position)
+    {
+        portalObj.transform.position = position;
+    }
 }
