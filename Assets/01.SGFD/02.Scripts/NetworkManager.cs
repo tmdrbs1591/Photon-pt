@@ -11,7 +11,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public static NetworkManager instance;
 
-    public CharImage charImage; // CharImage -> Image로 수정
+    public CharImage charImage;
 
     public CharManager charManager;
 
@@ -56,6 +56,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField] GameObject hpBarListItemPrefab;
     internal object playerList;
 
+    private Dictionary<string, GameObject> playerObjects = new Dictionary<string, GameObject>(); // 플레이어 오브젝트 관리 딕셔너리
+
     public void StartGame()
     {
         if (PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected)
@@ -85,6 +87,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2f);
         fadeImage.SetActive(false);
     }
+
     public void Fade()
     {
         StartCoroutine(FadeCor());
@@ -103,7 +106,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
             Vector3 spawnPosition = spawnPositions[playerIndex % spawnPositions.Length].position;
-            PhotonNetwork.Instantiate(CharManager.instance.currentCharacter.ToString(), spawnPosition, Quaternion.identity);
+            GameObject playerObject = PhotonNetwork.Instantiate(CharManager.instance.currentCharacter.ToString(), spawnPosition, Quaternion.identity);
+            playerObjects[PhotonNetwork.LocalPlayer.NickName] = playerObject; // 플레이어 오브젝트 저장
         }
         else
         {
@@ -210,6 +214,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             GameObject playerItem = Instantiate(playerListItemPrefab, playerLisContent);
             playerItem.GetComponent<PlayerListItem>().Setup(players[i]);
             charImage = playerItem.GetComponent<CharImage>();
+            playerObjects[players[i].NickName] = playerItem; // 플레이어 오브젝트 저장
         }
         for (int i = 0; i < players.Count(); i++)
         {
@@ -242,18 +247,28 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         CreateRoom();
     }
 
+
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         RoomRenewal();
-        ChatRPC("<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
-        Instantiate(playerListItemPrefab, playerLisContent).GetComponent<PlayerListItem>().Setup(newPlayer);
-        Instantiate(hpBarListItemPrefab, hpBarLisContent).GetComponent<HpbarListItem>().Setup(newPlayer);
+        ChatRPC(newPlayer.NickName, "<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
+        GameObject playerItem = Instantiate(playerListItemPrefab, playerLisContent);
+        playerItem.GetComponent<PlayerListItem>().Setup(newPlayer);
+        playerObjects[newPlayer.NickName] = playerItem; // 플레이어 오브젝트 저장
+        GameObject playerHpItem = Instantiate(hpBarListItemPrefab, hpBarLisContent);
+        playerHpItem.GetComponent<HpbarListItem>().Setup(newPlayer);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         RoomRenewal();
-        ChatRPC("<color=yellow>" + otherPlayer.NickName + "님이 퇴장하셨습니다</color>");
+        ChatRPC(otherPlayer.NickName, "<color=yellow>" + otherPlayer.NickName + "님이 퇴장하셨습니다</color>");
+
+        if (playerObjects.ContainsKey(otherPlayer.NickName))
+        {
+            Destroy(playerObjects[otherPlayer.NickName]);
+            playerObjects.Remove(otherPlayer.NickName);
+        }
     }
 
     void RoomRenewal()
@@ -275,7 +290,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             startGameButton.SetActive(false);
         }
     }
-
     #endregion
 
     #region Chat
@@ -284,7 +298,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         if (!string.IsNullOrEmpty(ChatInput.text))
         {
-            PV.RPC("ChatRPC", RpcTarget.All, PhotonNetwork.NickName + " : " + ChatInput.text);
+            string message = ChatInput.text;
+            PV.RPC("ChatRPC", RpcTarget.All, PhotonNetwork.NickName, message);
             ChatInput.text = "";
         }
 
@@ -293,15 +308,26 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void ChatRPC(string msg)
+    void ChatRPC(string playerName, string msg)
     {
         for (int i = 0; i < ChatText.Length - 1; i++)
         {
             ChatText[i].text = ChatText[i + 1].text;
         }
 
-        ChatText[ChatText.Length - 1].text = msg;
+        ChatText[ChatText.Length - 1].text = playerName + " : " + msg;
+
+        // 채팅을 보낸 플레이어의 오브젝트에서 PlayerChat 컴포넌트의 이미지 활성화
+        if (playerObjects.ContainsKey(playerName))
+        {
+            PhotonView playerPhotonView = playerObjects[playerName].GetComponent<PhotonView>();
+            if (playerPhotonView != null)
+            {
+                playerPhotonView.RPC("ActivateChatImage", RpcTarget.All, msg); // 이미지 활성화 및 채팅 메시지 설정
+            }
+        }
     }
+
 
     #endregion
 }

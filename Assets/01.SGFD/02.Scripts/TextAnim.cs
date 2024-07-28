@@ -31,7 +31,7 @@ public class TextAnim : MonoBehaviour
     // 문자가 화면에 표시될 때 호출되는 함수입니다.
     private void OnCharacterVisible(char letter)
     {
-        Debug.Log("문자가 표시되었습니다: " + letter);
+      //  Debug.Log("문자가 표시되었습니다: " + letter);
         // 여기에 원하는 동작을 추가할 수 있습니다.
     }
 }
