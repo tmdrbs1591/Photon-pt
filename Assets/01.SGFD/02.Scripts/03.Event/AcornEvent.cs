@@ -9,13 +9,19 @@ public class AcornEvent : MonoBehaviourPun
     [SerializeField] GameObject goldPrefab; // 생성할 골드 프리팹
     [SerializeField] Transform basket; // 바구니의 트랜스폼
     [SerializeField] float radius = 10f; // 아콘이 생성될 주변 반경
+    [SerializeField] GameObject clearPtc;
 
     [SerializeField] int acornCount;
+
+    private bool isCoroutineRunning = false; // Coroutine running flag
 
     private void OnEnable()
     {
         // 바구니의 자식 오브젝트 상태를 감시하기 위한 코루틴 시작
-        StartCoroutine(CheckAllChildrenActive());
+        if (!isCoroutineRunning)
+        {
+            StartCoroutine(CheckAllChildrenActive());
+        }
     }
 
     private void Update()
@@ -28,10 +34,25 @@ public class AcornEvent : MonoBehaviourPun
 
     void EventStart()
     {
-        if (PhotonNetwork.IsMasterClient)
+        // 마스터 클라이언트가 모든 클라이언트에 아콘을 생성하도록 명령
+        SpawnAcorns(11);
+
+        // 자식 오브젝트 모두 비활성화
+        photonView.RPC("DisableAllChildren", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void DisableAllChildren()
+    {
+        foreach (Transform child in basket)
         {
-            // 마스터 클라이언트가 모든 클라이언트에 아콘을 생성하도록 명령
-            SpawnAcorns(10);
+            child.gameObject.SetActive(false);
+        }
+
+        // DisableAllChildren을 호출한 후 다시 자식 오브젝트 상태를 감시하기 위한 코루틴 시작
+        if (!isCoroutineRunning)
+        {
+            StartCoroutine(CheckAllChildrenActive());
         }
     }
 
@@ -43,8 +64,7 @@ public class AcornEvent : MonoBehaviourPun
             Vector3 randomPosition = transform.position + Random.insideUnitSphere * radius;
 
             // Y축 위치를 고정하려면 아래와 같이 변경
-            randomPosition.y = transform.position.y;
-
+            randomPosition.y = transform.position.y + 0.2f;
             // 네트워크를 통해 아콘을 생성합니다.
             PhotonNetwork.Instantiate(acornPrefab.name, randomPosition, Quaternion.identity);
         }
@@ -52,15 +72,20 @@ public class AcornEvent : MonoBehaviourPun
 
     IEnumerator CheckAllChildrenActive()
     {
+        isCoroutineRunning = true; // Set the flag to true
+
         while (true)
         {
-            yield return new WaitForSeconds(1f); // 1초마다 체크
-
+            yield return new WaitForSeconds(0.1f); // 1초마다 체크
 
             if (AreAllChildrenActive(basket))
             {
+                AudioManager.instance.PlaySound(transform.position, 8, Random.Range(1f, 1f), 1f);
+                clearPtc.SetActive(false);
+                clearPtc.SetActive(true);
                 Debug.Log("골드생성");
                 SpawnGold();
+                isCoroutineRunning = false; // Set the flag to false
                 yield break; // 골드를 생성한 후 이 코루틴을 중지
             }
         }
@@ -88,7 +113,7 @@ public class AcornEvent : MonoBehaviourPun
             {
                 GameObject gold = PhotonNetwork.Instantiate(goldPrefab.name, spawnPosition + new Vector3(0, 3, 0), Quaternion.identity);
                 Gold goldComponent = gold.GetComponent<Gold>();
-                goldComponent.isget = false;
+               // goldComponent.isget = false;
 
                 // 모든 "Player" 태그가 붙은 오브젝트를 찾음
                 GameObject[] players = GameObject.FindGameObjectsWithTag("Player");

@@ -29,7 +29,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Transform attackBoxPos;
     [SerializeField] Slider hpBar;
 
-   
+
 
     [Header("쿨타임")]
     private float attacklCurTime;
@@ -49,6 +49,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     [Header("Shop")]
     [SerializeField] public bool isShop;
+
+    [Header("사운드")]
+    [SerializeField] private AudioSource wakkAudioSource;
+
+
 
     public PhotonView PV;
 
@@ -76,7 +81,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     protected void Awake()
     {
-
+        wakkAudioSource = GetComponent<AudioSource>();
         playerStats = GetComponent<PlayerStats>();  
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -143,8 +148,9 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop || isSkill)//공격이나 스킬중엔 못움직이게
+        if (isStop || isSkill) // 공격이나 스킬 중엔 못 움직이게
             return;
+
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
         transform.position += moveVec * playerStats.speed * Time.deltaTime;
 
@@ -154,10 +160,23 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveVec);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // 걷는 소리가 재생 중이 아니면 재생
+            if (!wakkAudioSource.isPlaying)
+            {
+                wakkAudioSource.Play();
+            }
+        }
+        else
+        {
+            // 캐릭터가 멈추면 걷는 소리 중지
+            if (wakkAudioSource.isPlaying)
+            {
+                wakkAudioSource.Stop();
+            }
         }
     }
-
-    void Jump()
+        void Jump()
     {
         if (jumpDown)
         {

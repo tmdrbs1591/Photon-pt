@@ -42,6 +42,11 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject playerCanvas;
     [SerializeField] private GameObject playerUICanvas;
 
+
+    [Header("사운드")]
+    [SerializeField] private AudioSource wakkAudioSource;
+
+
     public PhotonView PV;
 
     float hAxis; // 수평 입력 값
@@ -65,6 +70,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     protected void Awake()
     {
+        wakkAudioSource = GetComponent<AudioSource>();
         playerStats = GetComponent<PlayerStats>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -140,7 +146,7 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     void Move()
     {
-        if (isStop || isSkill) // 공격이나 스킬 중엔 움직이지 않게 함
+        if (isStop || isSkill) // 공격이나 스킬 중엔 못 움직이게
             return;
 
         Vector3 moveVec = new Vector3(hAxis, 0, vAxis).normalized;
@@ -152,6 +158,20 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveVec);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // 걷는 소리가 재생 중이 아니면 재생
+            if (!wakkAudioSource.isPlaying)
+            {
+                wakkAudioSource.Play();
+            }
+        }
+        else
+        {
+            // 캐릭터가 멈추면 걷는 소리 중지
+            if (wakkAudioSource.isPlaying)
+            {
+                wakkAudioSource.Stop();
+            }
         }
     }
 

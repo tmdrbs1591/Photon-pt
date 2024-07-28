@@ -101,5 +101,7 @@ MonoBehaviour:
   - SyncActivateChildObject
   - SyncActivateChild
   - SyncGoldTarget
+  - DisableAllChildren
+  - SetGoldTarget
   DisableAutoOpenWizard: 1
   ShowSettings: 1

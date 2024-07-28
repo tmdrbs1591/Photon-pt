@@ -15,7 +15,6 @@ public class PlayerEvent : MonoBehaviourPunCallbacks, IPunObservable
     private void Update()
     {
         AcornHold();
-        AcornHoldOut();
     }
 
     private void AcornHold()
@@ -66,27 +65,7 @@ public class PlayerEvent : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    private void AcornHoldOut()
-    {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            if (isHold)
-            {
-                if (heldObject != null)
-                {
-                    Rigidbody rb = heldObject.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        rb.isKinematic = false;
-                    }
-                }
-                isHold = false;
-                photonView.RPC("SyncAcornDrop", RpcTarget.AllBuffered, heldObject?.GetComponent<PhotonView>().ViewID ?? -1, -1);
-                heldObject = null;
-                Debug.Log("³õ¾Ò´Ù!");
-            }
-        }
-    }
+   
 
     [PunRPC]
     private void SyncAcornPickup(int viewID)
@@ -135,10 +114,20 @@ public class PlayerEvent : MonoBehaviourPunCallbacks, IPunObservable
         while (nextChildIndex < children.Length)
         {
             Transform nextChild = children[nextChildIndex];
-            if (nextChild != basket.transform && !nextChild.gameObject.activeSelf)
+            if (nextChild != basket.transform && nextChild != null && !nextChild.gameObject.activeSelf)
             {
                 nextChild.gameObject.SetActive(true);
-                photonView.RPC("SyncActivateNextChild", RpcTarget.OthersBuffered, nextChild.gameObject.GetComponent<PhotonView>().ViewID);
+                PhotonView childPhotonView = nextChild.GetComponent<PhotonView>();
+
+                if (childPhotonView != null)
+                {
+                    photonView.RPC("SyncActivateNextChild", RpcTarget.OthersBuffered, childPhotonView.ViewID);
+                }
+                else
+                {
+                    Debug.LogWarning($"PhotonView not found on child object: {nextChild.gameObject.name}");
+                }
+
                 nextChildIndex++;
                 return;
             }
@@ -162,7 +151,12 @@ public class PlayerEvent : MonoBehaviourPunCallbacks, IPunObservable
         {
             child.SetActive(true);
         }
+        else
+        {
+            Debug.LogWarning($"Child object not found for ViewID: {viewID}");
+        }
     }
+
 
     private void OnDrawGizmos()
     {
