@@ -13,6 +13,9 @@ public class AcornEvent : MonoBehaviourPun
 
     [SerializeField] int acornCount;
 
+    [SerializeField] GameObject eventTextPanel;
+    [SerializeField] TextAnim textanim;
+
     private bool isCoroutineRunning = false; // Coroutine running flag
 
     private void OnEnable()
@@ -44,6 +47,9 @@ public class AcornEvent : MonoBehaviourPun
     [PunRPC]
     void DisableAllChildren()
     {
+        eventTextPanel.SetActive(false);
+        eventTextPanel.SetActive(true);
+        textanim.textToShow = "다람쥐를 도와 도토리를 상자에 담으세요!";
         foreach (Transform child in basket)
         {
             child.gameObject.SetActive(false);
