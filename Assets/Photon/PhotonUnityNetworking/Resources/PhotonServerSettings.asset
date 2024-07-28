@@ -103,5 +103,7 @@ MonoBehaviour:
   - SyncGoldTarget
   - DisableAllChildren
   - SetGoldTarget
+  - EventStart
+  - SpawnGold
   DisableAutoOpenWizard: 1
   ShowSettings: 1
