@@ -23,7 +23,7 @@ public class PlayerChat : MonoBehaviourPun
         chatImage.gameObject.SetActive(false);
         chatImage.gameObject.SetActive(true);
         chatText.text = message;
-        StartCoroutine(DeactivateChatImageAfterDelay());
+        //StartCoroutine(DeactivateChatImageAfterDelay());
     }
 
     private IEnumerator DeactivateChatImageAfterDelay()
