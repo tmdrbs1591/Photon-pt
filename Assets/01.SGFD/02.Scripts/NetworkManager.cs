@@ -251,7 +251,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         RoomRenewal();
-        ChatRPC(newPlayer.NickName, "<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
+        ChatRPC("<color=yellow>" + "[System]", "<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
         GameObject playerItem = Instantiate(playerListItemPrefab, playerLisContent);
         playerItem.GetComponent<PlayerListItem>().Setup(newPlayer);
         playerObjects[newPlayer.NickName] = playerItem; // 플레이어 오브젝트 저장
@@ -262,7 +262,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         RoomRenewal();
-        ChatRPC(otherPlayer.NickName, "<color=yellow>" + otherPlayer.NickName + "님이 퇴장하셨습니다</color>");
+        ChatRPC("<color=yellow>" + "[System]", "<color=yellow>" + otherPlayer.NickName + "님이 퇴장하셨습니다</color>");
 
         if (playerObjects.ContainsKey(otherPlayer.NickName))
         {
