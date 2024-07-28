@@ -10,6 +10,14 @@ public class StageInfo
 {
     public Transform spawnPos;
     public Transform[] monsterSpawnPos;
+    public Transform portalPos;
+}
+
+[System.Serializable]
+public class BossMonster
+{
+    public string BossName;
+    public GameObject bossObj;
 }
 
 [System.Serializable]
@@ -22,12 +30,31 @@ public class StageIcon
 public class StageManager : MonoBehaviourPun
 {
     public static StageManager instance;
+
+    [Header("StageInfo")]
     public List<StageInfo> stageInfos = new List<StageInfo>();
-    public List<Transform> ShopPosition = new List<Transform>();
-    public List<Transform> BossPosition = new List<Transform>();
+
+    [Header("Shop")]
+    public List<Transform> shopPosition = new List<Transform>();
+
+    [Header("Boss")]
+    public List<StageInfo> bossPosition = new List<StageInfo>();
+    public List<BossMonster> bossMonsters = new List<BossMonster>();    
+
+    [Header("EventStage")]
+    public List<Transform> eventStage = new List<Transform>();
+    public int stagePercentage = 5;
+
+    [Header("Monster")]
     public GameObject monsterPrefab;
+    public int currentStageMonsterCount = 0;
+
+    [Header("StageCount")]
     public int currentStage = 0;
     public int lastStage;
+
+    [Header("Portal")]
+    public GameObject portalObj;
 
     [SerializeField] TMP_Text stageText;
 
@@ -60,6 +87,11 @@ public class StageManager : MonoBehaviourPun
     private void Update()
     {
         stageText.text = "STAGE " + currentStage;
+
+        if(currentStageMonsterCount == 0)
+        {
+            portalObj.SetActive(true);
+        }
     }
 
     public void NextStage()
@@ -78,31 +110,47 @@ public class StageManager : MonoBehaviourPun
             // 5, 15, 25, 35 스테이지일 때는 ShopPosition으로 이동
             if (currentStage > 0 && currentStage % 10 == 5)
             {
-                int shopIndex = Random.Range(0, ShopPosition.Count);
-                targetPosition = ShopPosition[shopIndex];
+                int shopIndex = Random.Range(0, shopPosition.Count);
+                targetPosition = shopPosition[shopIndex];
             }
             // 10, 20, 30, 40, 50 스테이지일 때는 BossPosition으로 이동
             else if (currentStage > 0 && currentStage % 10 == 0)
             {
-                int bossIndex = Random.Range(0, BossPosition.Count);
-                targetPosition = BossPosition[bossIndex];
+                int bossIndex = Random.Range(0, bossPosition.Count);
+                targetPosition = bossPosition[bossIndex].spawnPos;
             }
             else
             {
-                // 일반 스테이지일 때는 stageInfos에서 랜덤하게 spawnPos 선택
-                int randomIndex = Random.Range(1, stageInfos.Count);
-                while (randomIndex == lastStage)
-                {
-                    randomIndex = Random.Range(1, stageInfos.Count);
-                }
+                int isEventStage = Random.Range(0, stagePercentage);
 
-                targetPosition = stageInfos[randomIndex - 1].spawnPos;
-
-                foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
+                if (isEventStage == 0)
                 {
-                    PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                    int randomIndex = Random.Range(0, eventStage.Count);
+
+                    targetPosition = eventStage[randomIndex];
                 }
-                lastStage = randomIndex;
+                else
+                {
+                    // 일반 스테이지일 때는 stageInfos에서 랜덤하게 spawnPos 선택
+                    int randomIndex = Random.Range(1, stageInfos.Count);
+                    while (randomIndex == lastStage)
+                    {
+                        randomIndex = Random.Range(1, stageInfos.Count);
+                    }
+
+                    targetPosition = stageInfos[randomIndex - 1].spawnPos;
+
+                    foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
+                    {
+                        PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                        currentStageMonsterCount++;
+                    }
+
+                    portalObj.transform.position = stageInfos[randomIndex - 1].portalPos.position;
+                    portalObj.SetActive(false);
+
+                    lastStage = randomIndex;
+                }
             }
 
             if (targetPosition != null)

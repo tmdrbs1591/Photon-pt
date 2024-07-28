@@ -35,11 +35,8 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     private PhotonView PV;
     NavMeshAgent agent;
 
-    
-
     void Start()
     {
-
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         currentHP = maxHP;
@@ -48,9 +45,12 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
             hpBar.gameObject.SetActive(false);
             hpBar2.gameObject.SetActive(false);
         }
-
     }
 
+    private void OnDestroy()
+    {
+        StageManager.instance.currentStageMonsterCount--;
+    }
     void Update()
     {
         if (playerObj == null)
