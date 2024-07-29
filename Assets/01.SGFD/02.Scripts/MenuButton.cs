@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using System.Collections;
+using System;
 
 public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
@@ -35,7 +36,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         // 위치를 초기화하고 애니메이션을 시작
         transform.position = originalPosition;
-        StartCoroutine(AnimateButton());
+        if (Type != "NoAnim")
+        {
+            StartCoroutine(AnimateButton());
+
+        }
     }
 
     void Start()
@@ -48,7 +53,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     IEnumerator AnimateButton()
     {
         // 버튼의 초기 위치를 왼쪽으로 이동시킵니다.
-        Vector3 startPos = originalPosition + new Vector3(-30, 0, 0); // 100은 임의의 값입니다.
+        Vector3 startPos = originalPosition + new Vector3(-240, 0, 0); // 100은 임의의 값입니다.
         transform.position = startPos;
         yield return new WaitForSeconds(startDelay);
         // 버튼을 오른쪽으로 부드럽게 이동시키는 애니메이션
@@ -69,6 +74,9 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             //    AudioManager.instance.PlaySound(transform.position, 3, Random.Range(1.2f, 1.2f), 1);
             //else
             //    AudioManager.instance.PlaySound(transform.position, 12, Random.Range(1f, 1f), 1);
+
+            SingleAudioManager.instance.PlaySound(transform.position, 3, UnityEngine.Random.Range(1f, 1f), 0.4f);
+
             // 마우스가 버튼 위에 있을 때 아웃라인 메테리얼로 교체합니다.
             buttonImage.material = outlineMaterial;
 

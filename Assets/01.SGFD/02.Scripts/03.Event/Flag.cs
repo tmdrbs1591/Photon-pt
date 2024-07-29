@@ -33,9 +33,21 @@ public class Flag : MonoBehaviourPunCallbacks
         {
             Ostrichtextanim.textToShow = "<wave>≥ª∞° ¿Ã∞Â¥Ÿ~~!<wave>";
             SetClearState(true);
+            photonView.RPC("SpawnPtc", RpcTarget.All);
+
         }
     }
 
+    [PunRPC]
+    void SpawnPtc()
+    {
+        if (clearPtc != null)
+        {
+            AudioManager.instance.PlaySound(transform.position, 8, Random.Range(0.8f, 0.8f), 1f);
+            clearPtc.SetActive(false);
+            clearPtc.SetActive(true);
+        }
+    }
     [PunRPC]
     void SpawnGold()
     {
