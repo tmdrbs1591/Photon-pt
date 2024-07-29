@@ -135,6 +135,11 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             transform.position = Vector3.Lerp(transform.position, networkPosition, Time.deltaTime * 25);
             transform.rotation = Quaternion.Lerp(transform.rotation, networkRotation, Time.deltaTime * 25);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Debug.Log("sasdasdasdasdsssssssssssssssss");
+            anim.SetTrigger("isSleep");
+        }
 
        
     }
