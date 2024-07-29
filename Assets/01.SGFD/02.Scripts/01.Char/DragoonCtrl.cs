@@ -436,7 +436,7 @@ public class DragoonCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator DashOut()
     {
-        yield return new WaitForSeconds(0.12f);
+        yield return new WaitForSeconds(0.08f);
 
         // 대쉬 속도 복구
         playerStats.speed /= 4f;

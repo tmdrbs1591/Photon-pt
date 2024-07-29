@@ -15,7 +15,7 @@ MonoBehaviour:
   AppSettings:
     AppIdRealtime: 60f81be3-6018-449a-8f01-fb771087c668
     AppIdFusion: 
-    AppIdChat: 
+    AppIdChat: a4f1951e-59ba-4ed1-b984-47f10412443b
     AppIdVoice: 566d08ad-2a53-4866-aec1-e9f09fee6e7b
     AppVersion: 
     UseNameServer: 1
@@ -74,6 +74,9 @@ MonoBehaviour:
   - ActivateChatImage
   - SetPortalPosition
   - SetPortalState
+  - DecreaseMonsterCount
+  - IncreaseMonsterCount
+  - UpdateStageIcons
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -8,7 +8,7 @@ public class Flag : MonoBehaviourPunCallbacks
     [SerializeField] GameObject goldPrefab;
     [SerializeField] TextAnim Ostrichtextanim;
 
-    private bool isClear = false;
+    public bool isClear = false;
 
     private void Start()
     {
