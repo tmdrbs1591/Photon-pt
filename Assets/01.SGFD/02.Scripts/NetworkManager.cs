@@ -161,6 +161,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "asia";
+        //PhotonNetwork.ConnectUsingSettings();
         instance = this;
         Screen.SetResolution(960, 540, false);
     }
