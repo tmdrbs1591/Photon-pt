@@ -47,7 +47,7 @@ public class StageManager : MonoBehaviourPun
 
     [Header("Monster")]
     public GameObject monsterPrefab;
-    public int currentStageMonsterCount = 0;
+    public List<GameObject> currentSpawnMonsters = new List<GameObject>();
 
     [Header("StageCount")]
     public int currentStage = 0;
@@ -88,7 +88,8 @@ public class StageManager : MonoBehaviourPun
     {
         stageText.text = "STAGE " + currentStage;
 
-        if (currentStageMonsterCount == 0)
+        // currentSpawnMonsters 리스트가 비었는지 확인
+        if (currentSpawnMonsters.Count == 0)
         {
             photonView.RPC("SetPortalState", RpcTarget.All, true);
         }
@@ -107,6 +108,7 @@ public class StageManager : MonoBehaviourPun
             // 스테이지 증가
             currentStage++;
 
+            currentSpawnMonsters.Clear();
             // 5, 15, 25, 35 스테이지일 때는 ShopPosition으로 이동
             if (currentStage > 0 && currentStage % 10 == 5)
             {
@@ -126,7 +128,6 @@ public class StageManager : MonoBehaviourPun
                 if (isEventStage == 0)
                 {
                     int randomIndex = Random.Range(0, eventStage.Count);
-
                     targetPosition = eventStage[randomIndex];
                 }
                 else
@@ -142,11 +143,13 @@ public class StageManager : MonoBehaviourPun
 
                     foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                     {
-                        photonView.RPC("IncreaseMonsterCount", RpcTarget.All);
-                        PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                        GameObject monster = PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                        currentSpawnMonsters.Add(monster);
                     }
 
+                    // 포탈 위치 설정
                     photonView.RPC("SetPortalPosition", RpcTarget.All, stageInfos[randomIndex - 1].portalPos.position);
+                    // 포탈 비활성화
                     photonView.RPC("SetPortalState", RpcTarget.All, false);
 
                     lastStage = randomIndex;
@@ -282,48 +285,65 @@ public class StageManager : MonoBehaviourPun
                     }
                     else
                     {
-                        if (currentStage > 5)
-                        {
-                            stageIcons[5].icon.transform.position = stagePoss[i].position;
-                            stageIcons[5].icon.SetActive(true);
-                        }
-                        else
-                        {
-                            stageIcons[4].icon.transform.position = stagePoss[i].position;
-                            stageIcons[4].icon.SetActive(true);
-                        }
+                        stageIcons[4].icon.transform.position = stagePoss[i].position;
+                        stageIcons[4].icon.SetActive(true);
                     }
                 }
             }
         }
-    }
 
-    [PunRPC]
-    public void IncreaseMonsterCount()
-    {
-        currentStageMonsterCount++;
-    }
-
-    [PunRPC]
-    public void DecreaseMonsterCount()
-    {
-        currentStageMonsterCount--;
-
-        if (currentStageMonsterCount <= 0)
+        if (currentStage == 0)
         {
-            photonView.RPC("SetPortalState", RpcTarget.All, true);
+            stageBar.value = 0;
+        }
+        else
+        {
+            stageBar.value = ((float)currentStage / 50f);
         }
     }
 
     [PunRPC]
     private void SetPortalPosition(Vector3 position)
     {
-        portalObj.transform.position = position;
+        if (portalObj != null)
+        {
+            portalObj.transform.position = position;
+        }
     }
 
     [PunRPC]
     private void SetPortalState(bool state)
     {
-        portalObj.SetActive(state);
+        if (portalObj != null)
+        {
+            portalObj.SetActive(state);
+        }
+    }
+
+    [PunRPC]
+    public void SyncCurrentSpawnMonsters(List<int> monsterViewIDs)
+    {
+        currentSpawnMonsters.Clear();
+        foreach (int id in monsterViewIDs)
+        {
+            GameObject monster = PhotonView.Find(id)?.gameObject;
+            if (monster != null)
+            {
+                currentSpawnMonsters.Add(monster);
+            }
+        }
+    }
+
+    public void UpdateCurrentSpawnMonsters()
+    {
+        List<int> monsterViewIDs = new List<int>();
+        foreach (GameObject monster in currentSpawnMonsters)
+        {
+            if (monster != null)
+            {
+                monsterViewIDs.Add(monster.GetComponent<PhotonView>().ViewID);
+            }
+        }
+        photonView.RPC("SyncCurrentSpawnMonsters", RpcTarget.All, monsterViewIDs);
     }
 }

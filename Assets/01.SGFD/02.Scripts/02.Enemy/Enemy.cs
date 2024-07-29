@@ -49,9 +49,10 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnDestroy()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (StageManager.instance != null)
         {
-            photonView.RPC("DecreaseMonsterCount", RpcTarget.All);
+            StageManager.instance.currentSpawnMonsters.Remove(gameObject);
+            StageManager.instance.UpdateCurrentSpawnMonsters();
         }
     }
 
