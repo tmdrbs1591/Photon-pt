@@ -47,7 +47,9 @@ public class StageManager : MonoBehaviourPun
 
     [Header("Monster")]
     public GameObject monsterPrefab;
-    public List<GameObject> currentSpawnMonsters = new List<GameObject>();
+    private List<GameObject> currentSpawnMonsters = new List<GameObject>();
+    private int killCount = 0;
+    private int totalMonsters = 0;
 
     [Header("StageCount")]
     public int currentStage = 0;
@@ -87,12 +89,6 @@ public class StageManager : MonoBehaviourPun
     private void Update()
     {
         stageText.text = "STAGE " + currentStage;
-
-        // currentSpawnMonsters 리스트가 비었는지 확인
-        if (currentSpawnMonsters.Count == 0)
-        {
-            photonView.RPC("SetPortalState", RpcTarget.All, true);
-        }
     }
 
     public void NextStage()
@@ -109,6 +105,9 @@ public class StageManager : MonoBehaviourPun
             currentStage++;
 
             currentSpawnMonsters.Clear();
+            killCount = 0;
+            totalMonsters = 0; // totalMonsters 초기화
+
             // 5, 15, 25, 35 스테이지일 때는 ShopPosition으로 이동
             if (currentStage > 0 && currentStage % 10 == 5)
             {
@@ -145,6 +144,7 @@ public class StageManager : MonoBehaviourPun
                     {
                         GameObject monster = PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
                         currentSpawnMonsters.Add(monster);
+                        totalMonsters++; // 몬스터 수 증가
                     }
 
                     // 포탈 위치 설정
@@ -285,65 +285,50 @@ public class StageManager : MonoBehaviourPun
                     }
                     else
                     {
-                        stageIcons[4].icon.transform.position = stagePoss[i].position;
-                        stageIcons[4].icon.SetActive(true);
+                        if (currentStage > 5)
+                        {
+                            stageIcons[5].icon.transform.position = stagePoss[i].position;
+                            stageIcons[5].icon.SetActive(true);
+                        }
+                        else
+                        {
+                            stageIcons[4].icon.transform.position = stagePoss[i].position;
+                            stageIcons[4].icon.SetActive(true);
+                        }
                     }
                 }
             }
         }
-
-        if (currentStage == 0)
-        {
-            stageBar.value = 0;
-        }
-        else
-        {
-            stageBar.value = ((float)currentStage / 50f);
-        }
     }
 
     [PunRPC]
-    private void SetPortalPosition(Vector3 position)
+    public void IncrementTotalMonsters()
     {
-        if (portalObj != null)
-        {
-            portalObj.transform.position = position;
-        }
+        totalMonsters++;
     }
 
     [PunRPC]
-    private void SetPortalState(bool state)
+    public void MonsterDied()
     {
-        if (portalObj != null)
+        if (PhotonNetwork.IsMasterClient)
         {
-            portalObj.SetActive(state);
-        }
-    }
-
-    [PunRPC]
-    public void SyncCurrentSpawnMonsters(List<int> monsterViewIDs)
-    {
-        currentSpawnMonsters.Clear();
-        foreach (int id in monsterViewIDs)
-        {
-            GameObject monster = PhotonView.Find(id)?.gameObject;
-            if (monster != null)
+            killCount++;
+            if (killCount >= totalMonsters)
             {
-                currentSpawnMonsters.Add(monster);
+                photonView.RPC("SetPortalState", RpcTarget.All, true);
             }
         }
     }
 
-    public void UpdateCurrentSpawnMonsters()
+    [PunRPC]
+    public void SetPortalState(bool state)
     {
-        List<int> monsterViewIDs = new List<int>();
-        foreach (GameObject monster in currentSpawnMonsters)
-        {
-            if (monster != null)
-            {
-                monsterViewIDs.Add(monster.GetComponent<PhotonView>().ViewID);
-            }
-        }
-        photonView.RPC("SyncCurrentSpawnMonsters", RpcTarget.All, monsterViewIDs);
+        portalObj.SetActive(state);
+    }
+
+    [PunRPC]
+    public void SetPortalPosition(Vector3 position)
+    {
+        portalObj.transform.position = position;
     }
 }
