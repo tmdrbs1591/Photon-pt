@@ -78,6 +78,10 @@ MonoBehaviour:
   - IncreaseMonsterCount
   - UpdateStageIcons
   - SpawnPtc
+  - SyncCurrentSpawnMonsters
+  - AddMonsterToList
+  - MonsterDied
+  - IncrementTotalMonsters
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
