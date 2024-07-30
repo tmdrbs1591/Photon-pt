@@ -161,6 +161,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "asia";
+        //PhotonNetwork.ConnectUsingSettings();
         instance = this;
         Screen.SetResolution(960, 540, false);
     }
@@ -276,7 +278,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         ListText.text = "";
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
             ListText.text += PhotonNetwork.PlayerList[i].NickName + ((i + 1 == PhotonNetwork.PlayerList.Length) ? "" : ", ");
-        RoomInfoText.text = PhotonNetwork.CurrentRoom.Name + " / " + PhotonNetwork.CurrentRoom.PlayerCount + "명 / " + PhotonNetwork.CurrentRoom.MaxPlayers + "최대";
+        RoomInfoText.text = PhotonNetwork.CurrentRoom.Name + " / " + PhotonNetwork.CurrentRoom.PlayerCount + "명 / " + PhotonNetwork.CurrentRoom.MaxPlayers + "명";
     }
 
     public override void OnMasterClientSwitched(Player newMasterClient)
