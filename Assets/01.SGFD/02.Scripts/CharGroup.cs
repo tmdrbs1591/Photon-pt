@@ -18,6 +18,9 @@ public class CharGroup : MonoBehaviour
             case Character.Dragoon:
                 SetActiveCharacter(2);
                 break;
+            case Character.Mage:
+                SetActiveCharacter(3);
+                break;
         }
     }
 

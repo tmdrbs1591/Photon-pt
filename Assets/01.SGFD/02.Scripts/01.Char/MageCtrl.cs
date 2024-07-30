@@ -50,6 +50,8 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
     private int curAttackCount = 0;
     private int maxAttackCount = 3;
 
+    [SerializeField] Transform skillPos;
+
 
     public PhotonView PV;
 
@@ -407,6 +409,7 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
             {
                 AudioManager.instance.PlaySound(transform.position, 3, Random.Range(1f, 1f), 1f);
 
+
                 StartCoroutine(ObjectSetActive(SkillPanel, 1.8f)); // 스킬 패널 활성화
                 StartCoroutine(IsSkill(1.3f));
                 anim.SetTrigger("isAttack1");
@@ -423,35 +426,21 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator SkillCor()
     {
-        GameObject closestEnemy = FindClosestEnemy();
-        if (closestEnemy != null)
-        {
-            PV.RPC("RPC_RotateToClosestEnemy", RpcTarget.All, closestEnemy.transform.position);
-        }
-
-        Vector3 fireDirection = transform.forward; // 캐릭터가 바라보는 방향
         yield return new WaitForSeconds(0.1f);
-        for (int i = 0; i < 30; i++)
+        StartCoroutine(IsStop(0.2f));
+        Vector3 fireDirection = transform.forward; // 캐릭터가 바라보는 방향
+        GameObject firePillarObj = PhotonNetwork.Instantiate("StarRay", skillPos.transform.position + new Vector3(0, 0.5f, 0) + fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
+        FirePillar firePillar = firePillarObj.GetComponent<FirePillar>();
+
+        if (firePillar != null)
         {
-            // 랜덤한 위치 벡터 생성 (-1부터 1까지의 범위)
-            Vector3 randomOffset = new Vector3(Random.Range(-1f, 1f), 0.5f, Random.Range(-1f, 1f));
-
-            // 화살을 랜덤한 위치에 생성
-            GameObject arrowObj = PhotonNetwork.Instantiate("SkillArrow", attackPos.transform.position + randomOffset + fireDirection * 1.5f, Quaternion.LookRotation(fireDirection));
-            SkillArrow arrow = arrowObj.GetComponent<SkillArrow>();
-            if (arrow != null)
-            {
-                //  arrow.SetDirection(fireDirection); // 화살의 방향 설정
-                //   arrow._damage = attackPower; // 화살의 파워 설정
-            }
-            CameraShake.instance.Shake();
-            anim.SetTrigger("isAttack1");
-
-            // n초 뒤에 삭제하기
-            StartCoroutine(DestroyAfterDelay(arrowObj, 0.5f));
-
-            yield return new WaitForSeconds(0.04f);
+            firePillar._damage = playerStats.attackPower; // 화살의 파워 설정
         }
+        AudioManager.instance.PlaySound(transform.position, 4, Random.Range(1f, 0.9f), 0.4f);
+        attacklCurTime = playerStats.attackCoolTime;
+        PV.RPC("PlayerAttackAnim", RpcTarget.AllBuffered,1);
+
+
     }
 
     IEnumerator DestroyAfterDelay(GameObject obj, float delay)

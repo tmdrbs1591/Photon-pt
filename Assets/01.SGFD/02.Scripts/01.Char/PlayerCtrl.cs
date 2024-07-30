@@ -415,7 +415,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator SkillCor()
     {
         yield return new WaitForSeconds(0.1f);
-        CameraShake.instance.ZoomIn(10f, 1f); // ¡‹ ¿Œ
+        //CameraShake.instance.ZoomIn(10f, 1f); // ¡‹ ¿Œ
 
         for (int i = 0; i < 6; i++)
         {
@@ -429,7 +429,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         CameraShake.instance.Shake();
         PV.RPC("Damage", RpcTarget.All, playerStats.attackPower + 10f);
 
-        CameraShake.instance.ZoomOut(57.4f, 0.2f); // ¡‹ æ∆øÙ
+        //CameraShake.instance.ZoomOut(57.4f, 0.2f); // ¡‹ æ∆øÙ
 
     }
 

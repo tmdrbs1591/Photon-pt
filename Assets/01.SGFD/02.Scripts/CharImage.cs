@@ -10,7 +10,8 @@ public class CharImage : MonoBehaviourPunCallbacks
 
     [SerializeField] Sprite KnightSprite; // Knight 캐릭터의 스프라이트
     [SerializeField] Sprite ArcherSprite; // Archer 캐릭터의 스프라이트
-    [SerializeField] Sprite DragoonSprite; // Archer 캐릭터의 스프라이트
+    [SerializeField] Sprite DragoonSprite; // drn 캐릭터의 스프라이트
+    [SerializeField] Sprite MageSprite; // Mages 캐릭터의 스프라이트
 
 
     void Start()
@@ -33,6 +34,10 @@ public class CharImage : MonoBehaviourPunCallbacks
 
             case Character.Dragoon:
                 NetworkManager.instance.charImage.currentImage.sprite = DragoonSprite;
+                break;
+
+            case Character.Mage:
+                NetworkManager.instance.charImage.currentImage.sprite = MageSprite;
                 break;
         }
     }

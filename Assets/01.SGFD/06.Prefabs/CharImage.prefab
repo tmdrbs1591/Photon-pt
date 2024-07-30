@@ -81,9 +81,10 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
+  observableSearch: 0
   ObservedComponents:
   - {fileID: 6428944959620501208}
-  viewIdField: 0
+  sceneViewId: 0
   InstantiationId: 24
   isRuntimeInstantiated: 0
 --- !u!114 &6428944959620501208
@@ -102,6 +103,7 @@ MonoBehaviour:
   KnightSprite: {fileID: 21300000, guid: 37f4620802dbe8947bb3bdaef9d13ddb, type: 3}
   ArcherSprite: {fileID: 21300000, guid: 213b38674ab3c3043aaa296677ed071b, type: 3}
   DragoonSprite: {fileID: 21300000, guid: 039bdbc7ade42fc40ab28ef3cf3ebff0, type: 3}
+  MageSprite: {fileID: 21300000, guid: aa5abbde0e99ed940a35e2164d7c9c3e, type: 3}
 --- !u!95 &8443071157935486443
 Animator:
   serializedVersion: 5

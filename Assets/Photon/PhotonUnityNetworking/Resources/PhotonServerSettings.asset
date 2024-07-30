@@ -19,7 +19,7 @@ MonoBehaviour:
     AppIdVoice: 566d08ad-2a53-4866-aec1-e9f09fee6e7b
     AppVersion: 
     UseNameServer: 1
-    FixedRegion: 
+    FixedRegion: asia
     Server: 
     Port: 0
     ProxyServer: 
@@ -79,6 +79,8 @@ MonoBehaviour:
   - UpdateStageIcons
   - SpawnPtc
   - SyncCurrentSpawnMonsters
+  - IncrementTotalMonsters
+  - MonsterDied
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
