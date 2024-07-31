@@ -118,8 +118,17 @@ public class StageManager : MonoBehaviourPun
             else if (currentStage > 0 && currentStage % 10 == 0)
             {
                 int bossIndex = Random.Range(0, bossPosition.Count);
+                int bossMonsterIndex = Random.Range(0, bossMonsters.Count);
                 targetPosition = bossPosition[bossIndex].spawnPos;
+                // spawnPos 대신 monsterSpawnPos를 사용하여 올바르게 반복문을 돌도록 수정
+                foreach (Transform t in bossPosition[bossIndex].monsterSpawnPos)
+                {
+                    GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, Quaternion.identity);
+                    currentSpawnMonsters.Add(boss);
+                    totalMonsters++;
+                }
             }
+
             else
             {
                 int isEventStage = Random.Range(0, stagePercentage);
