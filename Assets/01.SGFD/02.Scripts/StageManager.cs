@@ -120,15 +120,20 @@ public class StageManager : MonoBehaviourPun
                 int bossIndex = Random.Range(0, bossPosition.Count);
                 int bossMonsterIndex = Random.Range(0, bossMonsters.Count);
                 targetPosition = bossPosition[bossIndex].spawnPos;
+
+                // 포탈 위치 설정
+                photonView.RPC("SetPortalPosition", RpcTarget.All, bossPosition[bossIndex].portalPos.position);
+                // 포탈 비활성화
+                photonView.RPC("SetPortalState", RpcTarget.All, false);
+
                 // spawnPos 대신 monsterSpawnPos를 사용하여 올바르게 반복문을 돌도록 수정
                 foreach (Transform t in bossPosition[bossIndex].monsterSpawnPos)
                 {
-                    GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, Quaternion.identity);
+                    GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, t.rotation);
                     currentSpawnMonsters.Add(boss);
                     totalMonsters++;
                 }
             }
-
             else
             {
                 int isEventStage = Random.Range(0, stagePercentage);
@@ -325,6 +330,7 @@ public class StageManager : MonoBehaviourPun
             if (killCount >= totalMonsters)
             {
                 photonView.RPC("SetPortalState", RpcTarget.All, true);
+                Debug.Log("포탈스폰");
             }
         }
     }
