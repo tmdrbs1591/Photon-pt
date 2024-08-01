@@ -66,7 +66,7 @@ public class StageManager : MonoBehaviourPun
     [Header("StageBar")]
     [SerializeField] public List<StageIcon> stageIcons = new List<StageIcon>();
     [SerializeField] public List<Transform> stagePoss = new List<Transform>();
-    [SerializeField] private Slider stageBar;
+    [SerializeField] private Image stageBar;
 
     private void Awake()
     {
@@ -97,12 +97,18 @@ public class StageManager : MonoBehaviourPun
         if (Time.time - lastStageChangeTime < stageCooldown)
             return;
 
+        // 스테이지 증가
+        currentStage++;
+
+        stageBar.fillAmount = 0;
+
+        // stageBar를 부드럽게 0.25까지 증가시키는 코루틴 호출
+        StartCoroutine(FillStageBar(0.28f, 1.5f)); // 1.5초 동안 0.25까지 증가
+
+
         if (PhotonNetwork.IsMasterClient)
         {
             Transform targetPosition = null;
-
-            // 스테이지 증가
-            currentStage++;
 
             currentSpawnMonsters.Clear();
             killCount = 0;
@@ -187,6 +193,22 @@ public class StageManager : MonoBehaviourPun
         }
     }
 
+    // stageBar의 fillAmount를 부드럽게 증가시키는 코루틴
+    private IEnumerator FillStageBar(float targetValue, float duration)
+    {
+        float startValue = stageBar.fillAmount;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            stageBar.fillAmount = Mathf.Lerp(startValue, targetValue, elapsedTime / duration);
+            yield return null;
+        }
+
+        stageBar.fillAmount = targetValue; // 최종적으로 목표 값을 설정
+    }
+
     [PunRPC]
     public void MovePlayer(int stage, Vector3 position, Quaternion rotation)
     {
@@ -255,62 +277,11 @@ public class StageManager : MonoBehaviourPun
                     Debug.Log("상점 스테이지 칸번호 : " + i);
                 }
             }
-            else if (i == 1)
-            {
-                stageIcons[6].icon.transform.position = stagePoss[i].position;
-                stageIcons[6].icon.SetActive(true);
-            }
-            else if (i != 4)
+            else // 기본 스테이지 아이콘 표시
             {
                 stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
                 stageIcons[defaulIconCount].icon.SetActive(true);
                 defaulIconCount++;
-            }
-
-            if (i == 4)
-            {
-                Debug.Log("현재상점 : " + isShop);
-                Debug.Log("현재보스 : " + isBoss);
-
-                if (isShop)
-                {
-                    stageIcons[5].icon.transform.position = stagePoss[i].position;
-                    stageIcons[5].icon.SetActive(true);
-                }
-                else if (isBoss)
-                {
-                    stageIcons[4].icon.transform.position = stagePoss[i].position;
-                    stageIcons[4].icon.SetActive(true);
-                }
-                else
-                {
-                    if (currentStage - 10 > 0)
-                    {
-                        if (currentStage - 10 > 5)
-                        {
-                            stageIcons[5].icon.transform.position = stagePoss[i].position;
-                            stageIcons[5].icon.SetActive(true);
-                        }
-                        else
-                        {
-                            stageIcons[4].icon.transform.position = stagePoss[i].position;
-                            stageIcons[4].icon.SetActive(true);
-                        }
-                    }
-                    else
-                    {
-                        if (currentStage > 5)
-                        {
-                            stageIcons[5].icon.transform.position = stagePoss[i].position;
-                            stageIcons[5].icon.SetActive(true);
-                        }
-                        else
-                        {
-                            stageIcons[4].icon.transform.position = stagePoss[i].position;
-                            stageIcons[4].icon.SetActive(true);
-                        }
-                    }
-                }
             }
         }
     }
