@@ -122,8 +122,8 @@ MonoBehaviour:
   <InventoryItem>k__BackingField: {fileID: 11400000, guid: 47ecde307ff91da4bbb382b6de410007,
     type: 2}
   <Quantity>k__BackingField: 1
-  audioSource: {fileID: 8534466141361780006}
   duration: 0.3
+  songIndex: 4
 --- !u!82 &8534466141361780006
 AudioSource:
   m_ObjectHideFlags: 0
