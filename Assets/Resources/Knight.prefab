@@ -14241,6 +14241,7 @@ GameObject:
   - component: {fileID: 1605395555083278155}
   - component: {fileID: 1314494849142529154}
   - component: {fileID: 5854981592367626505}
+  - component: {fileID: 8861251677682171478}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Player
@@ -14679,15 +14680,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 3070082665741676158}
   inventoryData: {fileID: 11400000, guid: 155808a7516f8f44984f3aae5cd8cfdf, type: 2}
-  initialItems:
-  - quantity: 5
-    item: {fileID: 11400000, guid: 47ecde307ff91da4bbb382b6de410007, type: 2}
-  - quantity: 0
-    item: {fileID: 0}
-  - quantity: 10
-    item: {fileID: 11400000, guid: 8eff1568a3623244694b2b46e87b5fb3, type: 2}
-  - quantity: 2
-    item: {fileID: 11400000, guid: 47ecde307ff91da4bbb382b6de410007, type: 2}
+  initialItems: []
+--- !u!114 &8861251677682171478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7226479372309024491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7fc529287e1de4fb7f3985063abade, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryData: {fileID: 11400000, guid: 155808a7516f8f44984f3aae5cd8cfdf, type: 2}
 --- !u!1 &7232548172885131704
 GameObject:
   m_ObjectHideFlags: 0

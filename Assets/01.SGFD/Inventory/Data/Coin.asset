@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ae78e3d12aeed48b7e3ad8bd193a3c, type: 3}
   m_Name: Coin
   m_EditorClassIdentifier: 
-  <InStackable>k__BackingField: 0
-  <MaxStackSize>k__BackingField: 1
+  <InStackable>k__BackingField: 1
+  <MaxStackSize>k__BackingField: 99
   <Name>k__BackingField: "\uCF54\uC778"
   <Description>k__BackingField: "\uCF54\uC778\uC774\uB2E4. \uC0C1\uC810\uC5D0\uC11C
     \uC0AC\uC6A9\uC774 \uAC00\uB2A5\uD558\uB2E4."
