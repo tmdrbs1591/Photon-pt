@@ -68,6 +68,12 @@ public class StageManager : MonoBehaviourPun
     [SerializeField] public List<Transform> stagePoss = new List<Transform>();
     [SerializeField] private Image stageBar;
 
+    [Header("StatUp")]
+    [SerializeField] private float hpUp = 0;
+    [SerializeField] private float attackUp = 0;
+    [SerializeField] private float bossHpUp = 0;
+    [SerializeField] private float bossAttackUp = 0;
+
     private void Awake()
     {
         if (instance == null)
@@ -105,7 +111,6 @@ public class StageManager : MonoBehaviourPun
         // stageBar를 부드럽게 0.25까지 증가시키는 코루틴 호출
         StartCoroutine(FillStageBar(0.28f, 1.5f)); // 1.5초 동안 0.25까지 증가
 
-
         if (PhotonNetwork.IsMasterClient)
         {
             Transform targetPosition = null;
@@ -136,6 +141,7 @@ public class StageManager : MonoBehaviourPun
                 foreach (Transform t in bossPosition[bossIndex].monsterSpawnPos)
                 {
                     GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, t.rotation);
+                    boss.GetComponent<Enemy>().StatUp(bossHpUp * currentStage, bossAttackUp * currentStage); // 보스 몬스터의 스탯 증가
                     currentSpawnMonsters.Add(boss);
                     totalMonsters++;
                 }
@@ -163,6 +169,7 @@ public class StageManager : MonoBehaviourPun
                     foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                     {
                         GameObject monster = PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                        monster.GetComponent<Enemy>().StatUp(hpUp * currentStage, attackUp * currentStage); // 몬스터의 스탯 증가
                         currentSpawnMonsters.Add(monster);
                         totalMonsters++; // 몬스터 수 증가
                     }
@@ -265,55 +272,63 @@ public class StageManager : MonoBehaviourPun
                 stageIcons[5].icon.transform.position = stagePoss[i].position;
                 stageIcons[5].icon.SetActive(true);
                 isBoss = true;
-                Debug.Log("보스 스테이지 칸번호 : " + i);
             }
-            else if ((currentStage + stagePosUpandDown) % 5 == 0 && i != 4 && (currentStage + stagePosUpandDown) > 0) // 만약 5의 배수 (상점 스테이지)
+            else if ((currentStage + stagePosUpandDown) % 10 == 5 && i != 4 && (currentStage + stagePosUpandDown) > 0)
             {
-                if (!isBoss) // 이미 보스 스테이지가 설정되지 않은 경우에만 설정
+                stageIcons[4].icon.transform.position = stagePoss[i].position;
+                stageIcons[4].icon.SetActive(true);
+                isShop = true;
+            }
+            else
+            {
+                if (i == 4)
                 {
-                    stageIcons[4].icon.transform.position = stagePoss[i].position;
-                    stageIcons[4].icon.SetActive(true);
-                    isShop = true;
-                    Debug.Log("상점 스테이지 칸번호 : " + i);
+                    if (isShop == true)
+                    {
+                        stageIcons[4].icon.transform.position = stagePoss[i].position;
+                        stageIcons[4].icon.SetActive(true);
+                    }
+                    else if (isBoss == true)
+                    {
+                        stageIcons[5].icon.transform.position = stagePoss[i].position;
+                        stageIcons[5].icon.SetActive(true);
+                    }
+                    else
+                    {
+                        stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
+                        stageIcons[defaulIconCount].icon.SetActive(true);
+                        defaulIconCount++;
+                    }
+                }
+                else
+                {
+                    stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
+                    stageIcons[defaulIconCount].icon.SetActive(true);
+                    defaulIconCount++;
                 }
             }
-            else // 기본 스테이지 아이콘 표시
-            {
-                stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
-                stageIcons[defaulIconCount].icon.SetActive(true);
-                defaulIconCount++;
-            }
         }
     }
 
-    [PunRPC]
-    public void IncrementTotalMonsters()
+    public void KillMonster()
     {
-        totalMonsters++;
-    }
+        killCount++;
+        stageBar.fillAmount = (float)killCount / totalMonsters;
 
-    [PunRPC]
-    public void MonsterDied()
-    {
-        if (PhotonNetwork.IsMasterClient)
+        if (killCount >= totalMonsters)
         {
-            killCount++;
-            if (killCount >= totalMonsters)
-            {
-                photonView.RPC("SetPortalState", RpcTarget.All, true);
-                Debug.Log("포탈스폰");
-            }
+            portalObj.SetActive(true);
         }
     }
 
     [PunRPC]
-    public void SetPortalState(bool state)
+    private void SetPortalState(bool state)
     {
         portalObj.SetActive(state);
     }
 
     [PunRPC]
-    public void SetPortalPosition(Vector3 position)
+    private void SetPortalPosition(Vector3 position)
     {
         portalObj.transform.position = position;
     }
