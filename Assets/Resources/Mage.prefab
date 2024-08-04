@@ -17108,6 +17108,7 @@ GameObject:
   - component: {fileID: 5927181024973420016}
   - component: {fileID: 958695424223935515}
   - component: {fileID: 775840161418925871}
+  - component: {fileID: 1004443068822902915}
   m_Layer: 0
   m_Name: Mage
   m_TagString: Player
@@ -17547,6 +17548,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryData: {fileID: 11400000, guid: 155808a7516f8f44984f3aae5cd8cfdf, type: 2}
+--- !u!114 &1004443068822902915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9154082510301980621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8a4860e20c18af40b54dd4d9eeea13b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9201610754849326364
 GameObject:
   m_ObjectHideFlags: 0

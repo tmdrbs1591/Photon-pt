@@ -7,16 +7,12 @@ using TMPro;
 
 public class PlayerGold : MonoBehaviour
 {
-    [SerializeField] private float gold; // 플레이어가 현재 가지고있는 골드
-    [SerializeField] TMP_Text goldtext;
-
     void Start()
     {
     }
 
     void Update()
     {
-        goldtext.text = gold.ToString();
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -28,7 +24,6 @@ public class PlayerGold : MonoBehaviour
             ps.currentXp += 10;
             ps.LV_UP();
             Destroy(collision.gameObject);
-            gold++;
         }
     }
 }

@@ -426,8 +426,8 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
             SkillArrow arrow = arrowObj.GetComponent<SkillArrow>();
             if (arrow != null)
             {
-              //  arrow.SetDirection(fireDirection); // 화살의 방향 설정
-             //   arrow._damage = attackPower; // 화살의 파워 설정
+               arrow.SetDirection(fireDirection); // 화살의 방향 설정
+               arrow._damage = playerStats.attackPower; ; // 화살의 파워 설정
             }
             CameraShake.instance.Shake();
             anim.SetTrigger("isAttack1");
