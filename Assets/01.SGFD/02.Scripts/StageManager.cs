@@ -332,4 +332,17 @@ public class StageManager : MonoBehaviourPun
     {
         portalObj.transform.position = position;
     }
+
+    [PunRPC]
+    public void MonsterDied()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            killCount++;
+            if (killCount >= totalMonsters)
+            {
+                photonView.RPC("SetPortalState", RpcTarget.All, true);
+            }
+        }
+    }
 }
