@@ -295,9 +295,16 @@ public class StageManager : MonoBehaviourPun
                     }
                     else
                     {
-                        stageIcons[defaulIconCount].icon.transform.position = stagePoss[i].position;
-                        stageIcons[defaulIconCount].icon.SetActive(true);
-                        defaulIconCount++;
+                        if ((currentStage + 3) % 10 == 5)
+                        {
+                            stageIcons[5].icon.transform.position = stagePoss[i].position;
+                            stageIcons[5].icon.SetActive(true);
+                        }
+                        else
+                        {
+                            stageIcons[4].icon.transform.position = stagePoss[i].position;
+                            stageIcons[4].icon.SetActive(true);
+                        }
                     }
                 }
                 else
