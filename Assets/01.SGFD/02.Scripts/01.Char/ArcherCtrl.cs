@@ -76,6 +76,10 @@ public class ArcherCtrl : MonoBehaviourPunCallbacks, IPunObservable
         anim = GetComponent<Animator>();
         playerStats.curHp = playerStats.maxHp;
 
+
+        PhotonNetwork.SendRate = 60; // 기본값 20에서 증가
+        PhotonNetwork.SerializationRate = 60; // 기본값 10에서 증가
+
         if (!photonView.IsMine)
         {
             // 다른 플레이어의 캔버스를 비활성화

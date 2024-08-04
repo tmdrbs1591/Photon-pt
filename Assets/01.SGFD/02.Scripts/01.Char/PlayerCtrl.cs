@@ -87,6 +87,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
         anim = GetComponent<Animator>();
         playerStats.curHp = playerStats.maxHp;
 
+        PhotonNetwork.SendRate = 60; // 기본값 20에서 증가
+        PhotonNetwork.SerializationRate = 60; // 기본값 10에서 증가
 
         if (!photonView.IsMine)
         {
@@ -422,6 +424,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             PV.RPC("Damage", RpcTarget.All, playerStats.attackPower + 1f);
             AudioManager.instance.PlaySound(transform.position, 2, Random.Range(1.1f, 1.4f), 0.2f);
             yield return new WaitForSeconds(0.1f);
+            CameraShake.instance.Shake();
             CameraShake.instance.Shake();
         }
         yield return new WaitForSeconds(0.37f);
