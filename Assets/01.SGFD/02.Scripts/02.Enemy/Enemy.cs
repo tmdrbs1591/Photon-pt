@@ -163,7 +163,7 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (damage > 0)
         {
-            PhotonNetwork.Instantiate("BloodPtc", transform.position + new Vector3(0, -1.5f, 0), Quaternion.identity);
+           // PhotonNetwork.Instantiate("BloodPtc", transform.position + new Vector3(0, -1.5f, 0), Quaternion.identity);
 
             if (hpBar != null || hpBar2 != null)
             {
