@@ -27,12 +27,14 @@ public class Flag : MonoBehaviourPunCallbacks
         {
             Ostrichtextanim.textToShow = "<shake>졌다 ㅜㅜ<shake>";
             SetClearState(true);
+            StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
             photonView.RPC("SpawnGold", RpcTarget.All);
         }
         if (other.gameObject.CompareTag("Ostrich") && !isClear)
         {
             Ostrichtextanim.textToShow = "<wave>내가 이겼다~~!<wave>";
             SetClearState(true);
+            StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
             photonView.RPC("SpawnPtc", RpcTarget.All);
 
         }

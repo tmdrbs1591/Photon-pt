@@ -44,6 +44,9 @@ public class StageManager : MonoBehaviourPun
     [Header("EventStage")]
     public List<Transform> eventStage = new List<Transform>();
     public int stagePercentage = 5;
+    public AcornEvent arconEvent;
+    public OstrichEvent ostrichEvent;
+    public Flag flag;
 
     [Header("Monster")]
     public GameObject monsterPrefab;
@@ -154,6 +157,8 @@ public class StageManager : MonoBehaviourPun
                 {
                     int randomIndex = Random.Range(0, eventStage.Count);
                     targetPosition = eventStage[randomIndex];
+
+                    StartCoroutine(Co_StartEventStage(randomIndex));
                 }
                 else
                 {
@@ -368,6 +373,35 @@ public class StageManager : MonoBehaviourPun
             {
                 photonView.RPC("SetPortalState", RpcTarget.All, true);
             }
+        }
+    }
+
+    [PunRPC]
+    public void EventCheck()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (flag.isClear || arconEvent.isEventEnd)
+            {
+                photonView.RPC("SetPortalState", RpcTarget.All, true);
+                flag.isClear = false;
+                arconEvent.isEventEnd = false;
+            }
+        }
+    }
+
+    IEnumerator Co_StartEventStage(int eventStage)
+    {
+        yield return new WaitForSeconds(1);
+        if (eventStage == 0)
+        {
+            Debug.Log("´Ù¶÷Áã");
+            arconEvent.EventStart();
+        }
+        else if (eventStage == 1)
+        {
+            Debug.Log("Å¸Á¶");
+            ostrichEvent.EventStartTrigger();
         }
     }
 }
