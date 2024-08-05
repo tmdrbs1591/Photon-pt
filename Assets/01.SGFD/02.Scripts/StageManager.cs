@@ -285,15 +285,15 @@ public class StageManager : MonoBehaviourPun
                 {
                     if (isShop == true)
                     {
-                        stageIcons[4].icon.transform.position = stagePoss[i].position;
-                        stageIcons[4].icon.SetActive(true);
-                    }
-                    else if (isBoss == true)
-                    {
                         stageIcons[5].icon.transform.position = stagePoss[i].position;
                         stageIcons[5].icon.SetActive(true);
                     }
-                    else
+                    else if (isBoss == true)
+                    {
+                        stageIcons[4].icon.transform.position = stagePoss[i].position;
+                        stageIcons[4].icon.SetActive(true);
+                    }
+                    else if(!isShop && !isBoss)
                     {
                         if ((currentStage + 3) % 10 == 5)
                         {
