@@ -293,9 +293,13 @@ public class StageManager : MonoBehaviourPun
                         stageIcons[4].icon.transform.position = stagePoss[i].position;
                         stageIcons[4].icon.SetActive(true);
                     }
-                    else if(!isShop && !isBoss)
+                    else if (!isShop && !isBoss)
                     {
-                        if ((currentStage + 3) % 10 == 5)
+                        // 5단위와 10단위 숫자 중 더 가까운 숫자를 계산하여 아이콘 설정
+                        int nearest5 = FindNearestMultiple(currentStage, 5);
+                        int nearest10 = FindNearestMultiple(currentStage, 10);
+
+                        if (Mathf.Abs(currentStage - nearest5) < Mathf.Abs(currentStage - nearest10))
                         {
                             stageIcons[5].icon.transform.position = stagePoss[i].position;
                             stageIcons[5].icon.SetActive(true);
@@ -317,6 +321,20 @@ public class StageManager : MonoBehaviourPun
         }
     }
 
+    int FindNearestMultiple(int num, int multiple)
+    {
+        int lower = (num / multiple) * multiple;
+        int upper = lower + multiple;
+
+        if (Mathf.Abs(num - lower) < Mathf.Abs(num - upper))
+        {
+            return lower;
+        }
+        else
+        {
+            return upper;
+        }
+    }
     public void KillMonster()
     {
         killCount++;
