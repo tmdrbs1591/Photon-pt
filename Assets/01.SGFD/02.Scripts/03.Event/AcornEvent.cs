@@ -18,6 +18,8 @@ public class AcornEvent : MonoBehaviourPun
 
     [SerializeField] TextAnim Squireltextanim;
 
+    public bool isEventEnd = false;
+
     private bool isCoroutineRunning = false; // Coroutine running flag
 
     private void OnEnable()
@@ -29,15 +31,15 @@ public class AcornEvent : MonoBehaviourPun
         }
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            EventStart();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.L))
+    //    {
+    //        EventStart();
+    //    }
+    //}
 
-    void EventStart()
+    public void EventStart()
     {
         // 마스터 클라이언트가 모든 클라이언트에 아콘을 생성하도록 명령
         SpawnAcorns(11);
@@ -94,6 +96,8 @@ public class AcornEvent : MonoBehaviourPun
                 clearPtc.SetActive(false);
                 clearPtc.SetActive(true);
                 Debug.Log("골드생성");
+                isEventEnd = true;
+                StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
                 SpawnGold();
                 isCoroutineRunning = false; // Set the flag to false
                 yield break; // 골드를 생성한 후 이 코루틴을 중지

@@ -1,8 +1,7 @@
+using Photon.Pun;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Photon.Pun;
 
 public class OstrichEvent : MonoBehaviourPunCallbacks
 {
@@ -26,12 +25,17 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
     void Update()
     {
         // "M" 키가 눌리면 이벤트 시작
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            photonView.RPC("EventStart", RpcTarget.All);
-        }
+        //if (Input.GetKeyDown(KeyCode.M))
+        //{
+        //    photonView.RPC("EventStart", RpcTarget.All);
+        //}
 
         anim.SetBool("isRun", agent.velocity.magnitude > 0.1f);
+    }
+
+    public void EventStartTrigger()
+    {
+        photonView.RPC("EventStart", RpcTarget.All);
     }
 
     [PunRPC]
@@ -39,6 +43,8 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
     {
         StartCoroutine(StartEvent());
     }
+
+
 
     IEnumerator StartEvent()
     {
