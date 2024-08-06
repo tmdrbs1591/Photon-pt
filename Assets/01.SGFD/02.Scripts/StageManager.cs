@@ -125,12 +125,14 @@ public class StageManager : MonoBehaviourPun
             // 5, 15, 25, 35 스테이지일 때는 ShopPosition으로 이동
             if (currentStage > 0 && currentStage % 10 == 5)
             {
+                Debug.Log("상점 스테이지 입장합니다. 현재 스테이지 : " + currentStage);
                 int shopIndex = Random.Range(0, shopPosition.Count);
                 targetPosition = shopPosition[shopIndex];
             }
             // 10, 20, 30, 40, 50 스테이지일 때는 BossPosition으로 이동
             else if (currentStage > 0 && currentStage % 10 == 0)
             {
+                Debug.Log("보스 스테이지 입장합니다. 현재 스테이지 : " + currentStage);
                 int bossIndex = Random.Range(0, bossPosition.Count);
                 int bossMonsterIndex = Random.Range(0, bossMonsters.Count);
                 targetPosition = bossPosition[bossIndex].spawnPos;
@@ -401,7 +403,8 @@ public class StageManager : MonoBehaviourPun
         else if (eventStage == 1)
         {
             Debug.Log("타조");
-            ostrichEvent.EventStartTrigger();
+            //ostrichEvent.EventStartTrigger();
+            ostrichEvent.photonView.RPC("EventStart", RpcTarget.All);
         }
     }
 }
