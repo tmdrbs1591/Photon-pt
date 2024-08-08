@@ -34,7 +34,7 @@ public class EventStageInfo
     public Transform PortalPos;
 }
 
-public class StageManager : MonoBehaviourPun
+public class StageManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static StageManager instance;
 
@@ -104,37 +104,33 @@ public class StageManager : MonoBehaviourPun
         UpdateStageIcons();
     }
 
-    private void Update()
-    {
-
-    }
-
     public void NextStage()
     {
         // 쿨다운 확인
         if (Time.time - lastStageChangeTime < stageCooldown)
             return;
 
-        if (currentStage == 10)
-        {
-            currentStageMonsterListLength++;
-
-            if (currentStageMonsterListLength > monsterPrefab.Length)
-            {
-                currentStageMonsterListLength = monsterPrefab.Length;
-            }
-        }
-
-        // 스테이지 증가
-        currentStage++;
-
-        stageBar.fillAmount = 0;
-
-        // stageBar를 부드럽게 0.25까지 증가시키는 코루틴 호출
-        StartCoroutine(FillStageBar(0.28f, 1.5f)); // 1.5초 동안 0.25까지 증가
-
         if (PhotonNetwork.IsMasterClient)
         {
+            // 마스터 클라이언트에서만 스테이지 변경 로직을 수행
+            if (currentStage == 10)
+            {
+                currentStageMonsterListLength++;
+
+                if (currentStageMonsterListLength > monsterPrefab.Length)
+                {
+                    currentStageMonsterListLength = monsterPrefab.Length;
+                }
+            }
+
+            // 스테이지 증가
+            currentStage++;
+
+            stageBar.fillAmount = 0;
+
+            // stageBar를 부드럽게 0.25까지 증가시키는 코루틴 호출
+            StartCoroutine(FillStageBar(0.28f, 1.5f)); // 1.5초 동안 0.25까지 증가
+
             Transform targetPosition = null;
 
             currentSpawnMonsters.Clear();
@@ -165,7 +161,6 @@ public class StageManager : MonoBehaviourPun
                 foreach (Transform t in bossPosition[bossIndex].monsterSpawnPos)
                 {
                     GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, t.rotation);
-                    boss.GetComponent<Enemy>().StatUp(bossHpUp * currentStage, bossAttackUp * currentStage); // 보스 몬스터의 스탯 증가
                     currentSpawnMonsters.Add(boss);
                     totalMonsters++;
                 }
@@ -203,7 +198,6 @@ public class StageManager : MonoBehaviourPun
                     {
                         monsterIndex = Random.Range(0, currentStageMonsterListLength);
                         GameObject monster = PhotonNetwork.Instantiate(monsterPrefab[monsterIndex].name, t.position, t.rotation);
-                        monster.GetComponent<Enemy>().StatUp(hpUp * currentStage, attackUp * currentStage); // 몬스터의 스탯 증가
                         currentSpawnMonsters.Add(monster);
                         totalMonsters++; // 몬스터 수 증가
                     }
@@ -231,41 +225,59 @@ public class StageManager : MonoBehaviourPun
 
             // 스테이지 아이콘 업데이트
             photonView.RPC("UpdateStageIcons", RpcTarget.All);
+
+            // totalMonsters 값 동기화
+            photonView.RPC("SyncTotalMonsters", RpcTarget.All, totalMonsters);
+
+            // 스테이지 설정이 끝난 후 추가 동기화 호출
+            photonView.RPC("SyncStageData", RpcTarget.All, currentStage, killCount, totalMonsters);
         }
         photonView.RPC("UpdateText", RpcTarget.All);
     }
 
     [PunRPC]
-    private void UpdateText()
+    private void SyncTotalMonsters(int total)
     {
-        stageText.text = "STAGE " + currentStage;
+        totalMonsters = total;
         totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
     }
 
+    [PunRPC]
+    private void SyncStageData(int stage, int kills, int total)
+    {
+        currentStage = stage;
+        killCount = kills;
+        totalMonsters = total;
+        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
+    }
 
-    // stageBar의 fillAmount를 부드럽게 증가시키는 코루틴
-    private IEnumerator FillStageBar(float targetValue, float duration)
+    [PunRPC]
+    public void UpdateText()
+    {
+        stageText.text = $"{currentStage} 스테이지";
+        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
+    }
+
+    IEnumerator FillStageBar(float targetValue, float duration)
     {
         float startValue = stageBar.fillAmount;
-        float elapsedTime = 0f;
+        float time = 0;
 
-        while (elapsedTime < duration)
+        while (time < duration)
         {
-            elapsedTime += Time.deltaTime;
-            stageBar.fillAmount = Mathf.Lerp(startValue, targetValue, elapsedTime / duration);
+            time += Time.deltaTime;
+            stageBar.fillAmount = Mathf.Lerp(startValue, targetValue, time / duration);
             yield return null;
         }
 
-        stageBar.fillAmount = targetValue; // 최종적으로 목표 값을 설정
+        stageBar.fillAmount = targetValue;
     }
 
     [PunRPC]
     public void MovePlayer(int stage, Vector3 position, Quaternion rotation)
     {
-        // 클라이언트에서 stage 값을 받아와서 설정
         currentStage = stage;
 
-        // 플레이어를 랜덤 위치로 이동
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
@@ -310,7 +322,7 @@ public class StageManager : MonoBehaviourPun
             }
             Debug.Log("현재 표시할 스테이지 : " + (currentStage + stagePosUpandDown));
 
-            if ((currentStage + stagePosUpandDown) % 10 == 0 && i != 4 && (currentStage + stagePosUpandDown) > 0) // 만약 10의 배수 (보스 스테이지)
+            if ((currentStage + stagePosUpandDown) % 10 == 0 && i != 4 && (currentStage + stagePosUpandDown) > 0)
             {
                 stageIcons[5].icon.transform.position = stagePoss[i].position;
                 stageIcons[5].icon.SetActive(true);
@@ -338,7 +350,6 @@ public class StageManager : MonoBehaviourPun
                     }
                     else if (!isShop && !isBoss)
                     {
-                        // 5단위와 10단위 숫자 중 더 가까운 숫자를 계산하여 아이콘 설정
                         int nearest5 = FindNearestMultiple(currentStage, 5);
                         int nearest10 = FindNearestMultiple(currentStage, 10);
 
@@ -378,6 +389,7 @@ public class StageManager : MonoBehaviourPun
             return upper;
         }
     }
+
     public void KillMonster()
     {
         killCount++;
@@ -387,6 +399,8 @@ public class StageManager : MonoBehaviourPun
         {
             portalObj.SetActive(true);
         }
+
+        photonView.RPC("UpdateKillCount", RpcTarget.Others, killCount);
     }
 
     [PunRPC]
@@ -411,6 +425,7 @@ public class StageManager : MonoBehaviourPun
             {
                 photonView.RPC("SetPortalState", RpcTarget.All, true);
             }
+            photonView.RPC("UpdateKillCount", RpcTarget.All, killCount); // killCount 동기화
             photonView.RPC("UpdateText", RpcTarget.All);
         }
     }
@@ -434,14 +449,34 @@ public class StageManager : MonoBehaviourPun
         yield return new WaitForSeconds(2);
         if (eventStage == 0)
         {
-            Debug.Log("다람쥐");
             arconEvent.EventStart();
         }
         else if (eventStage == 1)
         {
-            Debug.Log("타조");
-            //ostrichEvent.EventStartTrigger();
             ostrichEvent.photonView.RPC("EventStart", RpcTarget.All);
         }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(currentStage);
+            stream.SendNext(killCount);
+            stream.SendNext(totalMonsters);
+        }
+        else
+        {
+            currentStage = (int)stream.ReceiveNext();
+            killCount = (int)stream.ReceiveNext();
+            totalMonsters = (int)stream.ReceiveNext();
+        }
+    }
+
+    [PunRPC]
+    private void UpdateKillCount(int newKillCount)
+    {
+        killCount = newKillCount;
+        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
     }
 }
