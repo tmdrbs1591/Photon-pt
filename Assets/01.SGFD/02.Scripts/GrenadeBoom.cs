@@ -34,7 +34,7 @@ public class GrenadeBoom : MonoBehaviourPunCallbacks
     IEnumerator DamageCor(Collider _other)
     {
         var enemyPhotonView = _other.gameObject.GetComponent<PhotonView>();
-        if (enemyPhotonView != null)
+        if (enemyPhotonView != null && PV.IsMine)
         {
        
                 enemyPhotonView.RPC("TakeDamage", RpcTarget.AllBuffered, _damage);
