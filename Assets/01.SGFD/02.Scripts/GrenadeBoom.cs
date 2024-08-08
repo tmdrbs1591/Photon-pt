@@ -45,7 +45,8 @@ public class GrenadeBoom : MonoBehaviourPunCallbacks
                 Debug.Log("Hit the enemy!");
 
                 yield return new WaitForSeconds(0.1f);
-            
+
+            PhotonNetwork.Destroy(gameObject);
         }
     }
     [PunRPC]
