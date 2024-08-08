@@ -27,6 +27,13 @@ public class StageIcon
     public GameObject icon;
 }
 
+[System.Serializable]
+public class EventStageInfo
+{
+    public Transform SpawnPos;
+    public Transform PortalPos;
+}
+
 public class StageManager : MonoBehaviourPun
 {
     public static StageManager instance;
@@ -42,7 +49,7 @@ public class StageManager : MonoBehaviourPun
     public List<BossMonster> bossMonsters = new List<BossMonster>();
 
     [Header("EventStage")]
-    public List<Transform> eventStage = new List<Transform>();
+    public List<EventStageInfo> eventStage = new List<EventStageInfo>();
     public int stagePercentage = 5;
     public AcornEvent arconEvent;
     public OstrichEvent ostrichEvent;
@@ -158,7 +165,12 @@ public class StageManager : MonoBehaviourPun
                 if (isEventStage == 0)
                 {
                     int randomIndex = Random.Range(0, eventStage.Count);
-                    targetPosition = eventStage[randomIndex];
+                    targetPosition = eventStage[randomIndex].SpawnPos;
+
+                    // Æ÷Å» À§Ä¡ ¼³Á¤
+                    photonView.RPC("SetPortalPosition", RpcTarget.All, eventStage[randomIndex].PortalPos.position);
+                    // Æ÷Å» ºñÈ°¼ºÈ­
+                    photonView.RPC("SetPortalState", RpcTarget.All, false);
 
                     StartCoroutine(Co_StartEventStage(randomIndex));
                 }
@@ -394,7 +406,7 @@ public class StageManager : MonoBehaviourPun
 
     IEnumerator Co_StartEventStage(int eventStage)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         if (eventStage == 0)
         {
             Debug.Log("´Ù¶÷Áã");
