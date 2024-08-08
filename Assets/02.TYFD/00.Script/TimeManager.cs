@@ -32,7 +32,14 @@ public class TimeManager : MonoBehaviour
             currentTime = 0;
         }
 
-        timerText.text = "남은 시간 : " + Mathf.FloorToInt(currentTime).ToString();
+        if (currentTime >= 60)
+        {
+            timerText.text = "남은 시간 " + Mathf.FloorToInt(currentTime / 60).ToString() + " : " + Mathf.FloorToInt(currentTime % 60);
+        }
+        else if(currentTime < 60) 
+        {
+            timerText.text = "남은 시간 " + Mathf.FloorToInt(currentTime % 60);
+        }
     }
 
     [PunRPC]
