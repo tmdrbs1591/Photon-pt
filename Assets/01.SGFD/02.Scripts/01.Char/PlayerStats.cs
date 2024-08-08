@@ -63,7 +63,11 @@ public class PlayerStats : MonoBehaviourPun, IPunObservable
             uiLevelUp.Show();
         }
     }
-
+    [PunRPC]
+    public void IncreaseHealth(float amount)
+    {
+        curHp += amount;
+    }
     [PunRPC]
     void UpdatePlayerStats(int level, float currentXp, float xp)
     {

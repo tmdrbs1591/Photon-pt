@@ -15128,7 +15128,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 3070082665741676158}
   inventoryData: {fileID: 11400000, guid: 155808a7516f8f44984f3aae5cd8cfdf, type: 2}
-  initialItems: []
+  initialItems:
+  - quantity: 2
+    item: {fileID: 11400000, guid: c583fdcf55285194bb87afd749887ebe, type: 2}
 --- !u!114 &8861251677682171478
 MonoBehaviour:
   m_ObjectHideFlags: 0
