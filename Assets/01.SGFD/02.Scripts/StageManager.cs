@@ -106,8 +106,7 @@ public class StageManager : MonoBehaviourPun
 
     private void Update()
     {
-        stageText.text = "STAGE " + currentStage;
-        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
+
     }
 
     public void NextStage()
@@ -116,7 +115,7 @@ public class StageManager : MonoBehaviourPun
         if (Time.time - lastStageChangeTime < stageCooldown)
             return;
 
-        if(currentStage == 10)
+        if (currentStage == 10)
         {
             currentStageMonsterListLength++;
 
@@ -233,7 +232,16 @@ public class StageManager : MonoBehaviourPun
             // 스테이지 아이콘 업데이트
             photonView.RPC("UpdateStageIcons", RpcTarget.All);
         }
+        photonView.RPC("UpdateText", RpcTarget.All);
     }
+
+    [PunRPC]
+    private void UpdateText()
+    {
+        stageText.text = "STAGE " + currentStage;
+        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
+    }
+
 
     // stageBar의 fillAmount를 부드럽게 증가시키는 코루틴
     private IEnumerator FillStageBar(float targetValue, float duration)
@@ -403,6 +411,7 @@ public class StageManager : MonoBehaviourPun
             {
                 photonView.RPC("SetPortalState", RpcTarget.All, true);
             }
+            photonView.RPC("UpdateText", RpcTarget.All);
         }
     }
 

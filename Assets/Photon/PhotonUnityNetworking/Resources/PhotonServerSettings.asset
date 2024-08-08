@@ -83,6 +83,7 @@ MonoBehaviour:
   - MonsterDied
   - EventCheck
   - SynchronizationHp
+  - UpdateText
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
