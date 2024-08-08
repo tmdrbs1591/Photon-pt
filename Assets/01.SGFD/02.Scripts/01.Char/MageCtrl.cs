@@ -47,6 +47,8 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [Header("사운드")]
     [SerializeField] private AudioSource wakkAudioSource;
 
+    [SerializeField] Camera MiniMapCamera;
+
     private int curAttackCount = 0;
     private int maxAttackCount = 3;
 
@@ -91,6 +93,7 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
             // 다른 플레이어의 캔버스를 비활성화
             playerCanvas.SetActive(false);
             playerUICanvas.SetActive(false);
+            MiniMapCamera.gameObject.SetActive(false);
         }
         if (PV.IsMine)
         {

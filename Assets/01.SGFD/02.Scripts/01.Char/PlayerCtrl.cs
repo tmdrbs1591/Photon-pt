@@ -53,6 +53,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     [Header("사운드")]
     [SerializeField] private AudioSource wakkAudioSource;
 
+    [SerializeField] Camera MiniMapCamera;
+
 
 
     public PhotonView PV;
@@ -95,6 +97,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             // 다른 플레이어의 캔버스를 비활성화
             playerCanvas.SetActive(false);
             playerUICanvas.SetActive(false);
+            MiniMapCamera.gameObject.SetActive(false);
         }
         if (PV.IsMine)
         {

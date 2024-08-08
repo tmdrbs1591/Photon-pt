@@ -63,6 +63,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected)
         {
             PV.RPC("StartGameRPC", RpcTarget.All);
+            StatusText.gameObject.SetActive(false);
         }
         else
         {
