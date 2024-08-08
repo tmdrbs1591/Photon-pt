@@ -90,6 +90,7 @@ MonoBehaviour:
   - UpdateKillCount
   - StatUp
   - SetTimer
+  - IncreaseHealth
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
