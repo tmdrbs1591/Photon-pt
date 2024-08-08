@@ -9,11 +9,17 @@ public class PlayerChat : MonoBehaviourPun
     public Image chatImage;
     public TMP_Text chatText;
 
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
             // 채팅 입력을 처리하는 부분은 NetworkManager에서 관리합니다.
+        }
+
+        if (Input.GetKeyDown(KeyCode.O) && photonView.IsMine)
+        {
+            PhotonNetwork.Instantiate("Grenade", transform.position, Quaternion.identity);
         }
     }
 
