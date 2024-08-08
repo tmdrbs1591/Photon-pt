@@ -56,10 +56,11 @@ public class StageManager : MonoBehaviourPun
     public Flag flag;
 
     [Header("Monster")]
-    public GameObject monsterPrefab;
+    public GameObject[] monsterPrefab;
     private List<GameObject> currentSpawnMonsters = new List<GameObject>();
     private int killCount = 0;
     private int totalMonsters = 0;
+    private int currentStageMonsterListLength = 1;
     [SerializeField] private TextMeshProUGUI totalMonstersText;
 
     [Header("StageCount")]
@@ -114,6 +115,16 @@ public class StageManager : MonoBehaviourPun
         // 쿨다운 확인
         if (Time.time - lastStageChangeTime < stageCooldown)
             return;
+
+        if(currentStage == 10)
+        {
+            currentStageMonsterListLength++;
+
+            if (currentStageMonsterListLength > monsterPrefab.Length)
+            {
+                currentStageMonsterListLength = monsterPrefab.Length;
+            }
+        }
 
         // 스테이지 증가
         currentStage++;
@@ -187,9 +198,12 @@ public class StageManager : MonoBehaviourPun
 
                     targetPosition = stageInfos[randomIndex - 1].spawnPos;
 
+                    int monsterIndex;
+
                     foreach (Transform t in stageInfos[randomIndex - 1].monsterSpawnPos)
                     {
-                        GameObject monster = PhotonNetwork.Instantiate(monsterPrefab.name, t.position, t.rotation);
+                        monsterIndex = Random.Range(0, currentStageMonsterListLength);
+                        GameObject monster = PhotonNetwork.Instantiate(monsterPrefab[monsterIndex].name, t.position, t.rotation);
                         monster.GetComponent<Enemy>().StatUp(hpUp * currentStage, attackUp * currentStage); // 몬스터의 스탯 증가
                         currentSpawnMonsters.Add(monster);
                         totalMonsters++; // 몬스터 수 증가
