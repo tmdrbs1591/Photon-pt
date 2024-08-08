@@ -27,6 +27,7 @@ public class Flag : MonoBehaviourPunCallbacks
         {
             Ostrichtextanim.textToShow = "<shake>졌다 ㅜㅜ<shake>";
             SetClearState(true);
+            isClear = true;
             StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
             photonView.RPC("SpawnGold", RpcTarget.All);
         }
@@ -34,6 +35,7 @@ public class Flag : MonoBehaviourPunCallbacks
         {
             Ostrichtextanim.textToShow = "<wave>내가 이겼다~~!<wave>";
             SetClearState(true);
+            isClear=true;
             StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
             photonView.RPC("SpawnPtc", RpcTarget.All);
 
