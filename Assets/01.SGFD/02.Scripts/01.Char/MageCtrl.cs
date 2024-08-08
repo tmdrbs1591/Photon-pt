@@ -85,8 +85,6 @@ public class MageCtrl : MonoBehaviourPunCallbacks, IPunObservable
         playerStats.curHp = playerStats.maxHp;
 
 
-        PhotonNetwork.SendRate = 60; // 기본값 20에서 증가
-        PhotonNetwork.SerializationRate = 60; // 기본값 10에서 증가
 
         if (!photonView.IsMine)
         {

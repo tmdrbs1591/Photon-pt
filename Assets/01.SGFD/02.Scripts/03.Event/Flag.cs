@@ -27,16 +27,15 @@ public class Flag : MonoBehaviourPunCallbacks
     {
         if (other.gameObject.CompareTag("Player") && !isClear)
         {
-            cameraFollowScript.offset = new Vector3(0, 6.86f, -7.4f);
             Ostrichtextanim.textToShow = "<shake>졌다 ㅜㅜ<shake>";
             SetClearState(true);
             isClear = true;
             StageManager.instance.photonView.RPC("EventCheck", RpcTarget.All);
             photonView.RPC("SpawnGold", RpcTarget.All);
+            photonView.RPC("SpawnPtc", RpcTarget.All);
         }
         if (other.gameObject.CompareTag("Ostrich") && !isClear)
         {
-            cameraFollowScript.offset = new Vector3(0, 6.86f, -7.4f);
             Ostrichtextanim.textToShow = "<wave>내가 이겼다~~!<wave>";
             SetClearState(true);
             isClear=true;
@@ -54,6 +53,9 @@ public class Flag : MonoBehaviourPunCallbacks
             AudioManager.instance.PlaySound(transform.position, 8, Random.Range(0.8f, 0.8f), 1f);
             clearPtc.SetActive(false);
             clearPtc.SetActive(true);
+            cameraFollowScript.offset = new Vector3(0, 6.86f, -7.4f);
+
+
         }
     }
     [PunRPC]
