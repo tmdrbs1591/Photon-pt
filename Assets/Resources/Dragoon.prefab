@@ -4179,8 +4179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.57254905}
+  m_Material: {fileID: 2100000, guid: f2fd11355f8f6e04bad75f7d11b3cd1a, type: 2}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4955,7 +4955,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.91195726, g: 1, b: 0, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5511,6 +5511,7 @@ GameObject:
   - component: {fileID: 4122376236790083561}
   - component: {fileID: 8761377484642264457}
   - component: {fileID: 2193170452446813675}
+  - component: {fileID: 8063239300782471215}
   m_Layer: 5
   m_Name: Augment
   m_TagString: Untagged
@@ -5696,6 +5697,25 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 1240310179635573142}
+--- !u!114 &8063239300782471215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2561359621213748668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626de477280978b4fb04a5ffc9d0c2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonManager: {fileID: 0}
+  startDelay: 0
+  scaleDuration: 0.2
+  scaleUp: {x: 1.2, y: 1.2, z: 1.2}
+  navScaleUp: {x: 1.1, y: 1.1, z: 1.1}
+  outlineMaterial: {fileID: 2100000, guid: 8417e14c4f8f25b4f8894db9721e96e8, type: 2}
+  Type: NoAnim
 --- !u!1 &2579615472487000506
 GameObject:
   m_ObjectHideFlags: 0
@@ -7095,7 +7115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.22948408, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -7245,7 +7265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.85257673, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -7415,7 +7435,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -9466,7 +9486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.6808264, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -10320,6 +10340,7 @@ GameObject:
   - component: {fileID: 4750626018114931626}
   - component: {fileID: 6931384281604989834}
   - component: {fileID: 2261832819993532906}
+  - component: {fileID: 550435258604098536}
   m_Layer: 5
   m_Name: Augment.2
   m_TagString: Untagged
@@ -10489,6 +10510,25 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 8863845642797195124}
+--- !u!114 &550435258604098536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5377822744787107468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626de477280978b4fb04a5ffc9d0c2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonManager: {fileID: 0}
+  startDelay: 0
+  scaleDuration: 0.2
+  scaleUp: {x: 1.2, y: 1.2, z: 1.2}
+  navScaleUp: {x: 1.1, y: 1.1, z: 1.1}
+  outlineMaterial: {fileID: 2100000, guid: 8417e14c4f8f25b4f8894db9721e96e8, type: 2}
+  Type: NoAnim
 --- !u!1 &5458420646049453247
 GameObject:
   m_ObjectHideFlags: 0
@@ -11465,6 +11505,7 @@ GameObject:
   - component: {fileID: 7028977449199102711}
   - component: {fileID: 2444084242429901712}
   - component: {fileID: 8147572215851960516}
+  - component: {fileID: 1611990663976615660}
   m_Layer: 5
   m_Name: Augment.1
   m_TagString: Untagged
@@ -11634,6 +11675,25 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 775254630278877812}
+--- !u!114 &1611990663976615660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5732760965889112629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626de477280978b4fb04a5ffc9d0c2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonManager: {fileID: 0}
+  startDelay: 0
+  scaleDuration: 0.2
+  scaleUp: {x: 1.2, y: 1.2, z: 1.2}
+  navScaleUp: {x: 1.1, y: 1.1, z: 1.1}
+  outlineMaterial: {fileID: 2100000, guid: 8417e14c4f8f25b4f8894db9721e96e8, type: 2}
+  Type: NoAnim
 --- !u!1 &5758884775674224335
 GameObject:
   m_ObjectHideFlags: 0
@@ -15480,7 +15540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 1aebb932488409a45839eeb5e936256c, type: 2}
   m_Color: {r: 0.3295524, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -15676,6 +15736,7 @@ GameObject:
   - component: {fileID: 1186624567735523828}
   - component: {fileID: 9018507720005113720}
   - component: {fileID: 1313351166619529575}
+  - component: {fileID: 7875128655195108754}
   m_Layer: 5
   m_Name: Augment.3
   m_TagString: Untagged
@@ -15845,6 +15906,25 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 6483140024550441915}
+--- !u!114 &7875128655195108754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8184437069153979811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626de477280978b4fb04a5ffc9d0c2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonManager: {fileID: 0}
+  startDelay: 0
+  scaleDuration: 0.2
+  scaleUp: {x: 1.2, y: 1.2, z: 1.2}
+  navScaleUp: {x: 1.1, y: 1.1, z: 1.1}
+  outlineMaterial: {fileID: 2100000, guid: 8417e14c4f8f25b4f8894db9721e96e8, type: 2}
+  Type: NoAnim
 --- !u!1 &8185362655045859863
 GameObject:
   m_ObjectHideFlags: 0
@@ -16312,6 +16392,7 @@ GameObject:
   - component: {fileID: 811314190503009880}
   - component: {fileID: 988937092900590173}
   - component: {fileID: 5095912778520862653}
+  - component: {fileID: 4508275698504643893}
   m_Layer: 5
   m_Name: Augment.4
   m_TagString: Untagged
@@ -16481,6 +16562,25 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 442657420213775852}
+--- !u!114 &4508275698504643893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8436512873248445909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 626de477280978b4fb04a5ffc9d0c2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonManager: {fileID: 0}
+  startDelay: 0
+  scaleDuration: 0.2
+  scaleUp: {x: 1.2, y: 1.2, z: 1.2}
+  navScaleUp: {x: 1.1, y: 1.1, z: 1.1}
+  outlineMaterial: {fileID: 2100000, guid: 8417e14c4f8f25b4f8894db9721e96e8, type: 2}
+  Type: NoAnim
 --- !u!1 &8450505988335188082
 GameObject:
   m_ObjectHideFlags: 0

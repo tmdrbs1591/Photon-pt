@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6490637825650692061, guid: 48a83e1362c338540ad351d884a80155, type: 2}
+  - {fileID: -6490637825650692061, guid: f106dca00ec988548b3e32bf08369c03, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,16 +104,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: 10
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 48a83e1362c338540ad351d884a80155, type: 2}
-  m_sharedMaterial: {fileID: -6490637825650692061, guid: 48a83e1362c338540ad351d884a80155,
+  m_fontAsset: {fileID: 11400000, guid: f106dca00ec988548b3e32bf08369c03, type: 2}
+  m_sharedMaterial: {fileID: -6490637825650692061, guid: f106dca00ec988548b3e32bf08369c03,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -208,7 +208,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a99dde0ad850ead42accd711a696c20f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cinemachineTag: CinemachineCamera
 --- !u!114 &-6394396566232568906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,8 +225,9 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 0
   OwnershipTransfer: 0
+  observableSearch: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 0
+  sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

@@ -8,6 +8,8 @@ public class Flag : MonoBehaviourPunCallbacks
     [SerializeField] GameObject goldPrefab;
     [SerializeField] TextAnim Ostrichtextanim;
 
+    [SerializeField] CameraFollow cameraFollowScript;
+
     public bool isClear = false;
 
     private void Start()
@@ -25,6 +27,7 @@ public class Flag : MonoBehaviourPunCallbacks
     {
         if (other.gameObject.CompareTag("Player") && !isClear)
         {
+            cameraFollowScript.offset = new Vector3(0, 6.86f, -7.4f);
             Ostrichtextanim.textToShow = "<shake>졌다 ㅜㅜ<shake>";
             SetClearState(true);
             isClear = true;
@@ -33,6 +36,7 @@ public class Flag : MonoBehaviourPunCallbacks
         }
         if (other.gameObject.CompareTag("Ostrich") && !isClear)
         {
+            cameraFollowScript.offset = new Vector3(0, 6.86f, -7.4f);
             Ostrichtextanim.textToShow = "<wave>내가 이겼다~~!<wave>";
             SetClearState(true);
             isClear=true;

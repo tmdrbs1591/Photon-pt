@@ -16,6 +16,8 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
     [SerializeField] GameObject eventTextPanel;
     [SerializeField] TextAnim textanim;
 
+    [SerializeField] CameraFollow cameraFollowScript;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -25,10 +27,10 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
     void Update()
     {
         // "M" 키가 눌리면 이벤트 시작
-        //if (Input.GetKeyDown(KeyCode.M))
-        //{
-        //    photonView.RPC("EventStart", RpcTarget.All);
-        //}
+        if (Input.GetKeyDown(KeyCode.M))
+       {
+           photonView.RPC("EventStart", RpcTarget.All);
+        }
 
         anim.SetBool("isRun", agent.velocity.magnitude > 0.1f);
     }
@@ -48,6 +50,7 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
 
     IEnumerator StartEvent()
     {
+
         eventTextPanel.SetActive(false);
         eventTextPanel.SetActive(true);
         textanim.textToShow = "타조와 함께 달리기 경주를 하고 승리를 쟁취하세요!";
@@ -66,6 +69,8 @@ public class OstrichEvent : MonoBehaviourPunCallbacks
         Ostrichtextanim.textToShow = "<shake>나랑 달리기 경주할 사람\r\n어디 없나~<shake>";
 
         yield return new WaitForSeconds(3); // 대기 시간
+
+        cameraFollowScript.offset = new Vector3(0, 12, -13);
 
         startingLine.SetActive(false);
         agent.isStopped = false;
