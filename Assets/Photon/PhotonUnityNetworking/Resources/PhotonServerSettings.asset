@@ -82,6 +82,7 @@ MonoBehaviour:
   - IncrementTotalMonsters
   - MonsterDied
   - EventCheck
+  - SynchronizationHp
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
