@@ -70,6 +70,11 @@ namespace Inventory
             {
                 itemAction.PerformAction(gameObject);
             }
+            IDestroyableItem destroybleItem = inventoryItem.item as IDestroyableItem;
+            if (destroybleItem != null)
+            {
+                inventoryData.RemoveItem(itemIndex,1);
+            }
         }
 
         private void HandleDragging(int itemIndex)
