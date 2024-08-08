@@ -60,6 +60,7 @@ public class StageManager : MonoBehaviourPun
     private List<GameObject> currentSpawnMonsters = new List<GameObject>();
     private int killCount = 0;
     private int totalMonsters = 0;
+    [SerializeField] private TextMeshProUGUI totalMonstersText;
 
     [Header("StageCount")]
     public int currentStage = 0;
@@ -105,6 +106,7 @@ public class StageManager : MonoBehaviourPun
     private void Update()
     {
         stageText.text = "STAGE " + currentStage;
+        totalMonstersText.text = "남은 몬스터 수 : " + (totalMonsters - killCount);
     }
 
     public void NextStage()
