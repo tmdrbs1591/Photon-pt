@@ -252,10 +252,11 @@ public class Enemy : MonoBehaviourPunCallbacks, IPunObservable
         StageManager.instance.photonView.RPC("DecreaseMonsterCount", RpcTarget.All);
     }
 
+    [PunRPC]
     public void StatUp(float upHp, float upAttack)
     {
         maxHP += upHp;
         currentHP = maxHP;
-        attackDamage = upAttack;
+        attackDamage += upAttack;
     }
 }

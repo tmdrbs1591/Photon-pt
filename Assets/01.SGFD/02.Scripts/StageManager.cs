@@ -161,6 +161,7 @@ public class StageManager : MonoBehaviourPunCallbacks, IPunObservable
                 foreach (Transform t in bossPosition[bossIndex].monsterSpawnPos)
                 {
                     GameObject boss = PhotonNetwork.Instantiate(bossMonsters[bossMonsterIndex].bossObj.name, t.position, t.rotation);
+                    boss.GetComponent<Enemy>().photonView.RPC("StatUp", RpcTarget.All, bossHpUp * currentStage, attackUp * currentStage);
                     currentSpawnMonsters.Add(boss);
                     totalMonsters++;
                 }
@@ -198,6 +199,7 @@ public class StageManager : MonoBehaviourPunCallbacks, IPunObservable
                     {
                         monsterIndex = Random.Range(0, currentStageMonsterListLength);
                         GameObject monster = PhotonNetwork.Instantiate(monsterPrefab[monsterIndex].name, t.position, t.rotation);
+                        monster.GetComponent<Enemy>().photonView.RPC("StatUp", RpcTarget.All, hpUp * currentStage, attackUp * currentStage);
                         currentSpawnMonsters.Add(monster);
                         totalMonsters++; // 몬스터 수 증가
                     }
