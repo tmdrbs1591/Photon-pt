@@ -5631,6 +5631,7 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 654592038603849477}
+  restartTime: 0.2
 --- !u!114 &4300117024527379820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8699,6 +8700,7 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 5882510368973780803}
+  restartTime: 0.2
 --- !u!114 &4435752576483007181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8965,7 +8967,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.669
+  m_Value: 0.663
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -10678,6 +10680,7 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 6041660605004770804}
+  restartTime: 0.2
 --- !u!114 &6312882667166026690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13684,6 +13687,7 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 4336593541869340850}
+  restartTime: 0.2
 --- !u!114 &7419109625709331034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14111,6 +14115,7 @@ MonoBehaviour:
   color: {r: 1, g: 1, b: 1, a: 0}
   images:
   - {fileID: 3511433320137828954}
+  restartTime: 0.2
 --- !u!114 &6368798699224724404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14234,6 +14239,7 @@ GameObject:
   - component: {fileID: 8105413334849635868}
   - component: {fileID: 6888096569767345163}
   - component: {fileID: 8272973894557463567}
+  - component: {fileID: 687144558225161159}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -14298,6 +14304,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &687144558225161159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7038417753533584078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5907cc3a61c7fd43be8ded63be517cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: {r: 0, g: 0, b: 0, a: 0}
+  images:
+  - {fileID: 8272973894557463567}
+  restartTime: 2
 --- !u!1 &7078148132541617403
 GameObject:
   m_ObjectHideFlags: 0

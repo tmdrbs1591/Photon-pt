@@ -85,6 +85,9 @@ MonoBehaviour:
   - SynchronizationHp
   - UpdateText
   - UpdateMonsterHp
+  - SyncStageData
+  - SyncTotalMonsters
+  - UpdateKillCount
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

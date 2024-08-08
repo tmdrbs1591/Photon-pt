@@ -9,6 +9,8 @@ public class ShineAnim : MonoBehaviour
     public Image[] images;
     private float temp = 0; // 클래스 레벨에서 temp 변수를 정의
 
+    public float restartTime = 0.2f;
+
     private void OnEnable()
     {
         StartCoroutine(DoShine());
@@ -33,7 +35,7 @@ public class ShineAnim : MonoBehaviour
             if (temp > 1.0f)
             {
                 temp = 0.0f;
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(restartTime);
             }
 
             for (int i = 0; i < images.Length; i++)
