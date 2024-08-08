@@ -111,6 +111,7 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             nickNameText.text = PV.Owner.NickName;
             nickNameText.color = Color.white;
         }
+
     }
     public override void OnDisconnected(DisconnectCause cause) => print("연결끊김");
 
@@ -144,7 +145,8 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetTrigger("isSleep");
         }
 
-       
+        PV.RPC("SynchronizationHp", RpcTarget.AllBuffered); // 체력 감소 RPC 호출
+
     }
 
     void GetInput()
@@ -363,9 +365,13 @@ public class PlayerCtrl : MonoBehaviourPunCallbacks, IPunObservable
     void PlayerTakeDamage(float damage)
     {
         playerStats.curHp -= damage;
+    
+    }
+    [PunRPC]
+    void SynchronizationHp()
+    {
         hpBar.value = playerStats.curHp / playerStats.maxHp; // HP 바 업데이트
     }
-
     void Dash()
     {
         if (dashCurTime <= 0)
