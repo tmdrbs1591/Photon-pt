@@ -13,7 +13,7 @@ public class GrenadeBoom : MonoBehaviourPunCallbacks
     void Start()
     {
         PV = GetComponent<PhotonView>();
-
+        StartCoroutine(DestroyCor());
     }
 
     // Update is called once per frame
@@ -31,6 +31,12 @@ public class GrenadeBoom : MonoBehaviourPunCallbacks
             // DestroyArrowDelayed() 메서드는 필요하지 않은 경우 주석 처리
         }
     }
+    IEnumerator DestroyCor()
+    {
+        yield return new WaitForSeconds(0.3f);
+        PhotonNetwork.Destroy(gameObject);
+
+    }
     IEnumerator DamageCor(Collider _other)
     {
         var enemyPhotonView = _other.gameObject.GetComponent<PhotonView>();
@@ -44,11 +50,11 @@ public class GrenadeBoom : MonoBehaviourPunCallbacks
 
                 Debug.Log("Hit the enemy!");
 
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.3f);
 
-            PhotonNetwork.Destroy(gameObject);
         }
     }
+
     [PunRPC]
     void SpawnDamageText(Vector3 position, float damage)
     {
