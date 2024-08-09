@@ -29,7 +29,7 @@ public class TimeManager : MonoBehaviour
 
     private void Update()
     {
-        if (currentTime > 0)
+        if (currentTime > 0 && StageManager.instance.currentStage % 10 != 5)
         {
             currentTime -= Time.deltaTime;
         }
